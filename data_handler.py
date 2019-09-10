@@ -9,14 +9,17 @@ ANSWER_DATA_FILE_PATH = os.getcwd() + "/data/answer.csv"
 QUESTION_DATA_FILE_PATH = os.getcwd() + "/data/question.csv"
 
 
-def get_answer():
+def get_answers():
     database = connection.csv_to_dict(ANSWER_DATA_FILE_PATH)
     return database
 
 
-def get_question():
+def get_questions():
     database = connection.csv_to_dict(QUESTION_DATA_FILE_PATH)
     return database
+
+def add_entry(entry, is_answer=False):
+    connection.append_to_csv(QUESTION_DATA_FILE_PATH if is_answer else ANSWER_DATA_FILE_PATH, entry)
 
 
 def generate_id(stories):
@@ -31,10 +34,10 @@ def gen_id():
 def generate_question_dict(data):
     question_data = {}
 
-    question_data.update(id=gen_id())
+    question_data.update(id=str(gen_id()))
     question_data.update(submission_time=str(time.time()))
-    question_data.update(view_number=0)
-    question_data.update(vote_number=0)
+    question_data.update(view_number=str(0))
+    question_data.update(vote_number=str(0))
     question_data.update(title=data["title"])
     question_data.update(message=data["message"])
     question_data.update(image=data["image"])
@@ -44,9 +47,9 @@ def generate_question_dict(data):
 def generate_answer_dict(data):
     answer_data = {}
 
-    answer_data.update(id=gen_id())
+    answer_data.update(id=str(gen_id()))
     answer_data.update(submission_time=str(time.time()))
-    answer_data.update(vote_number=0)
+    answer_data.update(vote_number=str(0))
     answer_data.update(question_id=data["question_id"])
     answer_data.update(message=data["message"])
     answer_data.update(image=data["image"])

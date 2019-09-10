@@ -5,16 +5,16 @@
     <title>Title</title>
 </head>
 <body>
-    <h1>Ask your question</h1>
-    <br>
-    <div>
+    <div align="center">
+        <h1>Ask your question</h1>
+        <br>
         <form action="/add-question" method="post">
-            <input type="text" name="title">
+            <input type="text" name="title" size="40">
             <input type="hidden" name="question_id" value="{{question_id}}">
             <br/>
             <br/>
             <textarea name="message" rows="4" cols="50"></textarea>
-            <input type="hidden" name="image" value="a">
+            <input type="hidden" name="image" value="">
             <br/>
             <input type="submit">
         </form>

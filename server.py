@@ -14,7 +14,7 @@ def route_home_page():
 @app.route('/list')
 def list_questions():
     fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
-    questions = data_handler.get_question()
+    questions = data_handler.get_questions()
     sorted_questions = data_handler.sorting_data(questions, 'id', True)
     return render_template('list.html', fieldnames=fieldnames, sorted_questions=sorted_questions)
 
@@ -23,13 +23,20 @@ def list_questions():
 def add_question():
     if request.method == 'POST':
         reqv = request.form.to_dict()
-        asd = data_handler.get_answers()
+        answers = data_handler.get_answers()
+        questions = data_handler.get_questions()
+
         if reqv["question_id"] == '':
-            asd.append(data_handler.generate_question_dict(reqv))
+            answer = data_handler.generate_question_dict(reqv)
+            answers.append(answer)
+            data_handler.add_entry(answer,True)
+
         elif reqv["question_id"] != '':
-            asd.append(data_handler.generate_answer_dict(reqv))
-        app.logger.info(asd)
-        data_handler.add_entry(data_handler.generate_question_dict(reqv))
+            question = data_handler.generate_answer_dict(reqv)
+            questions.append(question)
+            data_handler.add_entry(question)
+
+        app.logger.info(answers)
     return render_template('add-question.html', question_id="")
 
 
