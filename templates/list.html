@@ -2,10 +2,27 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>List of questions | Ask Mate</title>
+        <title>Welcome! | Ask Mate</title>
     </head>
     <body>
-        <h1>Questions sorted by latest questions</h1>
+        <h1>Ask Mate</h1>
+        <p>
+            <label for="attribute-selector">Sort questions by: </label>
+            <form action="" method="post">
+                    <select id="attribute-selector" name="order_by">
+                        {% for header in fieldnames %}
+                        <option value="{{ header }}">{{ header|capitalize|replace('_',' ') }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="order-direction-selector" name="order_direction">
+                        {% for order in ['asc', 'desc'] %}
+                        <option value="{{ order }}">{{ 'Ascending order' if order == 'asc' else 'Descending order' }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" value="Sort">
+            </form>
+
+        </p>
         <table style="width: 90%">
             <tr>
                 {% for header in fieldnames %}

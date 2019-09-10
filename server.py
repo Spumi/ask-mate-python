@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 
 import data_handler
 
@@ -8,15 +8,20 @@ from datetime import datetime
 app = Flask(__name__)
 
 @app.route('/')
-def route_home_page():
-    return render_template('home_page.html')
-
-@app.route('/list')
+@app.route('/list', methods=['GET', 'POST'])
+# @app.route('/?order_by=vote_number&order_direction=desc', methods=['GET', 'POST'])
 def list_questions():
     fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
     questions = data_handler.get_questions()
-    sorted_questions = data_handler.sorting_data(questions, 'id', True)
+    sorted_questions = data_handler.sorting_data(questions, 'submission_time', True)
+    if request.method == 'POST':
+        order_by = request.form.get('order_by')
+        order_direction = False if request.form.get('order_direction') == 'asc' else True
+        # app.logger.info(order_by)
+        # app.logger.info(order_direction)
+        sorted_questions = data_handler.sorting_data(questions, order_by, order_direction)
     return render_template('list.html', fieldnames=fieldnames, sorted_questions=sorted_questions)
+
 
 
 @app.route('/add-question', methods=["GET", "POST"])
