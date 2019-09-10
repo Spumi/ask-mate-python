@@ -20,9 +20,11 @@ def add_question():
         elif reqv["question_id"] != '':
             asd = data_handler.generate_answer_dict(reqv)
         app.logger.info(asd)
-        return render_template('test.html', d=asd)
-    return render_template('add-question.html')
+    return render_template('add-question.html', question_id="")
 
+@app.route("/test")
+def test():
+    return str(data_handler.get_answer())
 
 if __name__ == '__main__':
     app.run(debug=True)
