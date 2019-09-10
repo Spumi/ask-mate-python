@@ -5,7 +5,7 @@
     <title>Question</title>
 </head>
 <body>
-    <h1>Question ID: {{ question.id }}</h1>
+    <h1>{{ question.title }}</h1>
 
     <h2>Question data</h2>
     <table>
@@ -27,6 +27,7 @@
     </table>
 
     <h2>Answers to the question</h2>
+
     {% if answers | length != 0 %}
     <table>
         <thead>
@@ -49,5 +50,13 @@
     {%  else  %}
         {{ "There is no answer to this question" }}
     {% endif %}
+    <br/><br/>
+    <form action={{"/add-question"}}>
+        <input type="submit" value="New question">
+    </form>
+    <br/>
+    <form action={{"/"}}{{question.id}}{{"/edit"}}>
+        <input type="submit" value="Edit question">
+    </form>
 </body>
 </html>
