@@ -63,9 +63,23 @@ def generate_answer_dict(data):
     return answer_data
 
 
+def get_question(question_id, question_database):
+    for question_data in question_database:
+        if question_data['id'] == question_id:
+            return question_data
+
+
+def get_question_related_answers(question_id, answer_database):
+    answers_of_question = []
+    for answer_data in answer_database:
+        if answer_data['question_id'] == question_id:
+            answers_of_question.append(answer_data)
+    return answers_of_question
+
+
 def sorting_data(data, attribute, order_flag):
     '''
-    :param attribute: list of dictionaries
+    :param data: list of dictionaries
     :param attribute: By which the data is sorted-
     :param order_flag: The order is ascending (False) or descending (True).
     :return: The sorted data.
@@ -75,5 +89,4 @@ def sorting_data(data, attribute, order_flag):
     except AttributeError:
         sorted_data = sorted(data, key=lambda x: x[attribute], reverse=order_flag)
     return sorted_data
-
 

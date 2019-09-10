@@ -3,6 +3,8 @@ from flask import Flask, render_template, request
 
 import data_handler
 
+from datetime import datetime
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -41,6 +43,16 @@ def add_question():
 @app.route("/test")
 def test():
     return str(data_handler.get_answers())
+
+
+@app.route('/question/<question_id>')
+def question_display(question_id):
+    question_database = data_handler.get_questions()
+    answer_database = data_handler.get_answers()
+    question = data_handler.get_question(question_id, question_database)
+    related_answers = data_handler.get_question_related_answers(question_id, answer_database)
+    return render_template('display_question.html', question=question, answers=related_answers)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

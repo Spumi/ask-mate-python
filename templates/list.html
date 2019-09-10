@@ -14,8 +14,16 @@
             </tr>
             {% for questions in sorted_questions %}
             <tr>
-                {% for data in questions.values() %}
-                    <td>{{ data }}</td>
+                {% for header, data in questions.items() %}
+                    {% if header == 'submission_time' %}
+                        <td>{{ data }}</td>
+                    {% elif header == 'title' %}
+                        <td>
+                            <a href="{{ url_for('question_display', question_id=questions['id']) }}">{{ data }}</a>
+                        </td>
+                    {% else %}
+                        <td>{{ data }}</td>
+                    {% endif %}
                 {% endfor %}
             {% endfor %}
             </tr>
