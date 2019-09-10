@@ -18,8 +18,8 @@ def get_questions():
     database = connection.csv_to_dict(QUESTION_DATA_FILE_PATH)
     return database
 
-def add_entry(entry):
-    connection.append_to_csv(QUESTION_DATA_FILE_PATH, entry)
+def add_entry(entry, is_answer=False):
+    connection.append_to_csv(QUESTION_DATA_FILE_PATH if is_answer else ANSWER_DATA_FILE_PATH, entry)
 
 
 def generate_id(stories):
@@ -72,7 +72,7 @@ def get_question_related_answers(question_id, answer_database):
 
 def sorting_data(data, attribute, order_flag):
     '''
-    :param attribute: list of dictionaries
+    :param data: list of dictionaries
     :param attribute: By which the data is sorted-
     :param order_flag: The order is ascending (False) or descending (True).
     :return: The sorted data.
@@ -82,5 +82,4 @@ def sorting_data(data, attribute, order_flag):
     except AttributeError:
         sorted_data = sorted(data, key=lambda x: x[attribute], reverse=order_flag)
     return sorted_data
-
 

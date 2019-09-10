@@ -3,6 +3,8 @@ from flask import Flask, render_template, request
 
 import data_handler
 
+from datetime import datetime
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -21,13 +23,20 @@ def list_questions():
 def add_question():
     if request.method == 'POST':
         reqv = request.form.to_dict()
-        asd = data_handler.get_answers()
+        answers = data_handler.get_answers()
+        questions = data_handler.get_questions()
+
         if reqv["question_id"] == '':
-            asd.append(data_handler.generate_question_dict(reqv))
+            answer = data_handler.generate_question_dict(reqv)
+            answers.append(answer)
+            data_handler.add_entry(answer,True)
+
         elif reqv["question_id"] != '':
-            asd.append(data_handler.generate_answer_dict(reqv))
-        app.logger.info(asd)
-        data_handler.add_entry(data_handler.generate_question_dict(reqv))
+            question = data_handler.generate_answer_dict(reqv)
+            questions.append(question)
+            data_handler.add_entry(question)
+
+        app.logger.info(answers)
     return render_template('add-question.html', question_id="")
 
 
