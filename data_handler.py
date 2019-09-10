@@ -3,6 +3,9 @@ import os
 import time
 
 # ANSWER_DATA_FILE_PATH = os.getenv('DATA_FILE_PATH') if 'DATA_FILE_PATH' in os.environ else 'data/answer.csv'
+import uuid
+from operator import itemgetter
+
 import connection
 
 ANSWER_DATA_FILE_PATH = os.getcwd() + "/data/answer.csv"
@@ -23,19 +26,22 @@ def add_entry(entry, is_answer=False):
     connection.append_to_csv(QUESTION_DATA_FILE_PATH if is_answer else ANSWER_DATA_FILE_PATH, entry)
 
 
-def generate_id(stories):
-    ordered_stories = sorted(stories, key=lambda x: DATA_HEADER[0])
-    return str(int(ordered_stories[-1][DATA_HEADER[0]]) + 1)
+def gen_question_id():
+    answers = get_questions()
+    items = [x['id'] for x in answers]
+    return int(max(items)) + 1
 
 
-def gen_id():
-    return 0
+def gen_answer_id():
+    answers = get_questions()
+    items = [x['id'] for x in answers]
+    return int(max(items)) + 1
 
 
 def generate_question_dict(data):
     question_data = {}
 
-    question_data.update(id=str(gen_id()))
+    question_data.update(id=str(gen_question_id()))
     question_data.update(submission_time=str(time.time()))
     question_data.update(view_number=str(0))
     question_data.update(vote_number=str(0))
@@ -48,7 +54,7 @@ def generate_question_dict(data):
 def generate_answer_dict(data):
     answer_data = {}
 
-    answer_data.update(id=str(gen_id()))
+    answer_data.update(id=str(gen_answer_id()))
     answer_data.update(submission_time=str(time.time()))
     answer_data.update(vote_number=str(0))
     answer_data.update(question_id=data["question_id"])
