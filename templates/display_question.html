@@ -51,12 +51,12 @@
         {{ "There is no answer to this question" }}
     {% endif %}
     <br/><br/>
-    <form action={{"/add-question"}}>
-        <input type="submit" value="New question">
-    </form>
-    <br/>
     <form action={{"/"}}{{question.id}}{{"/edit"}}>
         <input type="submit" value="Edit question">
+    </form>
+    <br/>
+    <form action={{"/"}}{{question.id}}{{"/delete"}}>
+        <input type="submit" value="Delete question">
     </form>
 </body>
 </html>
