@@ -65,3 +65,17 @@ def generate_answer_dict(data):
     answer_data.update(message=data["message"])
     answer_data.update(image=data["image"])
     return answer_data
+
+
+def get_question(question_id, question_database):
+    for question_data in question_database:
+        if question_data['id'] == question_id:
+            return question_data
+
+
+def get_answers(question_id, answer_database):
+    answers_of_question = []
+    for answer_data in answer_database:
+        if answer_data['question_id'] == question_id:
+            answers_of_question.append(answer_data)
+    return answers_of_question
