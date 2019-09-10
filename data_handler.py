@@ -55,7 +55,7 @@ def generate_answer_dict(data):
 
 def sorting_data(data, attribute, order_flag):
     '''
-    :param attribute: list of dictionaries
+    :param data: list of dictionaries
     :param attribute: By which the data is sorted-
     :param order_flag: The order is ascending (False) or descending (True).
     :return: The sorted data.
@@ -65,5 +65,4 @@ def sorting_data(data, attribute, order_flag):
     except AttributeError:
         sorted_data = sorted(data, key=lambda x: x[attribute], reverse=order_flag)
     return sorted_data
-
 
