@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Ask your question</h1>
+    <br>
+    <div>
+        <form action="/add-question" method="post">
+            <input type="text" name="title">
+            <input type="hidden" name="question_id" value="{{question_id}}">
+            <br/>
+            <br/>
+            <textarea name="message" rows="4" cols="50"></textarea>
+            <input type="hidden" name="image" value="a">
+            <br/>
+            <input type="submit">
+        </form>
+    </div>
+</body>
+</html>

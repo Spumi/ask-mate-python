@@ -21,14 +21,19 @@ def list_questions():
 def add_question():
     if request.method == 'POST':
         reqv = request.form.to_dict()
+        asd = data_handler.get_answers()
         if reqv["question_id"] == '':
-            asd = data_handler.generate_question_dict(reqv)
+            asd.append(data_handler.generate_question_dict(reqv))
         elif reqv["question_id"] != '':
-            asd = data_handler.generate_answer_dict(reqv)
+            asd.append(data_handler.generate_answer_dict(reqv))
         app.logger.info(asd)
-        return render_template('test.html', d=asd)
-    return render_template('add-question.html')
+        data_handler.add_entry(data_handler.generate_question_dict(reqv))
+    return render_template('add-question.html', question_id="")
 
+
+@app.route("/test")
+def test():
+    return str(data_handler.get_answers())
 
 if __name__ == '__main__':
     app.run(debug=True)
