@@ -12,7 +12,7 @@ def route_home_page():
 @app.route('/list')
 def list_questions():
     fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
-    questions = data_handler.temporary_get_data()
+    questions = data_handler.get_question()
     sorted_questions = data_handler.sorting_data(questions, 'id', True)
     return render_template('list.html', fieldnames=fieldnames, sorted_questions=sorted_questions)
 

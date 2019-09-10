@@ -5,16 +5,16 @@ import time
 # ANSWER_DATA_FILE_PATH = os.getenv('DATA_FILE_PATH') if 'DATA_FILE_PATH' in os.environ else 'data/answer.csv'
 import connection
 
-ANSWER_DATA_FILE_PATH = os.getcwd() + "/../data/answer.csv"
-QUESTION_DATA_FILE_PATH = os.getcwd() + "/../data/question.csv"
+ANSWER_DATA_FILE_PATH = os.getcwd() + "/data/answer.csv"
+QUESTION_DATA_FILE_PATH = os.getcwd() + "/data/question.csv"
 
 
 def get_answer():
-    database = connection.csv_to_dict(QUESTION_DATA_FILE_PATH)
+    database = connection.csv_to_dict(ANSWER_DATA_FILE_PATH)
     return database
 
 
-def get_answer():
+def get_question():
     database = connection.csv_to_dict(QUESTION_DATA_FILE_PATH)
     return database
 
@@ -67,7 +67,3 @@ def sorting_data(data, attribute, order_flag):
     return sorted_data
 
 
-def temporary_get_data():
-    data = [{'id': 4, 'submission_time': 13, 'vote_number': '42', 'message': 'ersad'}, {'id': 2, 'submission_time': 123, 'vote_number': '25', 'message': 'csad'},
-     {'id': 3, 'submission_time': 123, 'vote_number': '32', 'message': 'asad'}, {'id': 1, 'submission_time': 73, 'vote_number': '32', 'message': 'abad'}]
-    return data
