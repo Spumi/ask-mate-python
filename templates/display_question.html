@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Question</title>
+</head>
+<body>
+    <h1>Question ID: {{ question.id }}</h1>
+
+    <h2>Question data</h2>
+    <table>
+        <thead>
+            <tr>
+                {% for header in question.keys() %}
+                <th>{{ header }}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                {% for header in question.keys() %}
+                <td>{{ question.get(header) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Answers to the question</h2>
+    <table>
+        <thead>
+            <tr>
+                {% for header in answer.keys() %}
+                <th>{{ header }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%  for answer in answers  %}
+            <tr>
+                {% for header in answer.keys() %}
+                <td>{{ question.get(header) }}</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
