@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>List of questions | Ask Mate</title>
+    </head>
+    <body>
+        <h1>Questions sorted by latest questions</h1>
+        <table style="width: 90%">
+            <tr>
+                {% for header in fieldnames %}
+                <th>{{ header|capitalize|replace('_', ' ') }}</th>
+                {% endfor %}
+            </tr>
+            {% for questions in sorted_questions %}
+            <tr>
+                {% for data in questions.values() %}
+                    <td>{{ data }}</td>
+                {% endfor %}
+            {% endfor %}
+            </tr>
+        </table>
+
+    </body>
+</html>

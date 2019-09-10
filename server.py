@@ -5,10 +5,16 @@ import data_handler
 
 app = Flask(__name__)
 
-
 @app.route('/')
-def hello_world():
-    return 'Hello World!'
+def route_home_page():
+    return render_template('home_page.html')
+
+@app.route('/list')
+def list_questions():
+    fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
+    questions = data_handler.get_questions()
+    sorted_questions = data_handler.sorting_data(questions, 'id', True)
+    return render_template('list.html', fieldnames=fieldnames, sorted_questions=sorted_questions)
 
 
 @app.route('/add-question', methods=["GET", "POST"])
