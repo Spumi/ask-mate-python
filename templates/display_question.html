@@ -39,8 +39,8 @@
         <tbody>
             {% for answer in answers %}
             <tr>
-                {% for header in answers[0].keys() %}
-                <td>{{ question.get(header) }}</td>
+                {% for header in answer.keys() %}
+                <td>{{ answer.get(header) }}</td>
                 {%  endfor %}
             </tr>
             {% endfor %}
