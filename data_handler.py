@@ -25,6 +25,9 @@ def get_questions():
 def add_entry(entry, is_answer=False):
     connection.append_to_csv(QUESTION_DATA_FILE_PATH if is_answer else ANSWER_DATA_FILE_PATH, entry)
 
+def modify_question_database(entry, is_question=True):
+    connection.dict_to_csv(QUESTION_DATA_FILE_PATH if is_question else ANSWER_DATA_FILE_PATH, entry, False)
+
 
 def gen_question_id():
     answers = get_questions()
