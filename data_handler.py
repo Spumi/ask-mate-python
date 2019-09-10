@@ -18,8 +18,8 @@ def get_questions():
     database = connection.csv_to_dict(QUESTION_DATA_FILE_PATH)
     return database
 
-def add_entry(entry):
-    connection.append_to_csv(QUESTION_DATA_FILE_PATH, entry)
+def add_entry(entry, is_answer=False):
+    connection.append_to_csv(QUESTION_DATA_FILE_PATH if is_answer else ANSWER_DATA_FILE_PATH, entry)
 
 
 def generate_id(stories):
