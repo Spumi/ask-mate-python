@@ -13,6 +13,7 @@
             <tr>
                 {% for header in question.keys() %}
                 <th>{{ header }}</th>
+                {% endfor %}
             </tr>
         </thead>
 
@@ -20,25 +21,33 @@
             <tr>
                 {% for header in question.keys() %}
                 <td>{{ question.get(header) }}</td>
+                {%  endfor %}
             </tr>
         </tbody>
     </table>
 
     <h2>Answers to the question</h2>
+    {% if answers | length != 0 %}
     <table>
         <thead>
             <tr>
-                {% for header in answer.keys() %}
+                {% for header in answers[0].keys() %}
                 <th>{{ header }}</th>
+                {%  endfor %}
             </tr>
         </thead>
         <tbody>
-            {%  for answer in answers  %}
+            {% for answer in answers %}
             <tr>
-                {% for header in answer.keys() %}
+                {% for header in answers[0].keys() %}
                 <td>{{ question.get(header) }}</td>
+                {%  endfor %}
             </tr>
+            {% endfor %}
         </tbody>
     </table>
+    {%  else  %}
+        {{ "There is no answer to this question" }}
+    {% endif %}
 </body>
 </html>

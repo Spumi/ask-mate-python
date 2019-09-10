@@ -35,12 +35,13 @@ def add_question():
 def test():
     return str(data_handler.get_answers())
 
+
 @app.route('/question/<question_id>')
 def question_display(question_id):
-    question_database = {}
-    answer_database = {}
+    question_database = data_handler.get_questions()
+    answer_database = data_handler.get_answers()
     question = data_handler.get_question(question_id, question_database)
-    related_answers = data_handler.get_answers(question_id, answer_database)
+    related_answers = data_handler.get_question_related_answers(question_id, answer_database)
     return render_template('display_question.html', question=question, answers=related_answers)
 
 

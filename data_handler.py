@@ -62,7 +62,7 @@ def get_question(question_id, question_database):
             return question_data
 
 
-def get_answers(question_id, answer_database):
+def get_question_related_answers(question_id, answer_database):
     answers_of_question = []
     for answer_data in answer_database:
         if answer_data['question_id'] == question_id:
