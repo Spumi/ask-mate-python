@@ -23,7 +23,7 @@ def get_questions():
 
 
 def add_entry(entry, is_answer=False):
-    connection.append_to_csv(QUESTION_DATA_FILE_PATH if is_answer else ANSWER_DATA_FILE_PATH, entry)
+    connection.append_to_csv(QUESTION_DATA_FILE_PATH if not is_answer else ANSWER_DATA_FILE_PATH, entry)
 
 
 def gen_question_id():

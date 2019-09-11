@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 
 import data_handler
 
@@ -23,26 +23,26 @@ def list_questions():
 def add_question():
     if request.method == 'POST':
         reqv = request.form.to_dict()
-        answers = data_handler.get_answers()
         questions = data_handler.get_questions()
 
-        if reqv["question_id"] == '':
-            answer = data_handler.generate_question_dict(reqv)
-            answers.append(answer)
-            data_handler.add_entry(answer,True)
+        question = data_handler.generate_question_dict(reqv)
+        questions.append(question)
+        data_handler.add_entry(question)
+        return redirect(url_for("list_questions"))
 
-        elif reqv["question_id"] != '':
-            question = data_handler.generate_answer_dict(reqv)
-            questions.append(question)
-            data_handler.add_entry(question)
-
-        app.logger.info(answers)
-    return render_template('add-question.html', question_id="")
+    return render_template("add-question.html", question_id="")
 
 
-@app.route("/test")
-def test():
-    return str(data_handler.get_answers())
+@app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
+def add_answer(question_id):
+    reqv = request.form.to_dict()
+    answers = data_handler.get_answers()
+
+    if request.method == 'POST':
+        answer = data_handler.generate_answer_dict(reqv)
+        answers.append(answer)
+        data_handler.add_entry(answer, True)
+    return render_template("/question/<question_id>/", question_id=question_id )
 
 
 @app.route('/question/<question_id>')
