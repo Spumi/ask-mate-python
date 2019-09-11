@@ -47,6 +47,13 @@
                 {% for header in answer.keys() %}
                     {% if header == 'submission_time' %}
                         <td>{{ convert_to_readable_date(answer.get(header)) }}</td>
+                    {% elif header == 'image' %}
+                        <td>
+                            {% if answer.get(header) != "" %}
+                            <img src="/static/{{ answer.get(header) }}"  width="20%" height="auto">
+                            {% endif %}
+                        </td>
+                
                     {% else %}
                         <td>{{ answer.get(header) }}</td>
                     {% endif %}
@@ -74,6 +81,7 @@
     <form action={{"/question/"}}{{question.id}}{{"/delete"}}>
         <input type="submit" value="Delete question">
     </form>
+
 </body>
 </html>
 

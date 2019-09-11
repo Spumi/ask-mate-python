@@ -8,7 +8,7 @@
     <div align="center">
         <h1>Ask your question</h1>
         <br>
-        <form action="/add-question" method="post">
+        <form action="/add-question" method="post" enctype="multipart/form-data">
             <input type="text" name="title" size="40">
             <input type="hidden" name="question_id" value="{{qid}}">
             <br/>
@@ -16,6 +16,7 @@
             <textarea name="message" rows="4" cols="50"></textarea>
             <input type="hidden" name="image" value="">
             <br/>
+            <input type="file" name="image"/><BR>
             <input type="submit">
         </form>
     </div>

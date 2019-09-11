@@ -1,14 +1,11 @@
 import os
+import time
 
 from flask import Flask, render_template, request, redirect, url_for
 
-import connection
 import data_handler
-
-from datetime import datetime
-import time
-
 import util
+from util import handle_upload
 
 app = Flask(__name__)
 app.debug = True
@@ -40,10 +37,10 @@ def list_questions():
 @app.route('/add-question', methods=["GET", "POST"])
 def add_question():
     if request.method == 'POST':
-        reqv = request.form.to_dict()
+        req = request.form.to_dict()
         questions = data_handler.get_questions()
-
-        question = data_handler.generate_question_dict(reqv)
+        handle_upload(req)
+        question = data_handler.generate_question_dict(req)
         questions.append(question)
         data_handler.add_entry(question)
         return redirect(url_for("list_questions"))
@@ -55,7 +52,7 @@ def add_question():
 def add_answer(question_id):
     if request.method == 'POST':
         reqv = request.form.to_dict()
-        app.logger.info(request.form.to_dict())
+        handle_upload(reqv)
         answer = data_handler.generate_answer_dict(reqv)
         answers = data_handler.get_answers()
 
@@ -71,6 +68,7 @@ def question_display(question_id):
     question_database = data_handler.get_questions()
     answer_database = data_handler.get_answers()
     question = data_handler.get_question(question_id, question_database)
+
     related_answers = data_handler.get_question_related_answers(question_id, answer_database)
     return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=data_handler.convert_to_readable_date)
 
@@ -133,7 +131,6 @@ def delete_answer(answer_id):
 
 @app.route("/upload", methods=["POST"])
 def upload_image():
-    app.logger.info(request.files)
     image = request.files["image"]
     image.save(os.path.join(os.getcwd() + "/images/", image.filename))
 
