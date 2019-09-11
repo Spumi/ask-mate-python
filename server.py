@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for
 import connection
 import data_handler
 
-from datetime import datetime
+from datetime import datetime, time
 
 app = Flask(__name__)
 
@@ -90,6 +90,21 @@ def delete_question(question_id):
             answer_database.remove(answer)
     data_handler.modify_question_database(question_database, True)
     return redirect(url_for('list_questions'))
+
+@app.route('/<question_id>/edit', methods=['GET', 'POST'])
+def edit_question(question_id):
+
+    if request.method == 'POST':
+        edited_question_data = request.form.to_dict()
+        edited_question_data['submission_time'] = time()
+        question = data_handler.update_questions(question_id, edited_question_data)
+        return render_template('display_question.html', question=question)
+
+    all_questions = data_handler.get_questions()
+    question = data_handler.get_question(question_id, all_questions)
+
+    return render_template('edit-question.html', question=question)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
