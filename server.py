@@ -33,26 +33,29 @@ def list_questions():
 def add_question():
     if request.method == 'POST':
         reqv = request.form.to_dict()
-        answers = data_handler.get_answers()
         questions = data_handler.get_questions()
 
-        if reqv["question_id"] == '':
-            answer = data_handler.generate_question_dict(reqv)
-            answers.append(answer)
-            data_handler.add_entry(answer,True)
+        question = data_handler.generate_question_dict(reqv)
+        questions.append(question)
+        data_handler.add_entry(question)
+        return redirect(url_for("list_questions"))
 
-        elif reqv["question_id"] != '':
-            question = data_handler.generate_answer_dict(reqv)
-            questions.append(question)
-            data_handler.add_entry(question)
-
-        app.logger.info(answers)
-    return render_template('add-question.html', question_id="")
+    return render_template("add-question.html", qid="")
 
 
-@app.route("/test")
-def test():
-    return str(data_handler.get_answers())
+@app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
+def add_answer(question_id):
+    if request.method == 'POST':
+        reqv = request.form.to_dict()
+        app.logger.info(request.form.to_dict())
+        answer = data_handler.generate_answer_dict(reqv)
+        answers = data_handler.get_answers()
+
+        answers.append(answer)
+        data_handler.add_entry(answer, True)
+        return redirect("/question/" + question_id)
+
+    return render_template("add-answer.html", qid=question_id)
 
 
 @app.route('/question/<question_id>')
@@ -78,3 +81,4 @@ def delete_question(question_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
