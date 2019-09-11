@@ -11,7 +11,7 @@
             <form action="/list" method="get">
                     <select id="attribute-selector" name="order_by">
                         {% for header in fieldnames %}
-                            {% if funcionality == 'sort_by_submission_time' %}
+                            {% if funcionality == 'index_page' %}
                                 <option value="{{ header }}" {{ 'selected' if header == 'submission_time' }}>{{ header|capitalize|replace('_',' ') }}</option>
                             {% else %}
                                 <option value="{{ header }}" {{ 'selected' if header == order_by }}>{{ header|capitalize|replace('_',' ') }}</option>
@@ -20,7 +20,7 @@
                     </select>
                     <select id="order-direction-selector" name="order_direction">
                         {% for order in ['asc', 'desc'] %}
-                            {% if funcionality == 'sort_by_submission_time' %}
+                            {% if funcionality == 'index_page' %}
                                 <option value="{{ order }}" {{ 'selected' if order == 'desc' }}>{{ 'Ascending order' if order == 'asc' else 'Descending order' }}</option>
                             {% else %}
                                 <option value="{{ order }}" {{ 'selected' if order == order_direction }}>{{ 'Ascending order' if order == 'asc' else 'Descending order' }}</option>
@@ -53,8 +53,10 @@
             {% endfor %}
             </tr>
         </table>
-    <form action="/add-question">
-        <input type="submit" value="Add New Question">
-    </form>
+    {% if funcionality == 'index_page' %}
+        <form action="/add-question">
+            <input type="submit" value="Add New Question">
+        </form>
+    {% endif %}
     </body>
 </html>
