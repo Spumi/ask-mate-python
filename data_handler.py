@@ -90,3 +90,14 @@ def sorting_data(data, attribute, order_flag):
         sorted_data = sorted(data, key=lambda x: x[attribute], reverse=order_flag)
     return sorted_data
 
+
+def update_questions(question_id, updated_data):
+    all_questions = get_questions()
+    question = get_question(question_id, all_questions)
+    question_index = all_questions.index(question)
+
+    for key, value in updated_data.items():
+        question[key] = value
+    all_questions[question_index] = question
+    connection.dict_to_csv(QUESTION_DATA_FILE_PATH, all_questions, True)
+    return question
