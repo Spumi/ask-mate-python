@@ -1,6 +1,7 @@
 import csv
 import os
 import time
+from datetime import datetime
 
 # ANSWER_DATA_FILE_PATH = os.getenv('DATA_FILE_PATH') if 'DATA_FILE_PATH' in os.environ else 'data/answer.csv'
 import uuid
@@ -24,6 +25,11 @@ def get_questions():
 
 def save_questions(data):
     database = connection.dict_to_csv(QUESTION_DATA_FILE_PATH, data)
+    return database
+
+
+def save_answers(data):
+    database = connection.dict_to_csv(ANSWER_DATA_FILE_PATH, data, True)
     return database
 
 
@@ -82,6 +88,12 @@ def get_question(question_id, question_database):
             return question_data
 
 
+def get_answer(answer_id, answer_database):
+    for answer_data in answer_database:
+        if answer_data['id'] == answer_id:
+            return answer_data
+
+
 def get_question_related_answers(question_id, answer_database):
     answers_of_question = []
     for answer_data in answer_database:
@@ -114,6 +126,12 @@ def update_questions(question_id, updated_data):
     all_questions[question_index] = question
     connection.dict_to_csv(QUESTION_DATA_FILE_PATH, all_questions)
     return question
+
+
+def convert_to_readable_date(timestamp):
+    readable_time = datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
+    return readable_time
+
 
 
 def delete_record(id, answer=False):
