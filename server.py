@@ -98,7 +98,8 @@ def edit_question(question_id):
         edited_question_data = request.form.to_dict()
         edited_question_data['submission_time'] = time()
         question = data_handler.update_questions(question_id, edited_question_data)
-        return render_template('display_question.html', question=question)
+        related_answers = data_handler.get_question_related_answers(question_id, data_handler.get_answers())
+        return render_template('display_question.html', question=question, answers=related_answers)
 
     all_questions = data_handler.get_questions()
     question = data_handler.get_question(question_id, all_questions)
