@@ -33,7 +33,7 @@
             <tr>
                 {% for header, data in questions.items() %}
                     {% if header == 'submission_time' %}
-                        <td>{{ data }}</td>
+                        <td>{{ convert_to_readable_date(data) }}</td>
                     {% elif header == 'title' %}
                         <td>
                             <a href="{{ url_for('question_display', question_id=questions['id']) }}">{{ data }}</a>

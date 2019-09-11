@@ -29,7 +29,8 @@ def list_questions():
                            fieldnames=fieldnames,
                            sorted_questions=sorted_questions,
                            order_by=order_by,
-                           order_direction=order_direction)
+                           order_direction=order_direction,
+                           convert_to_readable_date=data_handler.convert_to_readable_date)
 
 
 
@@ -68,7 +69,7 @@ def question_display(question_id):
     answer_database = data_handler.get_answers()
     question = data_handler.get_question(question_id, question_database)
     related_answers = data_handler.get_question_related_answers(question_id, answer_database)
-    return render_template('display_question.html', question=question, answers=related_answers)
+    return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=data_handler.convert_to_readable_date)
 
 @app.route("/question/<question_id>/vote-up")
 def vote_up(question_id):
@@ -102,7 +103,7 @@ def edit_question(question_id):
         edited_question_data['submission_time'] = str(int(time.time()))
         question = data_handler.update_questions(question_id, edited_question_data)
         related_answers = data_handler.get_question_related_answers(question_id, data_handler.get_answers())
-        return render_template('display_question.html', question=question, answers=related_answers)
+        return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=data_handler.convert_to_readable_date)
 
     all_questions = data_handler.get_questions()
     question = data_handler.get_question(question_id, all_questions)

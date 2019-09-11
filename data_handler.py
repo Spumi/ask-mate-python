@@ -1,6 +1,7 @@
 import csv
 import os
 import time
+from datetime import datetime
 
 # ANSWER_DATA_FILE_PATH = os.getenv('DATA_FILE_PATH') if 'DATA_FILE_PATH' in os.environ else 'data/answer.csv'
 import uuid
@@ -114,3 +115,9 @@ def update_questions(question_id, updated_data):
     all_questions[question_index] = question
     connection.dict_to_csv(QUESTION_DATA_FILE_PATH, all_questions)
     return question
+
+
+def convert_to_readable_date(timestamp):
+    readable_time = datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
+    return readable_time
+
