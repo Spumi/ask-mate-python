@@ -22,6 +22,11 @@ def get_questions():
     return database
 
 
+def save_questions(data):
+    database = connection.dict_to_csv(QUESTION_DATA_FILE_PATH, data)
+    return database
+
+
 def add_entry(entry, is_answer=False):
     if not is_answer:
         connection.append_to_csv(QUESTION_DATA_FILE_PATH, entry)
@@ -48,7 +53,7 @@ def generate_question_dict(data):
     question_data = {}
 
     question_data.update(id=str(gen_question_id()))
-    question_data.update(submission_time=str(time.time()))
+    question_data.update(submission_time=str(int(time.time())))
     question_data.update(view_number=str(0))
     question_data.update(vote_number=str(0))
     question_data.update(title=data["title"])
@@ -61,7 +66,7 @@ def generate_answer_dict(data):
     answer_data = {}
 
     answer_data.update(id=str(gen_answer_id()))
-    answer_data.update(submission_time=str(time.time()))
+    answer_data.update(submission_time=str(int(time.time())))
     answer_data.update(vote_number=str(0))
     answer_data.update(question_id=data["question_id"])
     answer_data.update(message=data["message"])
@@ -96,3 +101,14 @@ def sorting_data(data, attribute, order_flag):
         sorted_data = sorted(data, key=lambda x: x[attribute], reverse=order_flag)
     return sorted_data
 
+
+def update_questions(question_id, updated_data):
+    all_questions = get_questions()
+    question = get_question(question_id, all_questions)
+    question_index = all_questions.index(question)
+
+    for key, value in updated_data.items():
+        question[key] = value
+    all_questions[question_index] = question
+    connection.dict_to_csv(QUESTION_DATA_FILE_PATH, all_questions, True)
+    return question

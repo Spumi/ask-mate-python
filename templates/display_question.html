@@ -12,7 +12,7 @@
         <thead>
             <tr>
                 {% for header in question.keys() %}
-                <th>{{ header }}</th>
+                <th>{{ header|capitalize|replace('_', ' ') }}</th>
                 {% endfor %}
             </tr>
         </thead>
@@ -20,7 +20,7 @@
         <tbody>
             <tr>
                 {% for header in question.keys() %}
-                <td>{{ question.get(header) }}</td>
+                <td>{{ question.get(header)}}</td>
                 {%  endfor %}
             </tr>
         </tbody>
@@ -33,7 +33,7 @@
         <thead>
             <tr>
                 {% for header in answers[0].keys() %}
-                <th>{{ header }}</th>
+                <th>{{ header|capitalize|replace('_', ' ') }}</th>
                 {%  endfor %}
             </tr>
         </thead>
