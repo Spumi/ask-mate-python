@@ -96,22 +96,29 @@ def vote_answer():
         app.logger.info("asdsa")
     return redirect("/list")
 
-@app.route('/question/<question_id>/delete')
+@app.route('/question/<question_id>/delete', methods=['GET', 'POST'])
 def delete_question(question_id):
-    question_database = data_handler.get_questions()
-    answer_database = data_handler.get_answers()
+    if request.method == 'POST':
+        if request.form.get('delete') == 'Yes':
+            question_database = data_handler.get_questions()
+            answer_database = data_handler.get_answers()
 
-    copied_answer_database = copy.deepcopy(answer_database)
-    for answer in copied_answer_database:
-        if answer['question_id'] == question_id:
-            answer_database.remove(answer)
-    for question in question_database:
-        if question['id'] == question_id:
-            question_database.remove(question)
+            copied_answer_database = copy.deepcopy(answer_database)
+            for answer in copied_answer_database:
+                if answer['question_id'] == question_id:
+                    answer_database.remove(answer)
+            for question in question_database:
+                if question['id'] == question_id:
+                    question_database.remove(question)
 
-    data_handler.save_questions(question_database)
-    data_handler.save_answers(answer_database)
-    return redirect(url_for('list_questions'))
+            data_handler.save_questions(question_database)
+            data_handler.save_answers(answer_database)
+            return redirect(url_for('list_questions'))
+
+        else:
+            return redirect(url_for('question_display', question_id=question_id))
+
+    return render_template('asking_if_delete_entry.html', question_id=question_id)
 
 @app.route('/<question_id>/edit', methods=['GET', 'POST'])
 def edit_question(question_id):
