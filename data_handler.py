@@ -45,6 +45,8 @@ def gen_question_id():
 
 def gen_answer_id():
     answers = get_answers()
+    if len(answers) == 0:
+        return 0
     items = [x['id'] for x in answers]
     return int(max(items)) + 1
 
@@ -110,5 +112,5 @@ def update_questions(question_id, updated_data):
     for key, value in updated_data.items():
         question[key] = value
     all_questions[question_index] = question
-    connection.dict_to_csv(QUESTION_DATA_FILE_PATH, all_questions, True)
+    connection.dict_to_csv(QUESTION_DATA_FILE_PATH, all_questions)
     return question
