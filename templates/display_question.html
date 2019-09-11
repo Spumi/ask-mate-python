@@ -43,6 +43,11 @@
                 {% for header in answer.keys() %}
                 <td>{{ answer.get(header) }}</td>
                 {%  endfor %}
+                <td>
+                    <form action={{"/answer/"}}{{answer.id}}{{"/delete"}}>
+                    <input type="submit" value="Delete answer">
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
