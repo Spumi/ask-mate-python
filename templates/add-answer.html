@@ -8,8 +8,7 @@
     <div align="center">
         <h1>Ask your question</h1>
         <br>
-        <form action="{{/add-question}}}" method="post">
-            <input type="text" name="title" size="40">
+        <form action="/question/{{qid}}/new-answer" method="post">
             <input type="hidden" name="question_id" value="{{qid}}">
             <br/>
             <br/>
