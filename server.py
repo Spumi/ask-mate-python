@@ -8,16 +8,26 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-@app.route('/')
-def route_home_page():
-    return render_template('home_page.html')
 
+@app.route('/')
 @app.route('/list')
+@app.route('/?order_by=<order_by>&order_direction=<order_direction>', methods=['GET', 'POST'])
 def list_questions():
     fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
     questions = data_handler.get_questions()
-    sorted_questions = data_handler.sorting_data(questions, 'id', True)
-    return render_template('list.html', fieldnames=fieldnames, sorted_questions=sorted_questions)
+    try:
+        funcionality = 'sort_by_any_attribute'
+        order_by = request.args.get('order_by')
+        order_direction = False if request.args.get('order_direction') == 'asc' else True
+        sorted_questions = data_handler.sorting_data(questions, order_by, order_direction)
+        order_direction = 'asc' if order_direction == False else 'desc'
+    except:
+        funcionality = 'sort_by_submission_time'
+        order_by = 'submission_time'
+        order_direction = 'desc'
+        sorted_questions = data_handler.sorting_data(questions, 'submission_time', True)
+    return render_template('list.html', fieldnames=fieldnames, sorted_questions=sorted_questions, funcionality=funcionality, order_by=order_by, order_direction=order_direction)
+
 
 
 @app.route('/add-question', methods=["GET", "POST"])
@@ -68,6 +78,18 @@ def vote_up(question_id):
 
     return redirect("/list")
 
+@app.route('/question/<question_id>/delete')
+def delete_question(question_id):
+    question_database = data_handler.get_questions()
+    answer_database = data_handler.get_answers()
+    for question in question_database:
+        if question['id'] == question_id:
+            question_database.remove(question)
+    for answer in answer_database:
+        if answer['question_id'] == question_id:
+            answer_database.remove(answer)
+    data_handler.modify_question_database(question_database, True)
+    return redirect(url_for('list_questions'))
 
 if __name__ == '__main__':
     app.run(debug=True)

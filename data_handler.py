@@ -33,6 +33,9 @@ def add_entry(entry, is_answer=False):
     else:
         connection.append_to_csv(ANSWER_DATA_FILE_PATH, entry)
 
+def modify_question_database(entry, is_question=True):
+    connection.dict_to_csv(QUESTION_DATA_FILE_PATH if is_question else ANSWER_DATA_FILE_PATH, entry, False)
+
 
 def gen_question_id():
     answers = get_questions()
@@ -50,7 +53,7 @@ def generate_question_dict(data):
     question_data = {}
 
     question_data.update(id=str(gen_question_id()))
-    question_data.update(submission_time=str(time.time()))
+    question_data.update(submission_time=str(int(time.time())))
     question_data.update(view_number=str(0))
     question_data.update(vote_number=str(0))
     question_data.update(title=data["title"])
@@ -63,7 +66,7 @@ def generate_answer_dict(data):
     answer_data = {}
 
     answer_data.update(id=str(gen_answer_id()))
-    answer_data.update(submission_time=str(time.time()))
+    answer_data.update(submission_time=str(int(time.time())))
     answer_data.update(vote_number=str(0))
     answer_data.update(question_id=data["question_id"])
     answer_data.update(message=data["message"])
