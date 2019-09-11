@@ -7,20 +7,25 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-@app.route('/?order_by=vote_number&order_direction=desc', methods=['GET', 'POST'])
+
 @app.route('/')
-@app.route('/list', methods=['GET', 'POST'])
+@app.route('/list')
+@app.route('/?order_by=<order_by>&order_direction=<order_direction>', methods=['GET', 'POST'])
 def list_questions():
     fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
     questions = data_handler.get_questions()
-    sorted_questions = data_handler.sorting_data(questions, 'submission_time', True)
-    if request.method == 'POST':
-        order_by = request.form.get('order_by')
-        order_direction = False if request.form.get('order_direction') == 'asc' else True
-        # app.logger.info(order_by)
-        # app.logger.info(order_direction)
+    try:
+        funcionality = 'sort_by_any_attribute'
+        order_by = request.args.get('order_by')
+        order_direction = False if request.args.get('order_direction') == 'asc' else True
         sorted_questions = data_handler.sorting_data(questions, order_by, order_direction)
-    return render_template('list.html', fieldnames=fieldnames, sorted_questions=sorted_questions)
+        order_direction = 'asc' if order_direction == False else 'desc'
+    except:
+        funcionality = 'sort_by_submission_time'
+        order_by = 'submission_time'
+        order_direction = 'desc'
+        sorted_questions = data_handler.sorting_data(questions, 'submission_time', True)
+    return render_template('list.html', fieldnames=fieldnames, sorted_questions=sorted_questions, funcionality=funcionality, order_by=order_by, order_direction=order_direction)
 
 
 

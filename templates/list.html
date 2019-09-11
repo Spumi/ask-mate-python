@@ -8,15 +8,23 @@
         <h1>Ask Mate</h1>
         <p>
             <label for="attribute-selector">Sort questions by: </label>
-            <form action="/list" method="post">
+            <form action="/list" method="get">
                     <select id="attribute-selector" name="order_by">
                         {% for header in fieldnames %}
-                        <option value="{{ header }}">{{ header|capitalize|replace('_',' ') }}</option>
+                            {% if funcionality == 'sort_by_submission_time' %}
+                                <option value="{{ header }}" {{ 'selected' if header == 'submission_time' }}>{{ header|capitalize|replace('_',' ') }}</option>
+                            {% else %}
+                                <option value="{{ header }}" {{ 'selected' if header == order_by }}>{{ header|capitalize|replace('_',' ') }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                     <select id="order-direction-selector" name="order_direction">
                         {% for order in ['asc', 'desc'] %}
-                        <option value="{{ order }}">{{ 'Ascending order' if order == 'asc' else 'Descending order' }}</option>
+                            {% if funcionality == 'sort_by_submission_time' %}
+                                <option value="{{ order }}" {{ 'selected' if order == 'desc' }}>{{ 'Ascending order' if order == 'asc' else 'Descending order' }}</option>
+                            {% else %}
+                                <option value="{{ order }}" {{ 'selected' if order == order_direction }}>{{ 'Ascending order' if order == 'asc' else 'Descending order' }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                     <input type="submit" value="Sort">
