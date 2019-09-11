@@ -45,6 +45,8 @@ def gen_question_id():
 
 def gen_answer_id():
     answers = get_answers()
+    if len(answers) == 0:
+        return 0
     items = [x['id'] for x in answers]
     return int(max(items)) + 1
 
