@@ -1,3 +1,4 @@
+import os
 
 from flask import Flask, render_template, request, redirect, url_for
 
@@ -129,6 +130,14 @@ def delete_answer(answer_id):
     question_id = data_handler.delete_record(answer_id, True)
     return redirect('/question/' + question_id)
 
+
+@app.route("/upload", methods=["POST"])
+def upload_image():
+    app.logger.info(request.files)
+    image = request.files["image"]
+    image.save(os.path.join(os.getcwd() + "/images/", image.filename))
+
+    return redirect("/")
 
 if __name__ == '__main__':
     app.run(debug=True)
