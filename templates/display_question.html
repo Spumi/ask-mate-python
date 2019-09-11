@@ -20,7 +20,11 @@
         <tbody>
             <tr>
                 {% for header in question.keys() %}
-                <td>{{ question.get(header)}}</td>
+                    {% if header == 'submission_time' %}
+                        <td>{{ convert_to_readable_date(question.get(header)) }}</td>
+                    {% else %}
+                        <td>{{ question.get(header) }}</td>
+                    {% endif %}
                 {%  endfor %}
             </tr>
         </tbody>
@@ -41,8 +45,17 @@
             {% for answer in answers %}
             <tr>
                 {% for header in answer.keys() %}
-                <td>{{ answer.get(header) }}</td>
+                    {% if header == 'submission_time' %}
+                        <td>{{ convert_to_readable_date(answer.get(header)) }}</td>
+                    {% else %}
+                        <td>{{ answer.get(header) }}</td>
+                    {% endif %}
                 {%  endfor %}
+                <td>
+                    <form action={{"/answer/"}}{{answer.id}}{{"/delete"}}>
+                    <input type="submit" value="Delete answer">
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

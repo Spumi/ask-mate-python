@@ -4,7 +4,8 @@ from flask import Flask, render_template, request, redirect, url_for
 import connection
 import data_handler
 
-from datetime import datetime, time
+from datetime import datetime
+import time
 
 import util
 
@@ -18,17 +19,20 @@ def list_questions():
     fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
     questions = data_handler.get_questions()
     try:
-        funcionality = 'sort_by_any_attribute_page'
         order_by = request.args.get('order_by')
         order_direction = False if request.args.get('order_direction') == 'asc' else True
         sorted_questions = data_handler.sorting_data(questions, order_by, order_direction)
         order_direction = 'asc' if order_direction == False else 'desc'
     except:
-        funcionality = 'index_page'
         order_by = 'submission_time'
         order_direction = 'desc'
         sorted_questions = data_handler.sorting_data(questions, 'submission_time', True)
-    return render_template('list.html', fieldnames=fieldnames, sorted_questions=sorted_questions, funcionality=funcionality, order_by=order_by, order_direction=order_direction)
+    return render_template('list.html',
+                           fieldnames=fieldnames,
+                           sorted_questions=sorted_questions,
+                           order_by=order_by,
+                           order_direction=order_direction,
+                           convert_to_readable_date=data_handler.convert_to_readable_date)
 
 
 
@@ -67,7 +71,7 @@ def question_display(question_id):
     answer_database = data_handler.get_answers()
     question = data_handler.get_question(question_id, question_database)
     related_answers = data_handler.get_question_related_answers(question_id, answer_database)
-    return render_template('display_question.html', question=question, answers=related_answers)
+    return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=data_handler.convert_to_readable_date)
 
 @app.route("/question/<question_id>/vote-up")
 def vote_up_question(question_id):
@@ -109,14 +113,21 @@ def edit_question(question_id):
 
     if request.method == 'POST':
         edited_question_data = request.form.to_dict()
-        edited_question_data['submission_time'] = time()
+        edited_question_data['submission_time'] = str(int(time.time()))
         question = data_handler.update_questions(question_id, edited_question_data)
-        return render_template('display_question.html', question=question)
+        related_answers = data_handler.get_question_related_answers(question_id, data_handler.get_answers())
+        return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=data_handler.convert_to_readable_date)
 
     all_questions = data_handler.get_questions()
     question = data_handler.get_question(question_id, all_questions)
 
     return render_template('edit-question.html', question=question)
+
+
+@app.route('/answer/<answer_id>/delete')
+def delete_answer(answer_id):
+    question_id = data_handler.delete_record(answer_id, True)
+    return redirect('/question/' + question_id)
 
 
 if __name__ == '__main__':
