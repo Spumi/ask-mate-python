@@ -30,19 +30,22 @@ def add_question():
         data_handler.add_entry(question)
         return redirect(url_for("list_questions"))
 
-    return render_template("add-question.html", question_id="")
+    return render_template("add-question.html", qid="")
 
 
 @app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
 def add_answer(question_id):
-    reqv = request.form.to_dict()
-    answers = data_handler.get_answers()
-
     if request.method == 'POST':
+        reqv = request.form.to_dict()
+        app.logger.info(request.form.to_dict())
         answer = data_handler.generate_answer_dict(reqv)
+        answers = data_handler.get_answers()
+
         answers.append(answer)
         data_handler.add_entry(answer, True)
-    return render_template("/question/<question_id>/", question_id=question_id )
+        return redirect("/question/" + question_id)
+
+    return render_template("add-answer.html", qid=question_id)
 
 
 @app.route('/question/<question_id>')
@@ -56,3 +59,4 @@ def question_display(question_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
