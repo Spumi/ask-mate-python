@@ -27,6 +27,11 @@ def save_questions(data):
     return database
 
 
+def save_answers(data):
+    database = connection.dict_to_csv(ANSWER_DATA_FILE_PATH, data, True)
+    return database
+
+
 def add_entry(entry, is_answer=False):
     if not is_answer:
         connection.append_to_csv(QUESTION_DATA_FILE_PATH, entry)
@@ -80,6 +85,12 @@ def get_question(question_id, question_database):
     for question_data in question_database:
         if question_data['id'] == question_id:
             return question_data
+
+
+def get_answer(answer_id, answer_database):
+    for answer_data in answer_database:
+        if answer_data['id'] == answer_id:
+            return answer_data
 
 
 def get_question_related_answers(question_id, answer_database):

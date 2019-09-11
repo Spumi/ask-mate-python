@@ -6,8 +6,10 @@ import data_handler
 
 from datetime import datetime, time
 
-app = Flask(__name__)
+import util
 
+app = Flask(__name__)
+app.debug = True
 
 @app.route('/')
 @app.route('/list')
@@ -68,14 +70,25 @@ def question_display(question_id):
     return render_template('display_question.html', question=question, answers=related_answers)
 
 @app.route("/question/<question_id>/vote-up")
-def vote_up(question_id):
-    questions = data_handler.get_questions()
-    question = data_handler.get_question(question_id, questions)
-    questions.remove(question)
-    question["vote_number"] = str(int(question["vote_number"]) + 1)
-    questions.append(question)
-    data_handler.save_questions(questions)
+def vote_up_question(question_id):
+    util.vote_question(question_id, 1)
 
+    return redirect("/question/" + question_id)
+
+
+@app.route("/question/<question_id>/vote-down")
+def vote_down_question(question_id):
+    util.vote_question(question_id, -1)
+
+    return redirect("/question/" + question_id)
+
+
+@app.route("/vote-answer", methods=["POST"])
+def vote_answer():
+    if request.method == 'POST':
+        req = request.form.to_dict()
+        util.vote_answer(req["id"], req["vote"])
+        app.logger.info("asdsa")
     return redirect("/list")
 
 @app.route('/question/<question_id>/delete')
