@@ -45,7 +45,17 @@
                 {%  endfor %}
                 <td>
                     <form action={{"/answer/"}}{{answer.id}}{{"/delete"}}>
-                    <input type="submit" value="Delete answer">
+                        <input type="submit" value="↑up">
+                    </form>
+                </td>
+                <td>
+                    <form action={{"/answer/"}}{{answer.id}}{{"/delete"}}>
+                        <input type="submit" value="↓down">
+                    </form>
+                </td>
+                <td>
+                    <form action={{"/answer/"}}{{answer.id}}{{"/delete"}}>
+                        <input type="submit" value="Delete answer">
                     </form>
                 </td>
             </tr>
