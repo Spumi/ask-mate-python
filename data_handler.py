@@ -114,3 +114,14 @@ def update_questions(question_id, updated_data):
     all_questions[question_index] = question
     connection.dict_to_csv(QUESTION_DATA_FILE_PATH, all_questions)
     return question
+
+
+def delete_record(id, answer=False):
+    if answer:
+        answers = get_answers()
+        for i, answer in enumerate(answers):
+            if answer['id'] == id:
+                question_id = answer['question_id']
+                del answers[i]
+                connection.dict_to_csv(ANSWER_DATA_FILE_PATH,answers, is_answers=True)
+                return question_id
