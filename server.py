@@ -91,8 +91,8 @@ def vote_answer():
     if request.method == 'POST':
         req = request.form.to_dict()
         util.vote_answer(req["id"], req["vote"])
-        app.logger.info("asdsa")
-    return redirect("/list")
+        question_id = req['question_id']
+        return redirect("/question/" + question_id)
 
 @app.route('/question/<question_id>/delete')
 def delete_question(question_id):
