@@ -110,5 +110,5 @@ def update_questions(question_id, updated_data):
     for key, value in updated_data.items():
         question[key] = value
     all_questions[question_index] = question
-    connection.dict_to_csv(QUESTION_DATA_FILE_PATH, all_questions, True)
+    connection.dict_to_csv(QUESTION_DATA_FILE_PATH, all_questions)
     return question
