@@ -108,6 +108,12 @@ def edit_question(question_id):
     return render_template('edit-question.html', question=question)
 
 
+@app.route('/answer/<answer_id>/delete')
+def delete_answer(answer_id):
+    question_id = data_handler.delete_record(answer_id, True)
+    return redirect('/question/' + question_id)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
