@@ -22,6 +22,11 @@ def get_questions():
     return database
 
 
+def save_questions(data):
+    database = connection.dict_to_csv(QUESTION_DATA_FILE_PATH, data)
+    return database
+
+
 def add_entry(entry, is_answer=False):
     if not is_answer:
         connection.append_to_csv(QUESTION_DATA_FILE_PATH, entry)
