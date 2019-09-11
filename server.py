@@ -1,6 +1,7 @@
 
 from flask import Flask, render_template, request, redirect, url_for
 
+import connection
 import data_handler
 
 from datetime import datetime
@@ -55,6 +56,17 @@ def question_display(question_id):
     question = data_handler.get_question(question_id, question_database)
     related_answers = data_handler.get_question_related_answers(question_id, answer_database)
     return render_template('display_question.html', question=question, answers=related_answers)
+
+@app.route("/question/<question_id>/vote-up")
+def vote_up(question_id):
+    questions = data_handler.get_questions()
+    question = data_handler.get_question(question_id, questions)
+    questions.remove(question)
+    question["vote_number"] = str(int(question["vote_number"]) + 1)
+    questions.append(question)
+    data_handler.save_questions(questions)
+
+    return redirect("/list")
 
 
 if __name__ == '__main__':
