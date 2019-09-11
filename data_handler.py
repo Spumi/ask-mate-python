@@ -121,3 +121,14 @@ def convert_to_readable_date(timestamp):
     readable_time = datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
     return readable_time
 
+
+
+def delete_record(id, answer=False):
+    if answer:
+        answers = get_answers()
+        for i, answer in enumerate(answers):
+            if answer['id'] == id:
+                question_id = answer['question_id']
+                del answers[i]
+                connection.dict_to_csv(ANSWER_DATA_FILE_PATH,answers, is_answers=True)
+                return question_id
