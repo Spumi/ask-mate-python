@@ -15,13 +15,13 @@ def list_questions():
     fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
     questions = data_handler.get_questions()
     try:
-        funcionality = 'sort_by_any_attribute'
+        funcionality = 'sort_by_any_attribute_page'
         order_by = request.args.get('order_by')
         order_direction = False if request.args.get('order_direction') == 'asc' else True
         sorted_questions = data_handler.sorting_data(questions, order_by, order_direction)
         order_direction = 'asc' if order_direction == False else 'desc'
     except:
-        funcionality = 'sort_by_submission_time'
+        funcionality = 'index_page'
         order_by = 'submission_time'
         order_direction = 'desc'
         sorted_questions = data_handler.sorting_data(questions, 'submission_time', True)
