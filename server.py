@@ -4,7 +4,8 @@ from flask import Flask, render_template, request, redirect, url_for
 import connection
 import data_handler
 
-from datetime import datetime, time
+from datetime import datetime
+import time
 
 app = Flask(__name__)
 
@@ -96,7 +97,7 @@ def edit_question(question_id):
 
     if request.method == 'POST':
         edited_question_data = request.form.to_dict()
-        edited_question_data['submission_time'] = time()
+        edited_question_data['submission_time'] = str(int(time.time()))
         question = data_handler.update_questions(question_id, edited_question_data)
         related_answers = data_handler.get_question_related_answers(question_id, data_handler.get_answers())
         return render_template('display_question.html', question=question, answers=related_answers)
