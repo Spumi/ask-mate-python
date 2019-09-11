@@ -30,6 +30,24 @@
         </tbody>
     </table>
     <br/>
+    <table>
+        <tr>
+            <td>
+                <form action="{{"/question/"}}{{ question.id }}{{"/vote-up"}}">
+                    <input type="hidden" name="id" value="{{ question.id }}">
+                    <input type="submit" value="↑">
+                </form>
+            </td>
+            <td>
+                <form action="{{"/question/"}}{{ question.id }}{{"/vote-down"}}">
+                    <input type="hidden" name="id" value="{{ question.id }}">
+                    <input type="submit" value="↓">
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <br/>
     <form action={{"/question/"}}{{question.id}}{{"/new-answer"}}>
         <input type="submit" value="Answer question">
     </form>
@@ -59,7 +77,7 @@
                 <td>
                     <form action="/vote-answer" method="post">
                         <input type="hidden" name="id" value="{{ answer.id }}">
-                        <input type="submit" value="up">
+                        <input type="submit" value="↑">
                         <input type="hidden" name="vote" value="up">
                         <input type="hidden" name="question_id" value="{{question.id}}">
                     </form>
@@ -67,7 +85,7 @@
                 <td>
                     <form action="/vote-answer" method="post">
                         <input type="hidden" name="id" value="{{ answer.id }}">
-                        <input type="submit" value="down">
+                        <input type="submit" value="↓">
                         <input type="hidden" name="vote" value="down">
                         <input type="hidden" name="question_id" value="{{question.id}}">
                     </form>
