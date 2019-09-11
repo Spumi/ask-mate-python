@@ -8,6 +8,7 @@ from datetime import datetime
 import time
 
 import util
+import copy
 
 app = Flask(__name__)
 app.debug = True
@@ -99,13 +100,17 @@ def vote_answer():
 def delete_question(question_id):
     question_database = data_handler.get_questions()
     answer_database = data_handler.get_answers()
+
+    copied_answer_database = copy.deepcopy(answer_database)
+    for answer in copied_answer_database:
+        if answer['question_id'] == question_id:
+            answer_database.remove(answer)
     for question in question_database:
         if question['id'] == question_id:
             question_database.remove(question)
-    for answer in answer_database:
-        if answer['question_id'] == question_id:
-            answer_database.remove(answer)
-    data_handler.modify_question_database(question_database, True)
+
+    data_handler.save_questions(question_database)
+    data_handler.save_answers(answer_database)
     return redirect(url_for('list_questions'))
 
 @app.route('/<question_id>/edit', methods=['GET', 'POST'])
