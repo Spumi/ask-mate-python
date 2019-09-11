@@ -50,7 +50,10 @@
     {%  else  %}
         {{ "There is no answer to this question" }}
     {% endif %}
-    <br/><br/>
+    <form action={{"/question/"}}{{question.id}}{{"/new-answer"}} method="get">
+        <input type="submit" value="Answer question">
+    </form>
+    <br>
     <form action={{"/"}}{{question.id}}{{"/edit"}}>
         <input type="submit" value="Edit question">
     </form>
@@ -60,3 +63,4 @@
     </form>
 </body>
 </html>
+

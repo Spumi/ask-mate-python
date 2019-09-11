@@ -23,7 +23,13 @@ def get_questions():
 
 
 def add_entry(entry, is_answer=False):
-    connection.append_to_csv(QUESTION_DATA_FILE_PATH if is_answer else ANSWER_DATA_FILE_PATH, entry)
+    if not is_answer:
+        connection.append_to_csv(QUESTION_DATA_FILE_PATH, entry)
+    else:
+        connection.append_to_csv(ANSWER_DATA_FILE_PATH, entry)
+
+def modify_question_database(entry, is_question=True):
+    connection.dict_to_csv(QUESTION_DATA_FILE_PATH if is_question else ANSWER_DATA_FILE_PATH, entry, False)
 
 
 def gen_question_id():
@@ -33,7 +39,7 @@ def gen_question_id():
 
 
 def gen_answer_id():
-    answers = get_questions()
+    answers = get_answers()
     items = [x['id'] for x in answers]
     return int(max(items)) + 1
 
