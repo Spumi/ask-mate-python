@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <h1>Your keywords were found in the following questions:</h1>
+        <table style="width: 90%">
+            <tr>
+                {% for header in fieldnames %}
+                <th>{{ header|capitalize|replace('_', ' ') }}</th>
+                {% endfor %}
+            </tr>
+            {% for question in questions %}
+            <tr>
+                {% for header, data in question.items() %}
+                    {% if header == 'submission_time' %}
+                        <td>{{ convert_to_readable_date(data) }}</td>
+                    {% else %}
+                        <td>{{ data }}</td>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            </tr>
+        </table>
+    </body>
+</html>

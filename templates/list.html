@@ -45,7 +45,14 @@
             {% endfor %}
             </tr>
         </table>
-        <form action="/add-question">
+        <p>
+        <form action="/search-for-questions">
+            <label for="search-for-questions">Enter the keywords your problem contains (separated with ',' and space):</label><br>
+            <input type="text" id="search-for-questions" name="keywords" size="56px">
+            <input type="submit" value="Search for questions">
+        </form>
+        </p>
+        <form action="/add-question" method="post">
             <input type="submit" value="Add New Question">
         </form>
     </body>

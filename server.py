@@ -142,6 +142,21 @@ def delete_answer(answer_id):
     return redirect('/question/' + question_id)
 
 
+@app.route('/search-for-questions', methods=['GET', 'POST'])
+def search_for_questions():
+    fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
+    question_database = data_handler.get_questions()
+    keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
+    questions_containing_keywords = []
+    for question in question_database:
+        if any(keyword in question['title'] for keyword in keywords) or any(keyword in question['message'] for keyword in keywords):
+            questions_containing_keywords.append(question)
+
+    return render_template('search_for_keywords_in_questions.html',
+                           keywords=keywords, fieldnames=fieldnames, questions=questions_containing_keywords,
+                           convert_to_readable_date=data_handler.convert_to_readable_date)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
