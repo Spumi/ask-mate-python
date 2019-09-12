@@ -14,7 +14,7 @@ app.debug = True
 @app.route('/list')
 @app.route('/?order_by=<order_by>&order_direction=<order_direction>', methods=['GET', 'POST'])
 def list_questions():
-    fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
+    # fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
     questions = data_handler.get_questions()
     try:
         order_by = request.args.get('order_by')
@@ -26,7 +26,6 @@ def list_questions():
         order_direction = 'desc'
         sorted_questions = util.sorting_data(questions, 'submission_time', True)
     return render_template('list.html',
-                           fieldnames=fieldnames,
                            sorted_questions=sorted_questions,
                            order_by=order_by,
                            order_direction=order_direction,

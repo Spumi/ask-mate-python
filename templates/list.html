@@ -6,6 +6,7 @@
     </head>
     <body>
         <h1>Ask Mate</h1>
+        {% set fieldnames = ['title', 'message', 'image', 'vote_number', 'view_number', 'submission_time'] %}
         <p>
             <label for="attribute-selector">Sort questions by: </label>
             <form action="/list" method="get">
@@ -31,21 +32,21 @@
             </tr>
             {% for questions in sorted_questions %}
             <tr>
-                {% for header, data in questions.items() %}
-                    {% if header == 'submission_time' %}
-                        <td>{{ convert_to_readable_date(data) }}</td>
-                    {% elif header == 'title' %}
+                {% for cell in fieldnames %}
+                    {% if cell == 'submission_time' %}
+                        <td>{{ convert_to_readable_date(questions[cell]) }}</td>
+                    {% elif cell == 'title' %}
                         <td>
-                            <a href="{{ url_for('question_display', question_id=questions['id']) }}">{{ data }}</a>
+                            <a href="{{ url_for('question_display', question_id=questions['id']) }}">{{ questions[cell] }}</a>
                         </td>
-                    {% elif header == 'image' %}
+                    {% elif cell == 'image' %}
                         <td>
-                            {% if data != "" %}
-                            <img src="/static/{{ data }}"  width="200" height="auto">
+                            {% if questions[cell] != "" %}
+                            <img src="/static/{{ questions[cell] }}"  width="200" height="auto">
                             {% endif %}
                         </td>
                     {% else %}
-                        <td>{{ data }}</td>
+                        <td>{{ questions[cell] }}</td>
                     {% endif %}
                 {% endfor %}
             {% endfor %}
