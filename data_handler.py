@@ -67,12 +67,12 @@ def update_questions(question_id, updated_data):
     return question
 
 
-def delete_record(id, answer=False):
+def delete_record(id, answer=False, delete=False):
     if answer:
         answers = get_answers()
         for i, answer in enumerate(answers):
-            if answer['id'] == id:
-                question_id = answer['question_id']
+            question_id = answer['question_id']
+            if answer['id'] == id and delete:
                 del answers[i]
                 save_answers(answers)
-                return question_id
+            return question_id
