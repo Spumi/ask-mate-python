@@ -71,7 +71,7 @@ def question_display(question_id):
     question = data_handler.get_question(question_id, question_database)
 
     related_answers = data_handler.get_question_related_answers(question_id, answer_database)
-    return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=util.convert_to_readable_date)
+    return render_template('display_question.html', question=question, answers=util.sorting_data(related_answers, 'submission_time', True), convert_to_readable_date=util.convert_to_readable_date)
 
 @app.route("/question/<question_id>/vote-up")
 def vote_up_question(question_id):
