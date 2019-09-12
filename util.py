@@ -32,7 +32,8 @@ def handle_upload(req):
     if image.filename != "":
         req["image"] = "images/" + image.filename
         image.save(os.path.join(os.getcwd() + "/static/images/", image.filename))
-
+    else:
+        req["image"] = ""
 
 def sorting_data(data, attribute, order_flag):
     '''
