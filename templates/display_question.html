@@ -22,6 +22,10 @@
                 {% for header in question.keys() %}
                     {% if header == 'submission_time' %}
                         <td>{{ convert_to_readable_date(question.get(header)) }}</td>
+                    {% elif header == "image"%}}
+                    <td>
+                    <img src="{{'/static/' + question[header] if question[header] != ''}}"  width="200" height="auto">
+                    </td>
                     {% else %}
                         <td>{{ question.get(header) }}</td>
                     {% endif %}
@@ -71,7 +75,7 @@
                     {% if header == 'submission_time' %}
                         <td>{{ convert_to_readable_date(answer.get(header)) }}</td>
                     {% elif header == 'image' %}
-                        <td>
+                        <td align="center">
                             {% if answer.get(header) != "" %}
                             <img src="/static/{{ answer.get(header) }}"  width="20%" height="auto">
                             {% endif %}
