@@ -14,17 +14,13 @@ app.debug = True
 @app.route('/list')
 @app.route('/?order_by=<order_by>&order_direction=<order_direction>', methods=['GET', 'POST'])
 def list_questions():
-    # fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
     questions = data_handler.get_questions()
-    try:
-        order_by = request.args.get('order_by')
-        order_direction = False if request.args.get('order_direction') == 'asc' else True
-        sorted_questions = util.sorting_data(questions, order_by, order_direction)
-        order_direction = 'asc' if order_direction == False else 'desc'
-    except:
-        order_by = 'submission_time'
-        order_direction = 'desc'
-        sorted_questions = util.sorting_data(questions, 'submission_time', True)
+
+    order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
+    order_direction = False if request.args.get('order_direction') == 'asc' else True
+    sorted_questions = util.sorting_data(questions, order_by, order_direction)
+    order_direction = 'asc' if order_direction == False else 'desc'
+
     return render_template('list.html',
                            sorted_questions=sorted_questions,
                            order_by=order_by,

@@ -47,7 +47,7 @@
         <table style="width: 90%">
             <tr>
                 {% for header in fieldnames %}
-                <th>{{ header|capitalize|replace('_', ' ') }}</th>
+                    <th>{{ header|capitalize|replace('_', ' ') }}</th>
                 {% endfor %}
             </tr>
             {% for questions in sorted_questions %}
