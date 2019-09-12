@@ -7,18 +7,19 @@
     <body>
         <h1>Your keywords were found in the following questions:</h1>
         <table style="width: 90%">
+            {% set fieldnames = ['title', 'message', 'image', 'vote_number', 'view_number', 'submission_time'] %}
             <tr>
-                {% for header in fieldnames %}
-                <th>{{ header|capitalize|replace('_', ' ') }}</th>
+                {% for cell in fieldnames %}
+                <th>{{ cell|capitalize|replace('_', ' ') }}</th>
                 {% endfor %}
             </tr>
             {% for question in questions %}
             <tr>
-                {% for header, data in question.items() %}
-                    {% if header == 'submission_time' %}
-                        <td>{{ convert_to_readable_date(data) }}</td>
+                {% for cell in fieldnames %}
+                    {% if cell == 'submission_time' %}
+                        <td>{{ convert_to_readable_date(question[cell]) }}</td>
                     {% else %}
-                        <td>{{ data }}</td>
+                        <td>{{ question[cell] }}</td>
                     {% endif %}
                 {% endfor %}
             {% endfor %}
