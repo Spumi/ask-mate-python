@@ -29,6 +29,28 @@
             </tr>
         </tbody>
     </table>
+    <br/>
+    <table>
+        <tr>
+            <td>
+                <form action="{{"/question/"}}{{ question.id }}{{"/vote-up"}}">
+                    <input type="hidden" name="id" value="{{ question.id }}">
+                    <input type="submit" value="↑">
+                </form>
+            </td>
+            <td>
+                <form action="{{"/question/"}}{{ question.id }}{{"/vote-down"}}">
+                    <input type="hidden" name="id" value="{{ question.id }}">
+                    <input type="submit" value="↓">
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+    <form action={{"/question/"}}{{question.id}}{{"/new-answer"}}>
+        <input type="submit" value="Answer question">
+    </form>
 
     <h2>Answers to the question</h2>
 
@@ -43,17 +65,41 @@
         </thead>
         <tbody>
             {% for answer in answers %}
+                {% set count=loop.index %}
             <tr>
                 {% for header in answer.keys() %}
                     {% if header == 'submission_time' %}
                         <td>{{ convert_to_readable_date(answer.get(header)) }}</td>
+                    {% elif header == 'image' %}
+                        <td>
+                            {% if answer.get(header) != "" %}
+                            <img src="/static/{{ answer.get(header) }}"  width="20%" height="auto">
+                            {% endif %}
+                        </td>
+                
                     {% else %}
                         <td>{{ answer.get(header) }}</td>
                     {% endif %}
                 {%  endfor %}
                 <td>
+                    <form action="/vote-answer" method="post">
+                        <input type="hidden" name="id" value="{{ answer.id }}">
+                        <input type="submit" value="↑">
+                        <input type="hidden" name="vote" value="up">
+                        <input type="hidden" name="question_id" value="{{question.id}}">
+                    </form>
+                </td>
+                <td>
+                    <form action="/vote-answer" method="post">
+                        <input type="hidden" name="id" value="{{ answer.id }}">
+                        <input type="submit" value="↓">
+                        <input type="hidden" name="vote" value="down">
+                        <input type="hidden" name="question_id" value="{{question.id}}">
+                    </form>
+                </td>
+                <td>
                     <form action={{"/answer/"}}{{answer.id}}{{"/delete"}}>
-                    <input type="submit" value="Delete answer">
+                        <input type="submit" value="Delete answer">
                     </form>
                 </td>
             </tr>
@@ -63,9 +109,6 @@
     {%  else  %}
         {{ "There is no answer to this question" }}
     {% endif %}
-    <form action={{"/question/"}}{{question.id}}{{"/new-answer"}} method="get">
-        <input type="submit" value="Answer question">
-    </form>
     <br>
     <form action={{"/"}}{{question.id}}{{"/edit"}}>
         <input type="submit" value="Edit question">
@@ -74,6 +117,7 @@
     <form action={{"/question/"}}{{question.id}}{{"/delete"}}>
         <input type="submit" value="Delete question">
     </form>
+
 </body>
 </html>
 

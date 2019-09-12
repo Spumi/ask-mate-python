@@ -1,14 +1,12 @@
+import os
+import time
 
 from flask import Flask, render_template, request, redirect, url_for
 
-import connection
 import data_handler
-
-from datetime import datetime
-import time
-
 import util
 import copy
+from util import handle_upload
 
 app = Flask(__name__)
 app.debug = True
@@ -22,41 +20,41 @@ def list_questions():
     try:
         order_by = request.args.get('order_by')
         order_direction = False if request.args.get('order_direction') == 'asc' else True
-        sorted_questions = data_handler.sorting_data(questions, order_by, order_direction)
+        sorted_questions = util.sorting_data(questions, order_by, order_direction)
         order_direction = 'asc' if order_direction == False else 'desc'
     except:
         order_by = 'submission_time'
         order_direction = 'desc'
-        sorted_questions = data_handler.sorting_data(questions, 'submission_time', True)
+        sorted_questions = util.sorting_data(questions, 'submission_time', True)
     return render_template('list.html',
                            fieldnames=fieldnames,
                            sorted_questions=sorted_questions,
                            order_by=order_by,
                            order_direction=order_direction,
-                           convert_to_readable_date=data_handler.convert_to_readable_date)
+                           convert_to_readable_date=util.convert_to_readable_date)
 
 
 
 @app.route('/add-question', methods=["GET", "POST"])
 def add_question():
     if request.method == 'POST':
-        reqv = request.form.to_dict()
+        req = request.form.to_dict()
         questions = data_handler.get_questions()
-
-        question = data_handler.generate_question_dict(reqv)
+        handle_upload(req)
+        question = util.generate_question_dict(req)
         questions.append(question)
         data_handler.add_entry(question)
         return redirect(url_for("list_questions"))
 
-    return render_template("add-question.html", qid="")
+    return render_template("edit-question.html", qid="")
 
 
 @app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
 def add_answer(question_id):
     if request.method == 'POST':
         reqv = request.form.to_dict()
-        app.logger.info(request.form.to_dict())
-        answer = data_handler.generate_answer_dict(reqv)
+        handle_upload(reqv)
+        answer = util.generate_answer_dict(reqv)
         answers = data_handler.get_answers()
 
         answers.append(answer)
@@ -71,8 +69,9 @@ def question_display(question_id):
     question_database = data_handler.get_questions()
     answer_database = data_handler.get_answers()
     question = data_handler.get_question(question_id, question_database)
+
     related_answers = data_handler.get_question_related_answers(question_id, answer_database)
-    return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=data_handler.convert_to_readable_date)
+    return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=util.convert_to_readable_date)
 
 @app.route("/question/<question_id>/vote-up")
 def vote_up_question(question_id):
@@ -93,8 +92,8 @@ def vote_answer():
     if request.method == 'POST':
         req = request.form.to_dict()
         util.vote_answer(req["id"], req["vote"])
-        app.logger.info("asdsa")
-    return redirect("/list")
+        question_id = req['question_id']
+        return redirect("/question/" + question_id)
 
 @app.route('/question/<question_id>/delete', methods=['GET', 'POST'])
 def delete_question(question_id):
@@ -128,7 +127,7 @@ def edit_question(question_id):
         edited_question_data['submission_time'] = str(int(time.time()))
         question = data_handler.update_questions(question_id, edited_question_data)
         related_answers = data_handler.get_question_related_answers(question_id, data_handler.get_answers())
-        return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=data_handler.convert_to_readable_date)
+        return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=util.convert_to_readable_date)
 
     all_questions = data_handler.get_questions()
     question = data_handler.get_question(question_id, all_questions)
@@ -156,6 +155,13 @@ def search_for_questions():
                            keywords=keywords, fieldnames=fieldnames, questions=questions_containing_keywords,
                            convert_to_readable_date=data_handler.convert_to_readable_date)
 
+
+@app.route("/upload", methods=["POST"])
+def upload_image():
+    image = request.files["image"]
+    image.save(os.path.join(os.getcwd() + "/images/", image.filename))
+
+    return redirect("/")
 
 if __name__ == '__main__':
     app.run(debug=True)
