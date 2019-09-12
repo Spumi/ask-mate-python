@@ -5,7 +5,28 @@
         <title>Welcome! | Ask Mate</title>
     </head>
     <body>
-        <h1>Ask Mate</h1>
+        <div align="center">
+            <h1>Ask Mate</h1>
+        </div>
+
+        <div align="center">
+            <form action="/search-for-questions">
+                <label for="search-for-questions">Enter the keywords your problem contains (separated with ',' and space):</label><br>
+                <input type="text" id="search-for-questions" name="keywords" size="56px">
+                <br>
+                <input type="submit" value="Search for questions">
+            </form>
+            <p>
+            <form action="/add-question">
+                <b>
+                    <label for="add-new-question">If your question isn't in the list:</label>
+                </b>
+                <br>
+                <input type="submit" id="add-new-question" value="Add New Question">
+            </form>
+            </p>
+        </div>
+
         {% set fieldnames = ['title', 'message', 'image', 'vote_number', 'view_number', 'submission_time'] %}
         <p>
             <label for="attribute-selector">Sort questions by: </label>
@@ -22,8 +43,8 @@
                     </select>
                     <input type="submit" value="Sort">
             </form>
-
         </p>
+
         <table style="width: 90%">
             <tr>
                 {% for header in fieldnames %}
@@ -52,15 +73,5 @@
             {% endfor %}
             </tr>
         </table>
-        <p>
-        <form action="/search-for-questions">
-            <label for="search-for-questions">Enter the keywords your problem contains (separated with ',' and space):</label><br>
-            <input type="text" id="search-for-questions" name="keywords" size="56px">
-            <input type="submit" value="Search for questions">
-        </form>
-        </p>
-        <form action="/add-question">
-            <input type="submit" value="Add New Question">
-        </form>
     </body>
 </html>
