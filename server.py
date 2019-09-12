@@ -5,8 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for
 
 import data_handler
 import util
-import copy
-from util import handle_upload
+from util import handle_delete_question, handle_add_answer, handle_add_question
 
 app = Flask(__name__)
 app.debug = True
@@ -33,16 +32,11 @@ def list_questions():
                            convert_to_readable_date=util.convert_to_readable_date)
 
 
-
 @app.route('/add-question', methods=["GET", "POST"])
 def add_question():
     if request.method == 'POST':
         req = request.form.to_dict()
-        questions = data_handler.get_questions()
-        handle_upload(req)
-        question = util.generate_question_dict(req)
-        questions.append(question)
-        data_handler.add_entry(question)
+        handle_add_question(req)
         return redirect(url_for("list_questions"))
 
     return render_template("edit-question.html", qid="")
@@ -51,13 +45,8 @@ def add_question():
 @app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
 def add_answer(question_id):
     if request.method == 'POST':
-        reqv = request.form.to_dict()
-        handle_upload(reqv)
-        answer = util.generate_answer_dict(reqv)
-        answers = data_handler.get_answers()
-
-        answers.append(answer)
-        data_handler.add_entry(answer, True)
+        req = request.form.to_dict()
+        handle_add_answer(req)
         return redirect("/question/" + question_id)
 
     return render_template("add-answer.html", qid=question_id)
@@ -98,25 +87,14 @@ def vote_answer():
 def delete_question(question_id):
     if request.method == 'POST':
         if request.form.get('delete') == 'Yes':
-            question_database = data_handler.get_questions()
-            answer_database = data_handler.get_answers()
-
-            copied_answer_database = copy.deepcopy(answer_database)
-            for answer in copied_answer_database:
-                if answer['question_id'] == question_id:
-                    answer_database.remove(answer)
-            for question in question_database:
-                if question['id'] == question_id:
-                    question_database.remove(question)
-
-            data_handler.save_questions(question_database)
-            data_handler.save_answers(answer_database)
+            handle_delete_question(question_id)
             return redirect(url_for('list_questions'))
 
         else:
             return redirect(url_for('question_display', question_id=question_id))
 
     return render_template('asking_if_delete_entry.html', question_id=question_id)
+
 
 @app.route('/<question_id>/edit', methods=['GET', 'POST'])
 def edit_question(question_id):
