@@ -63,7 +63,7 @@ def update_questions(question_id, updated_data):
     for key, value in updated_data.items():
         question[key] = value
     all_questions[question_index] = question
-    connection.dict_to_csv(QUESTION_DATA_FILE_PATH, all_questions)
+    save_questions(all_questions)
     return question
 
 
@@ -74,5 +74,5 @@ def delete_record(id, answer=False):
             if answer['id'] == id:
                 question_id = answer['question_id']
                 del answers[i]
-                connection.dict_to_csv(ANSWER_DATA_FILE_PATH,answers, is_answers=True)
+                save_answers(answers)
                 return question_id
