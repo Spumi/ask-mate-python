@@ -2,23 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit question</title>
+    <title>{{"Edit question" if question else "Ask your Question" }}</title>
 </head>
 <body>
     <div align="center">
-        <h1>Edit question</h1>
+        <h1>{{"Edit question" if question else "Ask your Question" }}</h1>
         <br>
-        <form action="{{ "/" }}{{ question.id }}{{ "/edit" }}" method="post">
+        <form action="/{{ question.id + '/edit' if question else 'add-question' }}" method="post" enctype="multipart/form-data">
             <label for="title"><b>Question title:<b></b></label>
             <br/>
-            <input type="text" id="title" name="title" size="40" value="{{ question.title }}">
-            <input type="hidden" name="id" value="{{question.id}}">
+            <input type="text" id="title" name="title" size="40" value="{{ question.title  if question else ""}}">
+            <input type="hidden" name="id" value="{{question.id if question else ''}}">
             <br/>
             <br/>
             <label for="message"><b>Question details:<b></label>
             <br/>
-            <textarea id="message" name="message" rows="20" cols="50">{{ question.message }}</textarea>
-            <input type="hidden" name="image" value="{{ question.image }}">
+            <textarea id="message" name="message" rows="20" cols="50">{{ question.message if question else "" }}</textarea>
+            <br>
+            <input type="file" name="image" value=""><BR>
             <br/>
             <input type="submit">
         </form>

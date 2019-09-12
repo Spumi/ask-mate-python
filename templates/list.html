@@ -5,7 +5,28 @@
         <title>Welcome! | Ask Mate</title>
     </head>
     <body>
-        <h1>Ask Mate</h1>
+        <div align="center">
+            <h1>Ask Mate</h1>
+        </div>
+
+        <div align="center">
+            <form action="/search-for-questions">
+                <label for="search-for-questions">Enter the keywords your problem contains (separated with ',' and space):</label><br>
+                <input type="text" id="search-for-questions" name="keywords" size="56px">
+                <br>
+                <input type="submit" value="Search for questions">
+            </form>
+            <br>
+            <p>
+            <form action="/add-question">
+                <label for="add-new-question">If your question isn't in the list:</label>
+                <br>
+                <input type="submit" id="add-new-question" value="Add New Question">
+            </form>
+            </p>
+        </div>
+
+        {% set fieldnames = ['title', 'message', 'image', 'vote_number', 'view_number', 'submission_time'] %}
         <p>
             <label for="attribute-selector">Sort questions by: </label>
             <form action="/list" method="get">
@@ -21,38 +42,35 @@
                     </select>
                     <input type="submit" value="Sort">
             </form>
-
         </p>
+
         <table style="width: 90%">
             <tr>
                 {% for header in fieldnames %}
-                <th>{{ header|capitalize|replace('_', ' ') }}</th>
+                    <th>{{ header|capitalize|replace('_', ' ') }}</th>
                 {% endfor %}
             </tr>
             {% for questions in sorted_questions %}
             <tr>
-                {% for header, data in questions.items() %}
-                    {% if header == 'submission_time' %}
-                        <td>{{ convert_to_readable_date(data) }}</td>
-                    {% elif header == 'title' %}
+                {% for cell in fieldnames %}
+                    {% if cell == 'submission_time' %}
+                        <td>{{ convert_to_readable_date(questions[cell]) }}</td>
+                    {% elif cell == 'title' %}
                         <td>
-                            <a href="{{ url_for('question_display', question_id=questions['id']) }}">{{ data }}</a>
+                            <a href="{{ url_for('question_display', question_id=questions['id']) }}">{{ questions[cell] }}</a>
                         </td>
-                    {% elif header == 'image' %}
+                    {% elif cell == 'image' %}
                         <td>
-                            {% if data != "" %}
-                            <img src="/static/{{ data }}"  width="200" height="auto">
+                            {% if questions[cell] != "" %}
+                            <img src="/static/{{ questions[cell] }}"  width="200" height="auto">
                             {% endif %}
                         </td>
                     {% else %}
-                        <td>{{ data }}</td>
+                        <td>{{ questions[cell] }}</td>
                     {% endif %}
                 {% endfor %}
             {% endfor %}
             </tr>
         </table>
-        <form action="/add-question">
-            <input type="submit" value="Add New Question">
-        </form>
     </body>
 </html>

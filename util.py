@@ -1,3 +1,4 @@
+import copy
 import os
 import time
 from datetime import datetime
@@ -32,7 +33,8 @@ def handle_upload(req):
     if image.filename != "":
         req["image"] = "images/" + image.filename
         image.save(os.path.join(os.getcwd() + "/static/images/", image.filename))
-
+    else:
+        req["image"] = ""
 
 def sorting_data(data, attribute, order_flag):
     '''
@@ -90,3 +92,33 @@ def generate_answer_dict(data):
     answer_data.update(message=data["message"])
     answer_data.update(image=data["image"])
     return answer_data
+
+
+def handle_delete_question(question_id):
+    question_database = data_handler.get_questions()
+    answer_database = data_handler.get_answers()
+    copied_answer_database = copy.deepcopy(answer_database)
+    for answer in copied_answer_database:
+        if answer['question_id'] == question_id:
+            answer_database.remove(answer)
+    for question in question_database:
+        if question['id'] == question_id:
+            question_database.remove(question)
+    data_handler.save_questions(question_database)
+    data_handler.save_answers(answer_database)
+
+
+def handle_add_answer(reqv):
+    handle_upload(reqv)
+    answer = generate_answer_dict(reqv)
+    answers = data_handler.get_answers()
+    answers.append(answer)
+    data_handler.add_entry(answer, True)
+
+
+def handle_add_question(req):
+    questions = data_handler.get_questions()
+    handle_upload(req)
+    question = generate_question_dict(req)
+    questions.append(question)
+    data_handler.add_entry(question)
