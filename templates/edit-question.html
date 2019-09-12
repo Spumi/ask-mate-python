@@ -8,18 +8,17 @@
     <div align="center">
         <h1>Edit question</h1>
         <br>
-        <form action="/{{ question.id if question else '' }}/edit"  method="post" enctype="multipart/form-data">
+        <form action="{{ "/" }}{{ question.id }}{{ "/edit" }}" method="post">
             <label for="title"><b>Question title:<b></b></label>
             <br/>
-            <input type="text" id="title" name="title" size="40" value="{{ question.title  if question else ""}}">
-            <input type="hidden" name="id" value="{{question.id if question else '' }}">
+            <input type="text" id="title" name="title" size="40" value="{{ question.title }}">
+            <input type="hidden" name="id" value="{{question.id}}">
             <br/>
             <br/>
             <label for="message"><b>Question details:<b></label>
             <br/>
-            <textarea id="message" name="message" rows="20" cols="50">{{ question.message if question else "" }}</textarea>
-            <br>
-            <input type="file" name="image"/><BR>
+            <textarea id="message" name="message" rows="20" cols="50">{{ question.message }}</textarea>
+            <input type="hidden" name="image" value="{{ question.image }}">
             <br/>
             <input type="submit">
         </form>
