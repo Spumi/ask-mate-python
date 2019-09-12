@@ -153,7 +153,7 @@ def search_for_questions():
 
     return render_template('search_for_keywords_in_questions.html',
                            keywords=keywords, fieldnames=fieldnames, questions=questions_containing_keywords,
-                           convert_to_readable_date=data_handler.convert_to_readable_date)
+                           convert_to_readable_date=util.convert_to_readable_date)
 
 
 @app.route("/upload", methods=["POST"])
