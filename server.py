@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for
 
 import data_handler
 import util
-from util import handle_delete_question, handle_add_answer, handle_add_question, handle_list_question
+from util import handle_delete_question, handle_add_answer, handle_add_question, sorting_data, convert_to_readable_date
 
 app = Flask(__name__)
 app.debug = True
@@ -14,9 +14,22 @@ app.debug = True
 @app.route('/list')
 @app.route('/?order_by=<order_by>&order_direction=<order_direction>', methods=['GET', 'POST'])
 def list_questions():
+    '''
+    Assign values to the parameters of the sorted_questions function. It happens by getting them from the user.
+    Sort the questions according to sorted questions's parameters.
+    :param questions:list of dictionaries
+    :return: sorted list of dictionaries
+    '''
     questions = data_handler.get_questions()
-
-    return handle_list_question(questions)
+    order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
+    order_direction = False if request.args.get('order_direction') == 'asc' else True
+    sorted_questions = sorting_data(questions, order_by, order_direction)
+    order_direction = 'asc' if order_direction == False else 'desc'
+    return render_template('list.html',
+                           sorted_questions=sorted_questions,
+                           order_by=order_by,
+                           order_direction=order_direction,
+                           convert_to_readable_date=convert_to_readable_date)
 
 
 @app.route('/add-question', methods=["GET", "POST"])
