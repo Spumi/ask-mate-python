@@ -2,11 +2,13 @@ import copy
 import os
 import time
 from datetime import datetime
-
-from flask import request, render_template
-
+from flask import request
 import data_handler
 from data_handler import get_questions, get_answers
+
+
+QUESTION_DATA_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
+ANSWER_DATA_HEADER = ['id', 'submission_time', 'vote_number', 'question_id', 'message', 'image']
 
 
 def vote_question(_id, vote):

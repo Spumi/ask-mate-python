@@ -1,8 +1,6 @@
 import os
 import time
-
 from flask import Flask, render_template, request, redirect, url_for
-
 import data_handler
 import util
 from util import handle_delete_question, handle_add_answer, handle_add_question, sorting_data, convert_to_readable_date
@@ -17,8 +15,9 @@ def list_questions():
     '''
     Assign values to the parameters of the sorted_questions function. It happens by getting them from the user.
     Sort the questions according to sorted questions's parameters.
+    Convert order_direction from boolean to string. It is needed for user interface (html).
     :param questions:list of dictionaries
-    :return: sorted list of dictionaries
+    :return:
     '''
     questions = data_handler.get_questions()
     order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
@@ -126,7 +125,6 @@ def delete_answer(answer_id):
 
 @app.route('/search-for-questions', methods=['GET', 'POST'])
 def search_for_questions():
-    fieldnames = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
     question_database = data_handler.get_questions()
     keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
     questions_containing_keywords = []
@@ -135,7 +133,7 @@ def search_for_questions():
             questions_containing_keywords.append(question)
 
     return render_template('search_for_keywords_in_questions.html',
-                           keywords=keywords, fieldnames=fieldnames, questions=questions_containing_keywords,
+                           keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords,
                            convert_to_readable_date=util.convert_to_readable_date)
 
 

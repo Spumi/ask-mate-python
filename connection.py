@@ -1,10 +1,4 @@
-# ANSWER_DATA_FILE_PATH = os.getenv('DATA_FILE_PATH') if 'DATA_FILE_PATH' in os.environ else 'data/answer.csv'
-import csv, os
-
-
-QUESTION_ANSWER_DATA_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
-ANSWER_DATA_HEADER = ['id', 'submission_time', 'vote_number', 'question_id', 'message', 'image']
-
+import csv
 
 def csv_to_dict(file_path):
     with open(file_path, 'r', newline='') as f:
@@ -15,7 +9,7 @@ def csv_to_dict(file_path):
 
 def dict_to_csv(file_path, data, is_answers=False):
     with open(file_path, 'w', newline='') as f:
-        writer = csv.DictWriter(f, ANSWER_DATA_HEADER if is_answers else QUESTION_ANSWER_DATA_HEADER)
+        writer = csv.DictWriter(f, ANSWER_DATA_HEADER if is_answers else QUESTION_DATA_HEADER)
         writer.writeheader()
         writer.writerows(data)
 

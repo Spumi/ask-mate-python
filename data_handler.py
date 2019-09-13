@@ -1,7 +1,4 @@
 import os
-
-# ANSWER_DATA_FILE_PATH = os.getenv('DATA_FILE_PATH') if 'DATA_FILE_PATH' in os.environ else 'data/answer.csv'
-
 import connection
 
 ANSWER_DATA_FILE_PATH = os.getcwd() + "/data/answer.csv"
