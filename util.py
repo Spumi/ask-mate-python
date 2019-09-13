@@ -38,10 +38,11 @@ def handle_upload(req):
 
 def sorting_data(data, attribute, order_flag):
     '''
+    Sorts data by attribute in order order_flag.
     :param data: list of dictionaries
-    :param attribute: By which the data is sorted-
-    :param order_flag: The order is ascending (False) or descending (True).
-    :return: The sorted data.
+    :param attribute: By which the data is sorted- This is the key of dictionaries.
+    :param order_flag: Boolean. The order is ascending (False) or descending (True).
+    :return: The sorted data. List of dictionaries.
     '''
     try:
         sorted_data = sorted(data, key=lambda x: int(x[attribute]) if x[attribute].isdigit() else x[attribute], reverse=order_flag)
@@ -51,6 +52,11 @@ def sorting_data(data, attribute, order_flag):
 
 
 def convert_to_readable_date(timestamp):
+    '''
+    Converts unix timestamp into 2019-09-12 12:54:49 date-time format.
+    :param timestamp: string
+    :return: string
+    '''
     readable_time = datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
     return readable_time
 
@@ -125,6 +131,12 @@ def handle_add_question(req):
 
 
 def handle_list_question(questions):
+    '''
+    Assign values to the parameters of the sorted_questions function. It happens by getting them from the user.
+    Sort the questions according to sorted questions's parameters.
+    :param questions:list of dictionaries
+    :return: sorted list of dictionaries
+    '''
     order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
     order_direction = False if request.args.get('order_direction') == 'asc' else True
     sorted_questions = sorting_data(questions, order_by, order_direction)
