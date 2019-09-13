@@ -3,7 +3,7 @@ import os
 import time
 from datetime import datetime
 
-from flask import request
+from flask import request, render_template
 
 import data_handler
 from data_handler import get_questions, get_answers
@@ -122,3 +122,15 @@ def handle_add_question(req):
     question = generate_question_dict(req)
     questions.append(question)
     data_handler.add_entry(question)
+
+
+def handle_list_question(questions):
+    order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
+    order_direction = False if request.args.get('order_direction') == 'asc' else True
+    sorted_questions = sorting_data(questions, order_by, order_direction)
+    order_direction = 'asc' if order_direction == False else 'desc'
+    return render_template('list.html',
+                           sorted_questions=sorted_questions,
+                           order_by=order_by,
+                           order_direction=order_direction,
+                           convert_to_readable_date=convert_to_readable_date)

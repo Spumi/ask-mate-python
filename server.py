@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for
 
 import data_handler
 import util
-from util import handle_delete_question, handle_add_answer, handle_add_question
+from util import handle_delete_question, handle_add_answer, handle_add_question, handle_list_question
 
 app = Flask(__name__)
 app.debug = True
@@ -16,16 +16,7 @@ app.debug = True
 def list_questions():
     questions = data_handler.get_questions()
 
-    order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
-    order_direction = False if request.args.get('order_direction') == 'asc' else True
-    sorted_questions = util.sorting_data(questions, order_by, order_direction)
-    order_direction = 'asc' if order_direction == False else 'desc'
-
-    return render_template('list.html',
-                           sorted_questions=sorted_questions,
-                           order_by=order_by,
-                           order_direction=order_direction,
-                           convert_to_readable_date=util.convert_to_readable_date)
+    return handle_list_question(questions)
 
 
 @app.route('/add-question', methods=["GET", "POST"])
