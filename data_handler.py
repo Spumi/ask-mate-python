@@ -29,11 +29,17 @@ def save_answers(data):
 
 
 def add_entry(entry, is_answer=False):
+    table = "answer"
     if not is_answer:
-        connection.append_to_csv(QUESTION_DATA_FILE_PATH, entry)
-    else:
-        connection.append_to_csv(ANSWER_DATA_FILE_PATH, entry)
+        table = "question"
 
+    query = """INSERT INTO {table}
+    ({columns}) VALUES ({values});
+    """.format(columns=string_builder(entry.keys()),
+               values=string_builder(entry.values(), False),
+               table=table)
+    print(query)
+    execute_query(query)
 
 def get_question(question_id, question_database):
     for question_data in question_database:
@@ -90,3 +96,12 @@ def execute_query(cursor, query):
         result = cursor.execute(query)
     return result
 
+
+def string_builder(lst, is_key=True):
+    result = ""
+    for element in lst:
+        if is_key:
+            result += "" + element + ", "
+        else:
+            result += "\'" + element + "\', "
+    return result[:-2]

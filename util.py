@@ -80,8 +80,8 @@ def gen_answer_id():
 def generate_question_dict(data):
     question_data = {}
 
-    question_data.update(id=str(gen_question_id()))
-    question_data.update(submission_time=str(int(time.time())))
+    # question_data.update(id="")
+    question_data.update(submission_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     question_data.update(view_number=str(0))
     question_data.update(vote_number=str(0))
     question_data.update(title=data["title"])
@@ -93,8 +93,9 @@ def generate_question_dict(data):
 def generate_answer_dict(data):
     answer_data = {}
 
-    answer_data.update(id=str(gen_answer_id()))
-    answer_data.update(submission_time=str(int(time.time())))
+    # answer_data.update(id=str(gen_answer_id()))
+    # answer_data.update(submission_time=str(int(time.time())))
+    answer_data.update(submission_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     answer_data.update(vote_number=str(0))
     answer_data.update(question_id=data["question_id"])
     answer_data.update(message=data["message"])
