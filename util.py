@@ -63,6 +63,7 @@ def sorting_data(data, attribute, order_flag):
 
 
 def convert_to_readable_date(timestamp):
+    # depricated - Marked for removal
     '''
     Converts unix timestamp into 2019-09-12 12:54:49 date-time format.
     :param timestamp: string
@@ -79,6 +80,7 @@ def gen_question_id():
 
 
 def gen_answer_id():
+    # depricated - Marked for removal
     answers = get_answers()
     if len(answers) == 0:
         return 0
@@ -135,8 +137,8 @@ def handle_add_answer(reqv):
 
 
 def handle_add_question(req):
-    questions = data_handler.get_questions()
+    # questions = data_handler.get_questions()
     handle_upload(req)
     question = generate_question_dict(req)
-    questions.append(question)
+    # questions.append(question)
     data_handler.add_entry(question)
