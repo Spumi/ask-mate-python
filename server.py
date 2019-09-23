@@ -93,7 +93,7 @@ def delete_question(question_id):
     if request.method == 'POST':
         if request.form.get('delete') == 'Yes':
 
-            q = """DELETE FROM comment WHERE answer_id = (SELECT id FROM answer WHERE id = {question_id}) 
+            q = """DELETE FROM comment WHERE id = {question_id} OR answer_id = (SELECT id FROM answer WHERE id = {question_id}) 
             """.format(question_id=question_id)
             data_handler.execute_query(q)
             q = """DELETE FROM answer WHERE question_id = {question_id}
