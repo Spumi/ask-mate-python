@@ -84,7 +84,6 @@ def execute_query(cursor, query):
         cursor.execute(
             sql.SQL(query)
         )
-        print(query)
         result = cursor.fetchall()
 
     else:

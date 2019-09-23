@@ -19,17 +19,15 @@ def list_questions():
     :param questions:list of dictionaries
     :return:
     '''
-    q = """SELECT * FROM question
-    """
-    # questions = data_handler.get_questions()
-    questions = data_handler.execute_query(q)
-    print(questions)
-    order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
     order_direction = False if request.args.get('order_direction') == 'asc' else True
-    sorted_questions = sorting_data(questions, order_by, order_direction)
-    order_direction = 'asc' if order_direction == False else 'desc'
+    order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
+    order_direction = 'ASC' if order_direction == False else 'DESC'
+
+    q = """SELECT * FROM question ORDER BY {order_by} {order_direction}   
+    """.format(order_by=order_by, order_direction=order_direction)
+    questions = data_handler.execute_query(q)
     return render_template('list.html',
-                           sorted_questions=sorted_questions,
+                           sorted_questions=questions,
                            order_by=order_by,
                            order_direction=order_direction,
                            convert_to_readable_date=str)
