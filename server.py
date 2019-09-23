@@ -88,7 +88,21 @@ def vote_answer():
 def delete_question(question_id):
     if request.method == 'POST':
         if request.form.get('delete') == 'Yes':
-            handle_delete_question(question_id)
+
+            q = """DELETE FROM comment WHERE answer_id = (SELECT id FROM answer WHERE id = {question_id}) 
+            """.format(question_id=question_id)
+            data_handler.execute_query(q)
+            q = """DELETE FROM answer WHERE question_id = {question_id}
+            """.format(question_id=question_id)
+            data_handler.execute_query(q)
+            q = """DELETE FROM question_tag WHERE question_id = {question_id}
+            """.format(question_id=question_id)
+            data_handler.execute_query(q)
+            q = """DELETE FROM question WHERE id = {question_id}
+            """.format(question_id=question_id)
+            data_handler.execute_query(q)
+
+            # handle_delete_question(question_id)
             return redirect(url_for('list_questions'))
 
         else:
