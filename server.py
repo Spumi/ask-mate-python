@@ -5,6 +5,7 @@ import data_handler
 import util
 from util import handle_delete_question, handle_add_answer, handle_add_question, sorting_data, convert_to_readable_date
 
+
 app = Flask(__name__)
 app.debug = True
 
@@ -145,16 +146,39 @@ def delete_answer(answer_id):
 
 @app.route('/search-for-questions', methods=['GET', 'POST'])
 def search_for_questions():
-    question_database = data_handler.get_questions()
+
+    # questions_containing_keywords = []
+    # for keyword in keywords:
+    #     print(type(keyword))
+    #     keyword = '\'%' + str(keyword) + '%\''
+    #     q = """"""
+    #     query = """SELECT to_tsvector(title) from question @@ to_tsquery({keyword})""".format(keyword=str(keyword))
+    #     result = data_handler.execute_query(query)
+    #     print(result)
+    #     questions_containing_keywords.append(result)
+
+    q_query = """SELECT * FROM question
+    """
+    question_database = data_handler.execute_query(q_query)
+    a_query = """SELECT * FROM answer
+    """
+    answer_database = data_handler.execute_query(a_query)
     keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
+
+    answer_related_question_id = []
+    for answer in answer_database:
+        if any(keyword in answer['message'] for keyword in keywords):
+            answer_related_question_id.append(answer['question_id'])
     questions_containing_keywords = []
     for question in question_database:
         if any(keyword in question['title'] for keyword in keywords) or any(keyword in question['message'] for keyword in keywords):
             questions_containing_keywords.append(question)
+        elif question['id'] in answer_related_question_id:
+            questions_containing_keywords.append(question)
 
     return render_template('search_for_keywords_in_questions.html',
                            keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords,
-                           convert_to_readable_date=util.convert_to_readable_date)
+                           convert_to_readable_date=str)
 
 
 @app.route("/upload", methods=["POST"])
