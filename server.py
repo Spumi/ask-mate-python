@@ -3,7 +3,7 @@ import time
 from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 import util
-from util import handle_delete_question, handle_add_answer, handle_add_question, sorting_data, convert_to_readable_date
+from util import handle_delete_question, handle_add_answer, handle_add_question,  convert_to_readable_date
 
 
 app = Flask(__name__)

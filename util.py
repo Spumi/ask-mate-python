@@ -38,19 +38,6 @@ def handle_upload(req):
     else:
         req["image"] = ""
 
-def sorting_data(data, attribute, order_flag):
-    '''
-    Sorts data by attribute in order order_flag.
-    :param data: list of dictionaries
-    :param attribute: By which the data is sorted- This is the key of dictionaries.
-    :param order_flag: Boolean. The order is ascending (False) or descending (True).
-    :return: The sorted data. List of dictionaries.
-    '''
-    try:
-        sorted_data = sorted(data, key=lambda x: int(x[attribute]) if x[attribute].isdigit() else x[attribute], reverse=order_flag)
-    except AttributeError:
-        sorted_data = sorted(data, key=lambda x: x[attribute], reverse=order_flag)
-    return sorted_data
 
 
 def convert_to_readable_date(timestamp):
