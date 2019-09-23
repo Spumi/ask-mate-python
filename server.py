@@ -147,34 +147,20 @@ def delete_answer(answer_id):
 @app.route('/search-for-questions', methods=['GET', 'POST'])
 def search_for_questions():
 
-    # questions_containing_keywords = []
-    # for keyword in keywords:
-    #     print(type(keyword))
-    #     keyword = '\'%' + str(keyword) + '%\''
-    #     q = """"""
-    #     query = """SELECT to_tsvector(title) from question @@ to_tsquery({keyword})""".format(keyword=str(keyword))
-    #     result = data_handler.execute_query(query)
-    #     print(result)
-    #     questions_containing_keywords.append(result)
-
     q_query = """SELECT * FROM question
     """
     question_database = data_handler.execute_query(q_query)
     a_query = """SELECT * FROM answer
     """
     answer_database = data_handler.execute_query(a_query)
-    keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
 
-    answer_related_question_id = []
-    for answer in answer_database:
-        if any(keyword in answer['message'] for keyword in keywords):
-            answer_related_question_id.append(answer['question_id'])
-    questions_containing_keywords = []
-    for question in question_database:
-        if any(keyword in question['title'] for keyword in keywords) or any(keyword in question['message'] for keyword in keywords):
-            questions_containing_keywords.append(question)
-        elif question['id'] in answer_related_question_id:
-            questions_containing_keywords.append(question)
+    keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
+    answer_related_question_id = util.get_answer_related_question_ids(keywords, answer_database, 'message')
+    questions_containing_keywords = util.search_keywords_in_attribute(keywords,
+                                                                      answer_related_question_id,
+                                                                      question_database,
+                                                                      'title',
+                                                                      'message')
 
     return render_template('search_for_keywords_in_questions.html',
                            keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords,
