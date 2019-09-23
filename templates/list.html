@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Welcome! | Ask Mate</title>
+    </head>
+    <body>
+        <div align="center">
+            <h1>Ask Mate</h1>
+        </div>
+
+        <div align="center">
+            <form action="/search-for-questions">
+                <label for="search-for-questions">Enter the keywords your problem contains (separated with ',' and space):</label><br>
+                <input type="text" id="search-for-questions" name="keywords" size="56px">
+                <br>
+                <input type="submit" value="Search for questions">
+            </form>
+            <br>
+            <p>
+            <form action="/add-question">
+                <label for="add-new-question">If your question isn't in the list:</label>
+                <br>
+                <input type="submit" id="add-new-question" value="Add New Question">
+            </form>
+            </p>
+        </div>
+
+        {% set fieldnames = ['title', 'message', 'image', 'vote_number', 'view_number', 'submission_time'] %}
+        <p>
+            <label for="attribute-selector">Sort questions by: </label>
+            <form action="/list" method="get">
+                    <select id="attribute-selector" name="order_by">
+                        {% for header in fieldnames %}
+                            <option value="{{ header }}" {{ 'selected' if header == order_by}}>{{ header|capitalize|replace('_',' ') }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="order-direction-selector" name="order_direction">
+                        {% for order in ['asc', 'desc'] %}
+                            <option value="{{ order }}" {{ 'selected' if order == order_direction }}>{{ 'Ascending order' if order == 'asc' else 'Descending order' }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" value="Sort">
+            </form>
+        </p>
+
+        <table style="width: 90%">
+            <tr>
+                {% for header in fieldnames %}
+                    <th>{{ header|capitalize|replace('_', ' ') }}</th>
+                {% endfor %}
+            </tr>
+            {% for questions in sorted_questions %}
+            <tr>
+                {% for cell in fieldnames %}
+                    {% if cell == 'submission_time' %}
+                        <td>{{ convert_to_readable_date(questions[cell]) }}</td>
+                    {% elif cell == 'title' %}
+                        <td>
+                            <a href="{{ url_for('question_display', question_id=questions['id']) }}">{{ questions[cell] }}</a>
+                        </td>
+                    {% elif cell == 'image' %}
+                        <td>
+                            {% if questions[cell] != "" %}
+                            <img src="/static/{{ questions[cell] }}"  width="200" height="auto">
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        <td>{{ questions[cell] }}</td>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            </tr>
+        </table>
+    </body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <h1>Your keywords were found in the following questions:</h1>
+        <table style="width: 90%">
+            {% set fieldnames = ['title', 'message', 'image', 'vote_number', 'view_number', 'submission_time'] %}
+            <tr>
+                {% for cell in fieldnames %}
+                <th>{{ cell|capitalize|replace('_', ' ') }}</th>
+                {% endfor %}
+            </tr>
+            {% for question in questions %}
+            <tr>
+                {% for cell in fieldnames %}
+                    {% if cell == 'submission_time' %}
+                        <td>{{ convert_to_readable_date(question[cell]) }}</td>
+                    {% else %}
+                        <td>{{ question[cell] }}</td>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            </tr>
+        </table>
+    </body>
+</html>

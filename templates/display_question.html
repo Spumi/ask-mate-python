@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+{% set headers = ['Vote', 'Question details', 'Image', 'Submission', 'View'] %}
+{% set keys = [('vote_number', '10%', 'left'), ('message', '55%', 'left'), ('image', '20%', 'center'), ('submission_time', '10%', 'center'), ('view_number', '5%', 'center')] %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Question</title>
+</head>
+<body>
+    <h1 style="text-align: center">{{ question.title }}</h1>
+    <div style="padding-bottom: 50px;padding-left: 20%">
+    <table width="80%">
+        <thead>
+            <tr>
+                {% for header in headers %}
+                    {% if header == "Vote" %}
+                        <th colspan="2" style="padding-bottom: 20px;padding-right: 40px">{{ header }}</th>
+                    {%  else %}
+                        <th style=" padding-bottom: 20px">{{ header }}</th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td align="center"><form action="{{"/question/"}}{{ question.id }}{{"/vote-up"}}">
+                        <input type="hidden" name="id" value="{{ question.id }}">
+                        <input type="submit" value="↑">
+                    </form>
+                    <form action="{{"/question/"}}{{ question.id }}{{"/vote-down"}}">
+                        <input type="hidden" name="id" value="{{ question.id }}">
+                        <input type="submit" value="↓">
+                    </form>
+                </td>
+                {% for key, width, align in keys %}
+                    {% if key == 'submission_time' %}
+                        <td align={{align}} width={{width}}>{{ convert_to_readable_date(question.get(key)) }}</td>
+                    {% elif key == 'image' %}
+                        <td align={{align}} width={{width}}>
+                            {% if question.get(key) != "" %}
+                            <img src="/static/{{ question.get(key) }}" width="50%" height="auto" alt="Picture">
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        <td align="{{ align }}" width="{{ width }}">{{ question.get(key) }}</td>
+                    {% endif %}
+                {%  endfor %}
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table>
+        <tr>
+            <td>
+                <form action={{"/question/"}}{{question.id}}{{"/new-answer"}}>
+                    <input type="submit" value="Answer question">
+                </form>
+            </td>
+            <td>
+                <form action={{"/"}}{{question.id}}{{"/edit"}}>
+                    <input type="submit" value="Edit question">
+                </form>
+            </td>
+            <td>
+                <form action={{"/question/"}}{{question.id}}{{"/delete"}}>
+                    <input type="submit" value="Delete question">
+                </form>
+            </td>
+        </tr>
+    </table>
+    </div>
+
+
+    {% set answer_headers = ['Vote', 'Answer', 'Image', 'Submission'] %}
+    {% set answer_keys = [('vote_number', '10%', 'left'), ('message', '55%', 'left'), ('image', '20%', 'center'), ('submission_time', '10%', 'center')] %}
+
+    <h2 style="text-align:center">Answers to the question</h2>
+
+    {% if answers | length != 0 %}
+    <div style="padding-left: 20%">
+    <table width="80%">
+        <thead>
+            <tr>
+                {% for header in answer_headers %}
+                    {% if header =="Vote" %}
+                    <th colspan="2" style="padding-bottom: 20px;padding-right: 40px">{{ header}}</th>
+                    {% else %}
+                    <th style="padding-bottom: 20px">{{ header}}</th>
+                    {% endif %}
+                {%  endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for answer in answers %}
+            <tr>
+                 <td>
+                    <form action="/vote-answer" method="post">
+                        <input type="hidden" name="id" value="{{ answer.id }}">
+                        <input type="submit" value="↑">
+                        <input type="hidden" name="vote" value="up">
+                        <input type="hidden" name="question_id" value="{{question.id}}">
+                    </form>
+                    <form action="/vote-answer" method="post">
+                        <input type="hidden" name="id" value="{{ answer.id }}">
+                        <input type="submit" value="↓">
+                        <input type="hidden" name="vote" value="down">
+                        <input type="hidden" name="question_id" value="{{question.id}}">
+                    </form>
+                </td>
+                {% for key, width, align in answer_keys %}
+                    {% if key == 'submission_time' %}
+                        <td align={{align}} width={{width}}>{{ convert_to_readable_date(answer.get(key)) }}</td>
+                    {% elif key == 'image' %}
+                        <td align={{align}} width={{width}}>
+                            {% if answer.get(key) != "" %}
+                            <img src="/static/{{ answer.get(key) }}" width="50%" height="auto" alt="Picture">
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        <td align="{{ align }}" width="{{ width }}">{{ answer.get(key) }}</td>
+                    {% endif %}
+                {%  endfor %}
+                <td>
+                    <form action={{"/answer/"}}{{answer.id}}{{"/delete"}}>
+                        <input type="submit" value="Delete">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {%  else  %}
+        <p style="text-align: center">{{ "There is no answer to this question" }}</p>
+    {% endif %}
+    <br>
+
+
+</body>
+</html>
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Delete answer</title>
+    </head>
+    <body>
+        <div align="center">
+            <h1>Are you sure you want to delete this answer?</h1>
+            <form action="{{ url_for('delete_answer', answer_id=answer_id) }}" method="post">
+                <input type="submit" name="delete" value="Yes">
+                <input type="submit" name="delete" value="No">
+            </form>
+        </div>
+    </body>
+</html>
