@@ -12,22 +12,31 @@ ANSWER_DATA_HEADER = ['id', 'submission_time', 'vote_number', 'question_id', 'me
 
 
 def vote_question(_id, vote):
-    questions = data_handler.get_questions()
-    question = data_handler.get_question(_id, questions)
-    questions.remove(question)
-    question["vote_number"] = str(int(question["vote_number"]) + vote)
-    questions.append(question)
-    data_handler.save_questions(questions)
+    # questions = data_handler.get_questions()
+    # question = data_handler.get_question(_id, questions)
+    # questions.remove(question)
+    # question["vote_number"] = str(int(question["vote_number"]) + vote)
+    # questions.append(question)
+    # data_handler.save_questions(questions)
+    # data_handler.save_questions(questions)
+    query ="""UPDATE question SET vote_number = question.vote_number +{vote}
+    WHERE id = {id}
+    """.format(vote=vote,id=_id)
+    data_handler.execute_query(query)
 
 
 def vote_answer(_id, vote):
     delta = 1 if vote == "up" else -1
-    answers = data_handler.get_answers()
-    answer = data_handler.get_answer(_id, answers)
-    answers.remove(answer)
-    answer["vote_number"] = str(int(answer["vote_number"]) + delta)
-    answers.append(answer)
-    data_handler.save_answers(answers)
+    # answers = data_handler.get_answers()
+    # answer = data_handler.get_answer(_id, answers)
+    # answers.remove(answer)
+    # answer["vote_number"] = str(int(answer["vote_number"]) + delta)
+    # answers.append(answer)
+    # data_handler.save_answers(answers)
+    query ="""UPDATE answer SET vote_number = vote_number +{vote}
+    WHERE id = {id}
+    """.format(vote=delta,id=_id)
+    data_handler.execute_query(query)
 
 
 def handle_upload(req):
