@@ -1,4 +1,7 @@
 import os
+
+from psycopg2 import sql
+
 import connection
 
 ANSWER_DATA_FILE_PATH = os.getcwd() + "/data/answer.csv"
@@ -73,3 +76,18 @@ def delete_record(id, answer=False, delete=False):
                 del answers[i]
                 save_answers(answers)
             return question_id
+
+@connection.connection_handler
+def execute_query(cursor, query):
+    # print(query.startswith("INSERT"))
+    if query.startswith("SELECT"):
+        cursor.execute(
+            sql.SQL(query)
+        )
+        print(query)
+        result = cursor.fetchall()
+
+    else:
+        result = cursor.execute(query)
+    return result
+
