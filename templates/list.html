@@ -54,7 +54,7 @@
             <tr>
                 {% for cell in fieldnames %}
                     {% if cell == 'submission_time' %}
-                        <td>{{ convert_to_readable_date(questions[cell]) }}</td>
+                        <td>{{ questions[cell] }}</td>
                     {% elif cell == 'title' %}
                         <td>
                             <a href="{{ url_for('question_display', question_id=questions['id']) }}">{{ questions[cell] }}</a>

@@ -3,7 +3,7 @@ import time
 from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 import util
-from util import handle_delete_question, handle_add_answer, handle_add_question,  convert_to_readable_date
+from util import handle_delete_question, handle_add_answer, handle_add_question
 
 
 app = Flask(__name__)
@@ -30,8 +30,7 @@ def list_questions():
     return render_template('list.html',
                            sorted_questions=questions,
                            order_by=order_by,
-                           order_direction=order_direction,
-                           convert_to_readable_date=str)
+                           order_direction=order_direction)
 
 
 @app.route('/add-question', methods=["GET", "POST"])
@@ -65,7 +64,7 @@ def question_display(question_id):
     question = data_handler.execute_query(question_query)
     related_answers = data_handler.execute_query(answers_query)
 
-    return render_template('display_question.html', question=question.pop(), answers=related_answers, convert_to_readable_date=str)
+    return render_template('display_question.html', question=question.pop(), answers=related_answers)
 
 @app.route("/question/<question_id>/vote-up")
 def vote_up_question(question_id):
@@ -124,7 +123,7 @@ def edit_question(question_id):
         edited_question_data['submission_time'] = str(int(time.time()))
         question = data_handler.update_questions(question_id, edited_question_data)
         related_answers = data_handler.get_question_related_answers(question_id, data_handler.get_answers())
-        return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=util.convert_to_readable_date)
+        return render_template('display_question.html', question=question, answers=related_answers)
 
     all_questions = data_handler.get_questions()
     question = data_handler.get_question(question_id, all_questions)
@@ -163,8 +162,7 @@ def search_for_questions():
                                                                       'message')
 
     return render_template('search_for_keywords_in_questions.html',
-                           keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords,
-                           convert_to_readable_date=str)
+                           keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords)
 
 
 @app.route("/upload", methods=["POST"])

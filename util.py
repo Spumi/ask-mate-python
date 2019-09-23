@@ -39,17 +39,6 @@ def handle_upload(req):
         req["image"] = ""
 
 
-
-def convert_to_readable_date(timestamp):
-    '''
-    Converts unix timestamp into 2019-09-12 12:54:49 date-time format.
-    :param timestamp: string
-    :return: string
-    '''
-    readable_time = datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
-    return readable_time
-
-
 def gen_question_id():
     answers = get_questions()
     items = [x['id'] for x in answers]
