@@ -5,6 +5,8 @@ import data_handler
 import util
 from util import handle_delete_question, handle_add_answer, handle_add_question, create_check_keywords_in_database_string
 
+from util import handle_add_answer, handle_add_question
+from data_handler import handle_add_comment
 
 app = Flask(__name__)
 app.debug = True
@@ -63,8 +65,12 @@ def question_display(question_id):
 
     question = data_handler.execute_query(question_query)
     related_answers = data_handler.execute_query(answers_query)
-
-    return render_template('display_question.html', question=question.pop(), answers=related_answers)
+    question_comments = data_handler.get_comments("question", question_id)
+    return render_template('display_question.html',
+                           question=question.pop(),
+                           question_comments=question_comments,
+                           answers=related_answers,
+                           get_comments=data_handler.get_comments)
 
 @app.route("/question/<question_id>/vote-up")
 def vote_up_question(question_id):
@@ -138,7 +144,7 @@ def delete_answer(answer_id):
         if request.form.get('delete') == 'Yes':
             delete = True
         question_id = data_handler.delete_record(answer_id, True, delete=delete)
-        return redirect('/question/' + question_id)
+        return redirect('/question/' + str(question_id))
     else:
         return render_template('asking_if_delete_answer.html', answer_id=answer_id)
 
@@ -166,6 +172,21 @@ def upload_image():
     image.save(os.path.join(os.getcwd() + "/images/", image.filename))
 
     return redirect("/")
+
+
+@app.route("/question/<id>/new-comment", methods=["GET", "POST"])
+@app.route("/answer/<id>/new-comment", methods=["GET", "POST"])
+def comment_question(id):
+    comment_type = "question"
+    if "answer" in str(request.url_rule):
+        comment_type = "answer"
+
+    if request.method == 'POST':
+        req = request.form.to_dict()
+        handle_add_comment(req)
+        return redirect(url_for("question_display", question_id=id))
+    return render_template("add-comment.html", qid=id, type=comment_type)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
