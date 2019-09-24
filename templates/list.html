@@ -61,7 +61,7 @@
                         </td>
                     {% elif cell == 'image' %}
                         <td>
-                            {% if questions[cell] != "" %}
+                            {% if questions[cell]  %}
                             <img src="/static/{{ questions[cell] }}"  width="200" height="auto">
                             {% endif %}
                         </td>
