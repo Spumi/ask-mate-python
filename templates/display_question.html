@@ -67,6 +67,32 @@
                     <input type="submit" value="Delete question">
                 </form>
             </td>
+            <td>
+                <form action={{"/question/"}}{{question.id}}{{"/new-comment"}}>
+                    <input type="submit" value="Comment">
+                </form>
+            </td>
+        </tr>
+    </table>
+    <table width="80%">
+        <tr align="center" >
+
+                    {% for title in question_comments[0].keys() %}
+                        <th>
+                        {{ title }}
+                        </th>
+                    {% endfor %}
+        </tr>
+        <tr>
+            {%  for comment in question_comments %}
+                <tr>
+                    {% for value in comment.values() %}
+                        <td>
+                            {{ value }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
         </tr>
     </table>
     </div>

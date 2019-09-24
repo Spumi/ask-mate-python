@@ -63,8 +63,9 @@ def question_display(question_id):
 
     question = data_handler.execute_query(question_query)
     related_answers = data_handler.execute_query(answers_query)
-
-    return render_template('display_question.html', question=question.pop(), answers=related_answers)
+    question_comments = data_handler.get_comments("question", question_id)
+    print(question_comments)
+    return render_template('display_question.html', question=question.pop(), question_comments=question_comments, answers=related_answers)
 
 @app.route("/question/<question_id>/vote-up")
 def vote_up_question(question_id):

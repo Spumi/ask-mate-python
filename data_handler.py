@@ -113,3 +113,12 @@ def handle_add_comment(req):
                                     value_list=string_builder(req.values(), False)
                                     )
     execute_query(query)
+
+
+def get_comments(comment_tpe, _id):
+    comment_tpe += "_id"
+    query = """SELECT message, submission_time, edited_count  FROM comment
+    WHERE {col} = {id} 
+    """.format(col=comment_tpe, id=_id)
+    print(query)
+    return execute_query(query)
