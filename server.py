@@ -3,8 +3,8 @@ import time
 from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 import util
-from util import handle_delete_question, handle_add_answer, handle_add_question
-
+from util import handle_add_answer, handle_add_question
+from data_handler import handle_add_comment
 
 app = Flask(__name__)
 app.debug = True
@@ -171,6 +171,20 @@ def upload_image():
     image.save(os.path.join(os.getcwd() + "/images/", image.filename))
 
     return redirect("/")
+
+
+@app.route("/question/<id>/new-comment", methods=["GET", "POST"])
+@app.route("/answer/<id>/new-comment", methods=["GET", "POST"])
+def comment_question(id):
+    comment_type = "question"
+    if "answer" in str(request.url_rule):
+        comment_type = "answer"
+
+    if request.method == 'POST':
+        req = request.form.to_dict()
+        handle_add_comment(req)
+    return render_template("add-comment.html", qid=id, type=comment_type)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
