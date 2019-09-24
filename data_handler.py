@@ -35,6 +35,7 @@ def add_entry(entry, is_answer=False):
     if not is_answer:
         table = "question"
 
+    entry = escape_single_quotes(entry)
     query = """INSERT INTO {table}
     ({columns}) VALUES ({values});
     """.format(columns=string_builder(entry.keys()),
