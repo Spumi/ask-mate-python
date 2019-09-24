@@ -59,7 +59,8 @@ def get_answer(answer_id, answer_database):
 
 def get_question_related_answers(question_id):
     answers_query = f"""SELECT * FROM answer
-                        WHERE question_id={int(question_id)};"""
+                        WHERE question_id={int(question_id)}
+                        ORDER BY submission_time DESC;"""
     answers_of_question = execute_query(answers_query)
     return answers_of_question
 
