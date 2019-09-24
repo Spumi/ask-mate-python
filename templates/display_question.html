@@ -76,12 +76,13 @@
     </table>
     <table width="80%" >
         <tr align="center" >
-
+                {% if question_comments | length > 0 %}
                     {% for title in question_comments[0].keys() %}
                         <th>
                         {{ title }}
                         </th>
                     {% endfor %}
+                {% endif %}
         </tr>
         <tr>
             {%  for comment in question_comments %}

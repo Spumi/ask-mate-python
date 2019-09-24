@@ -128,7 +128,10 @@ def edit_question(question_id):
         question = data_handler.get_question(question_id)[0]
         related_answers = data_handler.get_question_related_answers(question_id)
 
-        return render_template('display_question.html', question=question, answers=related_answers)
+        return render_template('display_question.html',
+                               question=question,
+                               answers=related_answers,
+                               get_comments=data_handler.get_comments)
 
     question = data_handler.get_question(question_id)[0]
 
