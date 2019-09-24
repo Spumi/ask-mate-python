@@ -148,29 +148,29 @@ def search_for_questions():
 
     keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
 
-    def check_keywords_in_items(keywords):
+    def create_check_keywords_in_database_string(keywords, database):
         string = f'\'%{keywords[0]}%\''
         for keyword in keywords[1:]:
-            string += f' OR message LIKE \'%{keyword}%\''
+            string += f' OR {database}.message LIKE \'%{keyword}%\''
         return string
+
 
 
     # Get the question ids from the answer database where keywords were found
     answer_related_question_id_query = """SELECT question_id FROM answer WHERE message LIKE {string}
-    """.format(string=check_keywords_in_items(keywords))
-
+    """.format(string=create_check_keywords_in_database_string(keywords, 'answer'))
+    print(data_handler.execute_query(answer_related_question_id_query))
 
     def change_list_of_dict_to_tuple():
     # Changes list to tuple. Tuple is needed for SQL VALUE(,,,) format
         answer_related_question_ids = data_handler.execute_query(answer_related_question_id_query)
         answer_id_sql_format = []
-        for question_id in answer_related_question_ids:
+        for question_id in answer_related_question_ids[:-1]:
             answer_id_sql_format.append(question_id.get('question_id'))
         answer_related_question_id_sql_format = tuple(answer_id_sql_format)
         return answer_related_question_id_sql_format
 
     answer_related_question_id_sql_format = change_list_of_dict_to_tuple()
-
     def check_question_id_in_answer_ids(answer_related_question_id_sql_format):
         if answer_related_question_id_sql_format != ():
             string_2 = f' OR (question.id IN {answer_related_question_id_sql_format})'
@@ -178,16 +178,12 @@ def search_for_questions():
             string_2 = ''
         return string_2
 
-    print(check_question_id_in_answer_ids(answer_related_question_id_sql_format))
-
-
-    print(answer_related_question_id_sql_format)
 
     questions_containing_keywords_query = """SELECT DISTINCT question.* FROM question
                                              JOIN answer ON question.id = answer.question_id
                                              WHERE (question.title LIKE {string_1})
                                              OR (question.message LIKE {string_1}) {string_2}
-    """.format(string_1=check_keywords_in_items(keywords),
+    """.format(string_1=create_check_keywords_in_database_string(keywords, 'answer'),
                string_2=check_question_id_in_answer_ids(answer_related_question_id_sql_format))
     print(questions_containing_keywords_query)
     questions_containing_keywords = data_handler.execute_query(questions_containing_keywords_query)
