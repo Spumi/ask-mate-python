@@ -67,6 +67,32 @@
                     <input type="submit" value="Delete question">
                 </form>
             </td>
+            <td>
+                <form action={{"/question/"}}{{question.id}}{{"/new-comment"}}>
+                    <input type="submit" value="Comment">
+                </form>
+            </td>
+        </tr>
+    </table>
+    <table width="80%" >
+        <tr align="center" >
+
+                    {% for title in question_comments[0].keys() %}
+                        <th>
+                        {{ title }}
+                        </th>
+                    {% endfor %}
+        </tr>
+        <tr>
+            {%  for comment in question_comments %}
+                <tr>
+                    {% for value in comment.values() %}
+                        <td>
+                            {{ value }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
         </tr>
     </table>
     </div>
@@ -79,7 +105,7 @@
 
     {% if answers | length != 0 %}
     <div style="padding-left: 20%">
-    <table width="80%">
+    <table width="80%" >
         <thead>
             <tr>
                 {% for header in answer_headers %}
@@ -120,13 +146,23 @@
                     {% else %}
                         <td align="{{ align }}" width="{{ width }}">{{ answer.get(key) }}</td>
                     {% endif %}
+
+
                 {%  endfor %}
                 <td>
                     <form action={{"/answer/"}}{{answer.id}}{{"/delete"}}>
                         <input type="submit" value="Delete">
                     </form>
                 </td>
-            </tr>
+                </tr>
+                        {% set comments = get_comments("answer",answer["id"]) %}
+                        {% for comment in comments %}
+                        <tr>
+                            <td colspan="4">
+                            {{ comment["message"] }}
+                            </td>
+                        </tr>
+                        {% endfor %}
             {% endfor %}
         </tbody>
     </table>

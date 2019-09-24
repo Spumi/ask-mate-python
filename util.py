@@ -1,10 +1,8 @@
 import copy
 import os
-import time
 from datetime import datetime
 from flask import request
 import data_handler
-from data_handler import get_questions, get_answers
 
 
 QUESTION_DATA_HEADER = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
@@ -140,6 +138,13 @@ def get_answer_related_question_ids(keywords, answer_database, attribute):
     return answer_related_question_ids
 
 
+def create_check_keywords_in_database_string(keywords, database, attribute):
+    string = f'\'%{keywords[0]}%\''
+    for keyword in keywords[1:]:
+        string += f' OR {database}.{attribute} LIKE \'%{keyword}%\''
+    return string
+
+
 def search_keywords_in_attribute(keywords, id_s, database, attribute_1, attribute_2=None):
     """
     Search keywords in table using attribute_1 and/or attribute_2 as key(s).
@@ -159,3 +164,13 @@ def search_keywords_in_attribute(keywords, id_s, database, attribute_1, attribut
         elif item['id'] in id_s:
             items_containing_keywords.append(item)
     return items_containing_keywords
+
+
+def string_builder(lst, is_key=True):
+    result = ""
+    for element in lst:
+        if is_key:
+            result += "" + element + ", "
+        else:
+            result += "\'" + element + "\', "
+    return result[:-2]

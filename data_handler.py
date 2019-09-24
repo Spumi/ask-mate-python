@@ -1,8 +1,10 @@
 import os
+from datetime import datetime
 
 from psycopg2 import sql
 
 import connection
+from util import string_builder
 
 ANSWER_DATA_FILE_PATH = os.getcwd() + "/data/answer.csv"
 QUESTION_DATA_FILE_PATH = os.getcwd() + "/data/question.csv"
@@ -102,6 +104,7 @@ def delete_record(id, answer=False, delete=False):
 
         return question_id
 
+
 @connection.connection_handler
 def execute_query(cursor, query):
     # print(query.startswith("INSERT"))
@@ -116,14 +119,13 @@ def execute_query(cursor, query):
     return result
 
 
-def string_builder(lst, is_key=True):
-    result = ""
-    for element in lst:
-        if is_key:
-            result += "" + element + ", "
-        else:
-            result += "\'" + element + "\', "
-    return result[:-2]
+def handle_add_comment(req):
+    req.update(submission_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    query ="""INSERT INTO comment ({columns}) 
+    VALUES ({value_list})""".format(columns=string_builder(req.keys(), True),
+                                    value_list=string_builder(req.values(), False)
+                                    )
+    execute_query(query)
 
 
 def escape_single_quotes(dictionary):
@@ -131,3 +133,12 @@ def escape_single_quotes(dictionary):
         if type(value) == str and "'" in value:
             dictionary[key] = value.replace("'", "''")
     return dictionary
+
+
+def get_comments(comment_tpe, _id):
+    comment_tpe += "_id"
+    query = """SELECT message, submission_time, edited_count  FROM comment
+    WHERE {col} = {id} 
+    """.format(col=comment_tpe, id=_id)
+    print(query)
+    return execute_query(query)
