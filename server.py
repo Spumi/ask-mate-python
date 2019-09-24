@@ -3,7 +3,8 @@ import time
 from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 import util
-from util import handle_delete_question, handle_add_answer, handle_add_question, sorting_data, convert_to_readable_date
+from util import handle_delete_question, handle_add_answer, handle_add_question
+
 
 app = Flask(__name__)
 app.debug = True
@@ -29,8 +30,7 @@ def list_questions():
     return render_template('list.html',
                            sorted_questions=questions,
                            order_by=order_by,
-                           order_direction=order_direction,
-                           convert_to_readable_date=str)
+                           order_direction=order_direction)
 
 
 @app.route('/add-question', methods=["GET", "POST"])
@@ -64,7 +64,7 @@ def question_display(question_id):
     question = data_handler.execute_query(question_query)
     related_answers = data_handler.execute_query(answers_query)
 
-    return render_template('display_question.html', question=question.pop(), answers=related_answers, convert_to_readable_date=str)
+    return render_template('display_question.html', question=question.pop(), answers=related_answers)
 
 @app.route("/question/<question_id>/vote-up")
 def vote_up_question(question_id):
@@ -92,7 +92,21 @@ def vote_answer():
 def delete_question(question_id):
     if request.method == 'POST':
         if request.form.get('delete') == 'Yes':
-            handle_delete_question(question_id)
+
+            q = """DELETE FROM comment WHERE question_id = {question_id} OR answer_id = (SELECT id FROM answer WHERE id = {question_id}) 
+            """.format(question_id=question_id)
+            data_handler.execute_query(q)
+            q = """DELETE FROM answer WHERE question_id = {question_id}
+            """.format(question_id=question_id)
+            data_handler.execute_query(q)
+            q = """DELETE FROM question_tag WHERE question_id = {question_id}
+            """.format(question_id=question_id)
+            data_handler.execute_query(q)
+            q = """DELETE FROM question WHERE id = {question_id}
+            """.format(question_id=question_id)
+            data_handler.execute_query(q)
+
+            # handle_delete_question(question_id)
             return redirect(url_for('list_questions'))
 
         else:
@@ -109,7 +123,7 @@ def edit_question(question_id):
         edited_question_data['submission_time'] = str(int(time.time()))
         question = data_handler.update_questions(question_id, edited_question_data)
         related_answers = data_handler.get_question_related_answers(question_id, data_handler.get_answers())
-        return render_template('display_question.html', question=question, answers=related_answers, convert_to_readable_date=util.convert_to_readable_date)
+        return render_template('display_question.html', question=question, answers=related_answers)
 
     all_questions = data_handler.get_questions()
     question = data_handler.get_question(question_id, all_questions)
@@ -131,16 +145,24 @@ def delete_answer(answer_id):
 
 @app.route('/search-for-questions', methods=['GET', 'POST'])
 def search_for_questions():
-    question_database = data_handler.get_questions()
+
+    q_query = """SELECT * FROM question
+    """
+    question_database = data_handler.execute_query(q_query)
+    a_query = """SELECT * FROM answer
+    """
+    answer_database = data_handler.execute_query(a_query)
+
     keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
-    questions_containing_keywords = []
-    for question in question_database:
-        if any(keyword in question['title'] for keyword in keywords) or any(keyword in question['message'] for keyword in keywords):
-            questions_containing_keywords.append(question)
+    answer_related_question_id = util.get_answer_related_question_ids(keywords, answer_database, 'message')
+    questions_containing_keywords = util.search_keywords_in_attribute(keywords,
+                                                                      answer_related_question_id,
+                                                                      question_database,
+                                                                      'title',
+                                                                      'message')
 
     return render_template('search_for_keywords_in_questions.html',
-                           keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords,
-                           convert_to_readable_date=util.convert_to_readable_date)
+                           keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords)
 
 
 @app.route("/upload", methods=["POST"])

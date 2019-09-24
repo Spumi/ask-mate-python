@@ -35,7 +35,7 @@
                 </td>
                 {% for key, width, align in keys %}
                     {% if key == 'submission_time' %}
-                        <td align={{align}} width={{width}}>{{ convert_to_readable_date(question.get(key)) }}</td>
+                        <td align={{align}} width={{width}}>{{ question.get(key) }}</td>
                     {% elif key == 'image' %}
                         <td align={{align}} width={{width}}>
                             {% if question.get(key) != "" %}
@@ -110,7 +110,7 @@
                 </td>
                 {% for key, width, align in answer_keys %}
                     {% if key == 'submission_time' %}
-                        <td align={{align}} width={{width}}>{{ convert_to_readable_date(answer.get(key)) }}</td>
+                        <td align={{align}} width={{width}}>{{ answer.get(key) }}</td>
                     {% elif key == 'image' %}
                         <td align={{align}} width={{width}}>
                             {% if answer.get(key) != "" %}
