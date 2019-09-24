@@ -119,6 +119,11 @@ def handle_add_question(req):
     data_handler.add_entry(question)
 
 
+def handle_edit_question(req):
+    handle_upload(req)
+    data_handler.update_record(req, is_answer=False)
+
+
 def get_answer_related_question_ids(keywords, answer_database, attribute):
     """
     Search keywords in database using attribute as a key. If it founds a keyword
