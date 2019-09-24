@@ -146,20 +146,34 @@ def delete_answer(answer_id):
 @app.route('/search-for-questions', methods=['GET', 'POST'])
 def search_for_questions():
 
-    q_query = """SELECT * FROM question
+    question_query = """SELECT * FROM question
     """
-    question_database = data_handler.execute_query(q_query)
-    a_query = """SELECT * FROM answer
+    question_database = data_handler.execute_query(question_query)
+    answer_query = """SELECT * FROM answer
     """
-    answer_database = data_handler.execute_query(a_query)
-
+    answer_database = data_handler.execute_query(answer_query)
+    print(answer_database)
     keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
-    answer_related_question_id = util.get_answer_related_question_ids(keywords, answer_database, 'message')
+
+    def check_keywords_in_answers(keywords):
+        string = f'\'%{keywords[0]}%\''
+        for keyword in keywords[1:]:
+            string += f' OR message LIKE \'%{keyword}%\''
+        return string
+
+
+    answer_related_question_id_query = """SELECT id FROM answer WHERE message LIKE {string}
+    """.format(string=check_keywords_in_answers(keywords))
+
+    answer_related_question_id = data_handler.execute_query(answer_related_question_id_query)
+    print(answer_related_question_id)
+    #answer_related_question_id = util.get_answer_related_question_ids(keywords, answer_database, 'message')
     questions_containing_keywords = util.search_keywords_in_attribute(keywords,
                                                                       answer_related_question_id,
                                                                       question_database,
                                                                       'title',
                                                                       'message')
+    print(questions_containing_keywords)
 
     return render_template('search_for_keywords_in_questions.html',
                            keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords)
