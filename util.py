@@ -119,38 +119,8 @@ def handle_add_question(req):
     data_handler.add_entry(question)
 
 
-def get_answer_related_question_ids(keywords, answer_database, attribute):
-    """
-    Search keywords in database using attribute as a key. If it founds a keyword
-    in the attribute, then its related question id is stored.
-    :param keywords: list
-    :param answer_database: list of dictionaries
-    :param attribute: string
-    :return: list of item related question ids
-    """
-    answer_related_question_ids = []
-    for answer in answer_database:
-        if any(keyword in answer[attribute] for keyword in keywords):
-            answer_related_question_ids.append(answer['question_id'])
-    return answer_related_question_ids
-
-
-def search_keywords_in_attribute(keywords, id_s, database, attribute_1, attribute_2=None):
-    """
-    Search keywords in table using attribute_1 and/or attribute_2 as key(s).
-    Search id in id_s in order to find and append other database related items.
-    :param keywords: list
-    :param id_s: list
-    :param database: list of dictionaries
-    :param attribute_1: string
-    :param attribute_2: string
-    :return: list of items containing keywords
-    """
-    items_containing_keywords = []
-    for item in database:
-        if any(keyword in item[attribute_1] for keyword in keywords) or \
-                any(keyword in item[attribute_2] for keyword in keywords):
-            items_containing_keywords.append(item)
-        elif item['id'] in id_s:
-            items_containing_keywords.append(item)
-    return items_containing_keywords
+def create_check_keywords_in_database_string(keywords, database, attribute):
+    string = f'\'%{keywords[0]}%\''
+    for keyword in keywords[1:]:
+        string += f' OR {database}.{attribute} LIKE \'%{keyword}%\''
+    return string

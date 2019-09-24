@@ -3,7 +3,7 @@ import time
 from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 import util
-from util import handle_delete_question, handle_add_answer, handle_add_question
+from util import handle_delete_question, handle_add_answer, handle_add_question, create_check_keywords_in_database_string
 
 
 app = Flask(__name__)
@@ -145,63 +145,16 @@ def delete_answer(answer_id):
 
 @app.route('/search-for-questions', methods=['GET', 'POST'])
 def search_for_questions():
-
     keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
-
-    def create_check_keywords_in_database_string(keywords, database):
-        string = f'\'%{keywords[0]}%\''
-        for keyword in keywords[1:]:
-            string += f' OR {database}.message LIKE \'%{keyword}%\''
-        return string
-
-
-
-    # Get the question ids from the answer database where keywords were found
-    answer_related_question_id_query = """SELECT question_id FROM answer WHERE message LIKE {string}
-    """.format(string=create_check_keywords_in_database_string(keywords, 'answer'))
-    print(data_handler.execute_query(answer_related_question_id_query))
-
-    def change_list_of_dict_to_tuple():
-    # Changes list to tuple. Tuple is needed for SQL VALUE(,,,) format
-        answer_related_question_ids = data_handler.execute_query(answer_related_question_id_query)
-        answer_id_sql_format = []
-        for question_id in answer_related_question_ids[:-1]:
-            answer_id_sql_format.append(question_id.get('question_id'))
-        answer_related_question_id_sql_format = tuple(answer_id_sql_format)
-        return answer_related_question_id_sql_format
-
-    answer_related_question_id_sql_format = change_list_of_dict_to_tuple()
-    def check_question_id_in_answer_ids(answer_related_question_id_sql_format):
-        if answer_related_question_id_sql_format != ():
-            string_2 = f' OR (question.id IN {answer_related_question_id_sql_format})'
-        else:
-            string_2 = ''
-        return string_2
-
-
     questions_containing_keywords_query = """SELECT DISTINCT question.* FROM question
                                              JOIN answer ON question.id = answer.question_id
                                              WHERE (question.title LIKE {string_1})
-                                             OR (question.message LIKE {string_1}) {string_2}
-    """.format(string_1=create_check_keywords_in_database_string(keywords, 'answer'),
-               string_2=check_question_id_in_answer_ids(answer_related_question_id_sql_format))
-    print(questions_containing_keywords_query)
+                                             OR (question.message LIKE {string_2}) 
+                                             OR (answer.message LIKE {string_3})
+    """.format(string_1=create_check_keywords_in_database_string(keywords, 'question', 'title'),
+               string_2=create_check_keywords_in_database_string(keywords, 'question', 'message'),
+               string_3=create_check_keywords_in_database_string(keywords, 'answer', 'message'))
     questions_containing_keywords = data_handler.execute_query(questions_containing_keywords_query)
-
-
-    # question_query = """SELECT * FROM question
-    # """
-    # question_database = data_handler.execute_query(question_query)
-    # answer_query = """SELECT * FROM answer
-    # """
-    # answer_database = data_handler.execute_query(answer_query)
-    # print(answer_database)
-    # questions_containing_keywords = util.search_keywords_in_attribute(keywords,
-    #                                                                   answer_related_question_id,
-    #                                                                   question_database,
-    #                                                                   'title',
-    #                                                                   'message')
-    # print(questions_containing_keywords)
 
     return render_template('search_for_keywords_in_questions.html',
                            keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords)
