@@ -124,7 +124,7 @@ def delete_answer(answer_id):
         if request.form.get('delete') == 'Yes':
             delete = True
         question_id = data_handler.delete_record(answer_id, True, delete=delete)
-        return redirect('/question/' + question_id)
+        return redirect('/question/' + str(question_id))
     else:
         return render_template('asking_if_delete_answer.html', answer_id=answer_id)
 
