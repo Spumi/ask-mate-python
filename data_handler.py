@@ -41,10 +41,12 @@ def add_entry(entry, is_answer=False):
     print(query)
     execute_query(query)
 
-def get_question(question_id, question_database):
-    for question_data in question_database:
-        if question_data['id'] == question_id:
-            return question_data
+
+def get_question(question_id):
+    question_query = f"""SELECT * FROM question
+                         WHERE id={int(question_id)};"""
+    question_data = execute_query(question_query)
+    return question_data
 
 
 def get_answer(answer_id, answer_database):
