@@ -55,16 +55,11 @@ def add_answer(question_id):
 
 @app.route('/question/<question_id>')
 def question_display(question_id):
-    question_query = f"""SELECT * FROM question
-                     WHERE id={question_id};"""
-
-    answers_query = f"""SELECT * FROM answer
-                    WHERE question_id={question_id};"""
-
-    question = data_handler.execute_query(question_query)
-    related_answers = data_handler.execute_query(answers_query)
+    question = data_handler.get_question(question_id)
+    related_answers = data_handler.get_question_related_answers(question_id)
 
     return render_template('display_question.html', question=question.pop(), answers=related_answers)
+
 
 @app.route("/question/<question_id>/vote-up")
 def vote_up_question(question_id):
