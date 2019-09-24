@@ -184,6 +184,7 @@ def comment_question(id):
     if request.method == 'POST':
         req = request.form.to_dict()
         handle_add_comment(req)
+        return redirect(url_for("question_display", question_id=id))
     return render_template("add-comment.html", qid=id, type=comment_type)
 
 
