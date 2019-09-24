@@ -77,13 +77,19 @@ def update_questions(question_id, updated_data):
 
 def delete_record(id, answer=False, delete=False):
     if answer:
-        answers = get_answers()
-        for i, answer in enumerate(answers):
-            question_id = answer['question_id']
-            if answer['id'] == id and delete:
-                del answers[i]
-                save_answers(answers)
-            return question_id
+        question_id_query = f"""SELECT question_id FROM answer
+                                WHERE id={id};"""
+        delete_answer_query = f"""DELETE FROM answer
+                                  WHERE id={id};"""
+        delete_comment_query = f"""DELETE FROM comment
+                                  WHERE answer_id={id};"""
+        question_id = execute_query(question_id_query)[0]['question_id']
+
+        if delete:
+            execute_query(delete_comment_query)
+            execute_query(delete_answer_query)
+
+        return question_id
 
 
 @connection.connection_handler
