@@ -8,7 +8,7 @@
     <div align="center">
         <h1>{{"Edit question" if question else "Ask your Question" }}</h1>
         <br>
-        <form action="/{{ question.id + '/edit' if question else 'add-question' }}" method="post" enctype="multipart/form-data">
+        <form action="/{{ question.id|string + '/edit' if question else 'add-question' }}" method="post" enctype="multipart/form-data">
             <label for="title"><b>Question title:<b></b></label>
             <br/>
             <input type="text" id="title" name="title" size="40" value="{{ question.title  if question else ""}}">
