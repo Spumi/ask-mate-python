@@ -1,5 +1,5 @@
 import os
-import time
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 import util
@@ -115,13 +115,15 @@ def edit_question(question_id):
 
     if request.method == 'POST':
         edited_question_data = request.form.to_dict()
-        edited_question_data['submission_time'] = str(int(time.time()))
-        question = data_handler.update_questions(question_id, edited_question_data)
-        related_answers = data_handler.get_question_related_answers(question_id, data_handler.get_answers())
+        edited_question_data['id'] = int(edited_question_data['id'])
+        edited_question_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        util.handle_edit_question(edited_question_data)
+        question = data_handler.get_question(question_id)[0]
+        related_answers = data_handler.get_question_related_answers(question_id)
+
         return render_template('display_question.html', question=question, answers=related_answers)
 
-    all_questions = data_handler.get_questions()
-    question = data_handler.get_question(question_id, all_questions)
+    question = data_handler.get_question(question_id)[0]
 
     return render_template('edit-question.html', question=question)
 
