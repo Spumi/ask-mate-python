@@ -62,16 +62,28 @@ def get_question_related_answers(question_id):
     return answers_of_question
 
 
-def update_questions(question_id, updated_data):
-    all_questions = get_questions()
-    question = get_question(question_id, all_questions)
-    question_index = all_questions.index(question)
+def update_record(record, is_answer=False):
+    table = "answer"
+    record = escape_single_quotes(record)
+    id_ = record['id']
+    if not is_answer:
+        table = "question"
+        query = f"""UPDATE {table}
+                    SET submission_time={"'" + record['submission_time'] + "'"},
+                        title={"'" + record['title'] + "'"},
+                        message={"'" + record['message'] + "'"},
+                        image={"'" + record['image'] + "'"}
+                    WHERE id={id_};
+                    """
+    else:
+        query = f"""UPDATE {table}
+            SET submission_time={"'" + record['submission_time'] + "'"},
+                message={"'" + record['title'] + "'"},
+                image={"'" + record['image'] + "'"}
+            WHERE id={id_};
+            """
 
-    for key, value in updated_data.items():
-        question[key] = value
-    all_questions[question_index] = question
-    save_questions(all_questions)
-    return question
+    execute_query(query)
 
 
 def delete_record(id, answer=False, delete=False):
