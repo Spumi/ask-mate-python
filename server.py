@@ -154,10 +154,10 @@ def delete_answer(answer_id):
 def search_for_questions():
     keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
     questions_containing_keywords_query = """SELECT DISTINCT question.* FROM question
-                                             JOIN answer ON question.id = answer.question_id
-                                             WHERE (question.title LIKE {string_1})
-                                             OR (question.message LIKE {string_2}) 
-                                             OR (answer.message LIKE {string_3})
+                                             LEFT JOIN answer ON question.id = answer.question_id
+                                             WHERE (question.title ILIKE {string_1})
+                                             OR (question.message ILIKE {string_2}) 
+                                             OR (answer.message ILIKE {string_3})
     """.format(string_1=create_check_keywords_in_database_string(keywords, 'question', 'title'),
                string_2=create_check_keywords_in_database_string(keywords, 'question', 'message'),
                string_3=create_check_keywords_in_database_string(keywords, 'answer', 'message'))
@@ -179,13 +179,16 @@ def upload_image():
 @app.route("/answer/<id>/new-comment", methods=["GET", "POST"])
 def comment_question(id):
     comment_type = "question"
+    question_id = id
     if "answer" in str(request.url_rule):
         comment_type = "answer"
-
+        question_id = util.get_related_question_id(id)
+        print(question_id)
     if request.method == 'POST':
         req = request.form.to_dict()
         handle_add_comment(req)
-        return redirect(url_for("question_display", question_id=id))
+        # return redirect(url_for("question_display", question_id=question_id))
+        return redirect("/question/" + str(question_id))
     return render_template("add-comment.html", qid=id, type=comment_type)
 
 
