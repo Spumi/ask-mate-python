@@ -109,6 +109,7 @@
                 <td>
                     <form action="/comments/{{ comment["id"] }}/edit" method="get">
                         <input type="hidden" name="qid" value="{{ comment["question_id"] }}">
+                        <input type="hidden" name="message" value="{{ comment["message"] }}">
                         <input type="submit" value="Edit">
                     </form>
                 </td>
@@ -199,6 +200,7 @@
                             <td>
                                 <form action="/comments/{{ comment["id"] }}/edit" method="get">
                                     <input type="hidden" name="qid" value="{{ question["id"] }}">
+                                    <input type="hidden" name="message" value="{{ comment["message"] }}">
                                     <input type="submit" value="Edit">
                                 </form>
 
