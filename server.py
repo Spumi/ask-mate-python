@@ -178,13 +178,16 @@ def upload_image():
 @app.route("/answer/<id>/new-comment", methods=["GET", "POST"])
 def comment_question(id):
     comment_type = "question"
+    question_id = id
     if "answer" in str(request.url_rule):
         comment_type = "answer"
-
+        question_id = util.get_related_question_id(id)
+        print(question_id)
     if request.method == 'POST':
         req = request.form.to_dict()
         handle_add_comment(req)
-        return redirect(url_for("question_display", question_id=id))
+        # return redirect(url_for("question_display", question_id=question_id))
+        return redirect("/question/" + str(question_id))
     return render_template("add-comment.html", qid=id, type=comment_type)
 
 
