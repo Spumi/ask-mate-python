@@ -92,7 +92,11 @@
                     {% for key in comment.keys() %}
                       {% if "id" not in key %}
                         <td>
-                            {{ comment[key] }}
+                            {% if key != "edited_count" %}
+                                {{ comment[key] }}
+                            {% else %}
+                                {{ comment[key] if comment[key] else "0"}}
+                            {% endif %}
                         </td>
                         {% endif %}
                     {% endfor %}

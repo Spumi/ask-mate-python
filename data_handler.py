@@ -139,7 +139,7 @@ def escape_single_quotes(dictionary):
 def get_comments(comment_tpe, _id):
     comment_tpe += "_id"
     query = """SELECT message, submission_time, edited_count, comment.question_id, comment.answer_id, comment.id  FROM comment
-    WHERE {col} = {id} 
+    WHERE {col} = {id} ORDER BY submission_time DESC 
     """.format(col=comment_tpe, id=_id)
     #qid aid
     return execute_query(query)
@@ -147,7 +147,8 @@ def get_comments(comment_tpe, _id):
 
 def handle_edit_comment(id, msg):
     query = """UPDATE comment 
-    SET message = {msg}
+    SET message = {msg},
+     edited_count = COALESCE (edited_count, 0) +1 
     WHERE id = {id}
     """.format(id=id,msg=("'" + msg["message"].replace("'", "''")) + "'")
     execute_query(query)

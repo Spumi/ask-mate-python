@@ -178,7 +178,7 @@ def string_builder(lst, is_key=True):
 
 
 def get_related_question_id(id):
-    query = """SELECT answer.question_id, comment.question_id FROM  answer JOIN comment ON comment.answer_id = answer.id
+    query = """SELECT answer.question_id FROM  answer JOIN comment ON comment.answer_id = answer.id
     WHERE answer.id = {id}
     """.format(id=id)
     print(query)
