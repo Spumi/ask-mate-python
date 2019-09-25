@@ -153,10 +153,10 @@ def delete_answer(answer_id):
 def search_for_questions():
     keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
     questions_containing_keywords_query = """SELECT DISTINCT question.* FROM question
-                                             JOIN answer ON question.id = answer.question_id
-                                             WHERE (question.title LIKE {string_1})
-                                             OR (question.message LIKE {string_2}) 
-                                             OR (answer.message LIKE {string_3})
+                                             LEFT JOIN answer ON question.id = answer.question_id
+                                             WHERE (question.title ILIKE {string_1})
+                                             OR (question.message ILIKE {string_2}) 
+                                             OR (answer.message ILIKE {string_3})
     """.format(string_1=create_check_keywords_in_database_string(keywords, 'question', 'title'),
                string_2=create_check_keywords_in_database_string(keywords, 'question', 'message'),
                string_3=create_check_keywords_in_database_string(keywords, 'answer', 'message'))
