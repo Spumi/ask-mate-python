@@ -202,7 +202,7 @@ def comment_question(id):
     return render_template("add-comment.html", qid=id, type=comment_type)
 
 
-@app.route('/answer/<answer_id>', methods=["GET", "POST"])
+@app.route('/answer/<answer_id>/edit', methods=["GET", "POST"])
 def edit_answer(answer_id):
 
     if request.method == 'POST':
