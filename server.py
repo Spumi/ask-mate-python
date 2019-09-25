@@ -210,6 +210,7 @@ def edit_answer(answer_id):
 def edit_comment(id):
     comment_type = "question"
     ref_question_id = request.args.get('qid')
+    message =request.args.get("message")
     if "answer" in str(request.url_rule):
         comment_type = "answer"
 #        question_id = util.get_related_question_id(id)
@@ -220,7 +221,7 @@ def edit_comment(id):
         handle_edit_comment(id,req)
         return redirect("/question/" + str(question_id))
 
-    return render_template("add-comment.html", qid=id, type=comment_type, message="asd", question_id = ref_question_id)
+    return render_template("add-comment.html", qid=id, type=comment_type, message=message, question_id = ref_question_id)
 
 
 @app.route("/comments/<comment_id>/delete", methods=["GET"])
