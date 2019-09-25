@@ -5,7 +5,7 @@ import data_handler
 import util
 from util import handle_delete_question, handle_add_answer, handle_add_question, create_check_keywords_in_database_string
 
-from util import handle_add_answer, handle_add_question
+from util import handle_add_answer, handle_add_question,  get_question_related_tags
 from data_handler import handle_add_comment
 import ast
 
@@ -61,12 +61,14 @@ def question_display(question_id):
     question = data_handler.get_question(question_id)
     related_answers = data_handler.get_question_related_answers(question_id)
     question_comments = data_handler.get_comments("question", question_id)
+    question_related_tags = get_question_related_tags(question_id)
 
     return render_template('display_question.html',
                            question=question.pop(),
                            question_comments=question_comments,
                            answers=related_answers,
-                           get_comments=data_handler.get_comments)
+                           get_comments=data_handler.get_comments,
+                           question_related_tags=question_related_tags)
 
 
 @app.route("/question/<question_id>/vote-up")
@@ -200,33 +202,48 @@ def tag_question(id):
 
     if request.method == 'POST':
 
-        # When chosen from existing tags
+        # If the user chooses a tag from the existing tags
         if request.form.get('selected_tag_name'):
             selected_tag = ast.literal_eval(request.form.to_dict('selected_tag_name')['selected_tag_name']) # data of selected tag
             selected_tag_id = selected_tag['id']
-            print(selected_tag_id)
+
             # Add new tag id and related question id to question_tag database
-            q = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag 
-                WHERE question_id = {q_id} AND tag_id = {t_id}""".format(q_id=id, t_id=selected_tag_id))
-            print(q)
-            if q == []:
+            form = 'select existing tag'
+            get_quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag 
+                WHERE question_id = {q_id} AND tag_id = {t_id}""".format(q_id=id, t_id=selected_tag_id)) # Check in question_tag database whether there is a tag to the current question and get the ids
+            if get_quest_tag_id_combination == []:
                 data_handler.execute_query("""INSERT INTO question_tag (question_id, tag_id) 
                 VALUES({q_id}, {t_id})""".format(q_id=id, t_id=selected_tag_id))
 
-        # When the user entered
-        new_tag_id = data_handler.execute_query("""SELECT MAX(id) FROM tag""")[0]['max'] + 1
-        print(request.form.get('add_new_tag'))
-        new_tag_name = '\'' + request.form.get('add_new_tag') + '\''
-        print(new_tag_name)
-        q = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag
-            WHERE question_id = {q_id} AND tag_id = (SELECT id FROM tag 
-                                                    WHERE name = {t_name})""".format(q_id=id, t_name=new_tag_name))
-        if q == []:
-            data_handler.execute_query("""INSERT INTO tag (id, name) VALUES({new_tag_id}, {new_tag_name})"""
-                                       .format(new_tag_id=new_tag_id, new_tag_name=new_tag_name))
+        # When the user enter a tag
+        elif request.form.get('add_new_tag'):
+            new_tag_id = data_handler.execute_query("""SELECT MAX(id) FROM tag""")[0]['max'] + 1
+            new_tag_name = '\'' + request.form.get('add_new_tag') + '\'' # ' is needed for the SQL query
 
-            data_handler.execute_query("""INSERT INTO question_tag (question_id, tag_id) 
-            VALUES({q_id}, {t_id})""".format(q_id=id, t_id=new_tag_id))
+            get_quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag
+                WHERE question_id = {q_id} AND tag_id = (SELECT id FROM tag 
+                                                        WHERE name = {t_name})""".format(q_id=id, t_name=new_tag_name))
+            if get_quest_tag_id_combination == []:
+                data_handler.execute_query("""INSERT INTO tag (id, name) VALUES({new_tag_id}, {new_tag_name})"""
+                                           .format(new_tag_id=new_tag_id, new_tag_name=new_tag_name))
+
+                data_handler.execute_query("""INSERT INTO question_tag (question_id, tag_id) 
+                VALUES({q_id}, {t_id})""".format(q_id=id, t_id=new_tag_id))
+
+## REFACTOR
+# def get_quest_tag_id_combination(form, selected_tag_id):
+#     if form == 'select existing tag':
+#         selected_tag_id =
+#
+#     else:
+#     quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag
+#         WHERE question_id = {q_id} AND tag_id =
+#     if get_quest_tag_id_combination == []:
+#         data_handler.execute_query("""INSERT INTO tag (id, name) VALUES({new_tag_id}, {new_tag_name})"""
+#                                    .format(new_tag_id=new_tag_id, new_tag_name=new_tag_name))
+#
+#     return quest_tag_id_combination
+
 
         return redirect("/question/" + id)
 
