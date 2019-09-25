@@ -51,10 +51,11 @@ def get_question(question_id):
     return question_data
 
 
-def get_answer(answer_id, answer_database):
-    for answer_data in answer_database:
-        if answer_data['id'] == answer_id:
-            return answer_data
+def get_answer(answer_id):
+    answer_query = f"""SELECT * FROM answer
+                       WHERE id={int(answer_id)}"""
+    answer_data = execute_query(answer_query)
+    return answer_data
 
 
 def get_question_related_answers(question_id):
