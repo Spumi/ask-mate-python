@@ -90,6 +90,7 @@ def vote_answer():
         question_id = req['question_id']
         return redirect("/question/" + question_id)
 
+
 @app.route('/question/<question_id>/delete', methods=['GET', 'POST'])
 def delete_question(question_id):
     if request.method == 'POST':

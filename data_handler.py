@@ -82,7 +82,7 @@ def update_record(record, is_answer=False):
     else:
         query = f"""UPDATE {table}
             SET submission_time={"'" + record['submission_time'] + "'"},
-                message={"'" + record['title'] + "'"},
+                message={"'" + record['message'] + "'"},
                 image={"'" + record['image'] + "'"}
             WHERE id={id_};
             """
