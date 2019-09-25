@@ -3,10 +3,10 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 import util
-from util import handle_delete_question, handle_add_answer, handle_add_question, create_check_keywords_in_database_string
+from util import create_check_keywords_in_database_string
 
 from util import handle_add_answer, handle_add_question
-from data_handler import handle_add_comment
+from data_handler import handle_add_comment, handle_edit_comment
 
 app = Flask(__name__)
 app.debug = True
@@ -191,6 +191,23 @@ def comment_question(id):
         return redirect("/question/" + str(question_id))
     return render_template("add-comment.html", qid=id, type=comment_type)
 
+
+@app.route("/comments/<id>/edit", methods=["GET", "POST"])
+def edit_comment(id):
+    comment_type = "question"
+    ref_question_id = request.args.get('qid')
+    if "answer" in str(request.url_rule):
+        comment_type = "answer"
+        question_id = util.get_related_question_id(id)
+        print(question_id)
+    if request.method == 'POST':
+        req = request.form.to_dict()
+        question_id = req["qid"]
+        del req["qid"]
+        handle_edit_comment(id,req)
+        return redirect("/question/" + str(question_id))
+
+    return render_template("add-comment.html", qid=id, type=comment_type, message="asd", question_id = ref_question_id)
 
 if __name__ == '__main__':
     app.run(debug=True)
