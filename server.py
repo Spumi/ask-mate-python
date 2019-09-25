@@ -208,6 +208,18 @@ def edit_comment(id):
 
     return render_template("add-comment.html", qid=id, type=comment_type, message="asd", question_id = ref_question_id)
 
+
+@app.route("/comments/<comment_id>/delete", methods=["GET"])
+def delete_comment(comment_id):
+    question_id = request.args.get("qid")
+    query = """DELETE FROM comment WHERE id = {comment_id}
+    """.format(comment_id=comment_id)
+    data_handler.execute_query(query)
+    return redirect("/question/" + str(question_id))
+
+    return query
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
