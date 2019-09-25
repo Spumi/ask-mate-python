@@ -25,24 +25,32 @@
             </form>
             </p>
         </div>
-
         {% set fieldnames = ['title', 'message', 'image', 'vote_number', 'view_number', 'submission_time'] %}
-        <p>
-            <label for="attribute-selector">Sort questions by: </label>
-            <form action="/list" method="get">
-                    <select id="attribute-selector" name="order_by">
-                        {% for header in fieldnames %}
-                            <option value="{{ header }}" {{ 'selected' if header == order_by}}>{{ header|capitalize|replace('_',' ') }}</option>
-                        {% endfor %}
-                    </select>
-                    <select id="order-direction-selector" name="order_direction">
-                        {% for order in ['asc', 'desc'] %}
-                            <option value="{{ order }}" {{ 'selected' if order == order_direction }}>{{ 'Ascending order' if order == 'asc' else 'Descending order' }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="submit" value="Sort">
+
+        {% if is_main %}
+            <h2>The most recent 5 questions</h2>
+            <form action={{"/list"}}>
+                <input type="submit" value="Click to view and sort all questions">
             </form>
-        </p>
+        {% else %}
+
+            <p>
+                <label for="attribute-selector">Sort questions by: </label>
+                <form action="/list" method="get">
+                        <select id="attribute-selector" name="order_by">
+                            {% for header in fieldnames %}
+                                <option value="{{ header }}" {{ 'selected' if header == order_by}}>{{ header|capitalize|replace('_',' ') }}</option>
+                            {% endfor %}
+                        </select>
+                        <select id="order-direction-selector" name="order_direction">
+                            {% for order in ['asc', 'desc'] %}
+                                <option value="{{ order }}" {{ 'selected' if order == order_direction }}>{{ 'Ascending order' if order == 'asc' else 'Descending order' }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value="Sort">
+                </form>
+            </p>
+        {% endif %}
 
         <table style="width: 90%">
             <tr>

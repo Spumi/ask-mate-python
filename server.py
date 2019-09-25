@@ -11,6 +11,7 @@ from data_handler import handle_add_comment, handle_edit_comment
 app = Flask(__name__)
 app.debug = True
 
+
 @app.route('/')
 @app.route('/list')
 @app.route('/?order_by=<order_by>&order_direction=<order_direction>', methods=['GET', 'POST'])
@@ -30,7 +31,8 @@ def list_questions():
         return render_template('list.html',
                                sorted_questions=questions,
                                order_by='submission_time',
-                               order_direction="DESC")
+                               order_direction="DESC",
+                               is_main=True)
 
     else:
         order_direction = False if request.args.get('order_direction') == 'asc' else True
@@ -43,7 +45,8 @@ def list_questions():
         return render_template('list.html',
                                sorted_questions=questions,
                                order_by=order_by,
-                               order_direction=order_direction)
+                               order_direction=order_direction,
+                               is_main=False)
 
 
 @app.route('/add-question', methods=["GET", "POST"])
