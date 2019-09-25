@@ -102,6 +102,7 @@
                     {% endfor %}
                     <td>
                         <form action="/comments/{{ comment["id"] }}/delete" method="get">
+                            <input type="hidden" name="qid" value="{{ comment["question_id"] }}">
                             <input type="submit" value="Delete">
                         </form>
                     </td>
