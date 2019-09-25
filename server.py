@@ -125,14 +125,9 @@ def edit_question(question_id):
         edited_question_data = request.form.to_dict()
         edited_question_data['id'] = int(edited_question_data['id'])
         edited_question_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        util.handle_edit_question(edited_question_data)
-        question = data_handler.get_question(question_id)[0]
-        related_answers = data_handler.get_question_related_answers(question_id)
+        util.handle_edit_entry(edited_question_data)
 
-        return render_template('display_question.html',
-                               question=question,
-                               answers=related_answers,
-                               get_comments=data_handler.get_comments)
+        return redirect("/question/" + str(question_id))
 
     question = data_handler.get_question(question_id)[0]
 
