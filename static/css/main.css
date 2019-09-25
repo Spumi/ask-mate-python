@@ -56,6 +56,18 @@
     text-align: center;
 }
 
+.question_title{
+    margin-top: 25px;
+    text-align: center;
+    width: 79%;
+    text-align: center;
+    background-color: aquamarine;
+    margin-left: 11.2%;
+    border-top: 1px solid;
+    border-top-left-radius: 75px;
+    border-top-right-radius: 75px;
+}
+
 /*td{*/
 /*    border: 1px solid black;*/
 /*}*/
