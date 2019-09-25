@@ -199,7 +199,6 @@ def edit_comment(id):
     if "answer" in str(request.url_rule):
         comment_type = "answer"
         question_id = util.get_related_question_id(id)
-        print(question_id)
     if request.method == 'POST':
         req = request.form.to_dict()
         question_id = req["qid"]
