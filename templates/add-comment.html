@@ -8,13 +8,17 @@
     <div align="center">
         <h1>Comment</h1>
         <br>
-        <form action="/{{ 'question' if type=='question' else 'answer' }}/{{qid}}/new-comment" method="post" enctype="multipart/form-data">
+        <form action="/{{ "comments" if message else ('question' if type=='question' else 'answer') }}/{{qid}}/{{  "new-comment" if not message else "edit" }}" method="post" enctype="multipart/form-data">
             <input type="hidden" name="{{ 'question_id' if type=='question' else 'answer_id' }}" value="{{qid}}">
             <br/>
             <br/>
-            <textarea name="message" rows="4" cols="50"></textarea>
+            <textarea name="message" rows="4" cols="50">{{ message if message else "" }}</textarea>
             <br/>
+            {% if question_id %}
+            <input type="hidden" name="qid", value="{{ question_id }}">
+            {% endif %}
             <input type="submit" value="Upload"/>
+{#            {{ "<input type=\"hidden\"  name=\"ref\" value=\"{{ ref }} n\">" if message else ""}}#}
         </form>
     </div>
 </body>

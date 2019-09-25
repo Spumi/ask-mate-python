@@ -35,7 +35,7 @@ def add_entry(entry, is_answer=False):
     if not is_answer:
         table = "question"
 
-    entry = escape_single_quotes(entry)
+    # entry = escape_single_quotes(entry)
     query = """INSERT INTO {table}
     ({columns}) VALUES ({values});
     """.format(columns=string_builder(entry.keys()),
@@ -139,8 +139,17 @@ def escape_single_quotes(dictionary):
 
 def get_comments(comment_tpe, _id):
     comment_tpe += "_id"
-    query = """SELECT message, submission_time, edited_count  FROM comment
-    WHERE {col} = {id} 
+    query = """SELECT message, submission_time, edited_count, comment.question_id, comment.answer_id, comment.id  FROM comment
+    WHERE {col} = {id} ORDER BY submission_time DESC 
     """.format(col=comment_tpe, id=_id)
     #qid aid
     return execute_query(query)
+
+
+def handle_edit_comment(id, msg):
+    query = """UPDATE comment 
+    SET message = {msg},
+     edited_count = COALESCE (edited_count, 0) +1 
+    WHERE id = {id}
+    """.format(id=id,msg=("'" + msg["message"].replace("'", "''")) + "'")
+    execute_query(query)

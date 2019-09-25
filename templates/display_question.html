@@ -78,20 +78,39 @@
         <tr align="center" >
                 {% if question_comments | length > 0 %}
                     {% for title in question_comments[0].keys() %}
+                        {% if "id" not in title %}
                         <th>
                         {{ title }}
                         </th>
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
         </tr>
         <tr>
             {%  for comment in question_comments %}
                 <tr>
-                    {% for value in comment.values() %}
+                    {% for key in comment.keys() %}
+                      {% if "id" not in key %}
                         <td>
-                            {{ value }}
+                            {% if key != "edited_count" %}
+                                {{ comment[key] }}
+                            {% else %}
+                                {{ comment[key] if comment[key] else "0"}}
+                            {% endif %}
                         </td>
+                        {% endif %}
                     {% endfor %}
+                    <td>
+                        <form action="/comments/{{ comment["id"] }}/delete" method="get">
+                            <input type="submit" value="Delete">
+                        </form>
+                    </td>
+                <td>
+                    <form action="/comments/{{ comment["id"] }}/edit" method="get">
+                        <input type="hidden" name="qid" value="{{ comment["question_id"] }}">
+                        <input type="submit" value="Edit">
+                    </form>
+                </td>
                 </tr>
             {% endfor %}
         </tr>
@@ -152,7 +171,14 @@
                 {%  endfor %}
                 <td>
                     <form action={{"/answer/"}}{{answer.id}}{{"/delete"}}>
+                        <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
                         <input type="submit" value="Delete">
+                    </form>
+                </td>
+                <td>
+                    <form action={{"/answer/"}}{{answer.id}}{{"/new-comment"}}>
+                        <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
+                        <input type="submit" value="comment">
                     </form>
                 </td>
                 </tr>
@@ -162,6 +188,19 @@
                             <td></td>
                             <td colspan="4">
                             {{ comment["message"] }}
+                            </td>
+                            <td>
+                                <form action="/comments/{{ comment["id"] }}/delete" method="get">
+                                    <input type="hidden" name="qid" value="{{ question["id"] }}">
+                                    <input type="submit" value="Delete">
+                                </form>
+                            </td>
+                            <td>
+                                <form action="/comments/{{ comment["id"] }}/edit" method="get">
+                                    <input type="hidden" name="qid" value="{{ question["id"] }}">
+                                    <input type="submit" value="Edit">
+                                </form>
+
                             </td>
                         </tr>
                         {% endfor %}
