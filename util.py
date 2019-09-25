@@ -162,3 +162,13 @@ def string_builder(lst, is_key=True):
         else:
             result += "\'" + element + "\', "
     return result[:-2]
+
+
+def get_related_question_id(id):
+    query = """SELECT answer.question_id FROM  answer JOIN comment ON comment.answer_id = answer.id
+    WHERE answer.id = {id}
+    """.format(id=id)
+    print(query)
+    result = data_handler.execute_query(query)
+    print(result)
+    return result.pop()["question_id"]

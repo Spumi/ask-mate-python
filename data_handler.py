@@ -40,7 +40,6 @@ def add_entry(entry, is_answer=False):
     """.format(columns=string_builder(entry.keys()),
                values=string_builder(entry.values(), False),
                table=table)
-    print(query)
     execute_query(query)
 
 def get_question(question_id, question_database):
@@ -120,5 +119,5 @@ def get_comments(comment_tpe, _id):
     query = """SELECT message, submission_time, edited_count  FROM comment
     WHERE {col} = {id} 
     """.format(col=comment_tpe, id=_id)
-    print(query)
+    #qid aid
     return execute_query(query)
