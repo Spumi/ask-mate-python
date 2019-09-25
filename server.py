@@ -192,6 +192,21 @@ def comment_question(id):
     return render_template("add-comment.html", qid=id, type=comment_type)
 
 
+@app.route("/question/<id>/new-tag", methods=["GET", "POST"])
+def tag_question(id):
+    MAX_ID = 0
+    new_tag_id = data_handler.execute_query("""SELECT MAX(id) FROM tag""")[0]['max'] + 1
+
+    # Add new tag id and related question id to question_tag database
+    ids_for_question_tag_database = """INSERT INTO question_tag (question_id, tag_id) VALUES ({question_id}, {tag_id})
+    """.format(question_id=id, tag_id=new_tag_id)
+    data_handler.execute_query(ids_for_question_tag_database)
+
+
+
+    return new_tag_id
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
