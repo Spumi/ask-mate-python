@@ -22,17 +22,28 @@ def list_questions():
     :param questions:list of dictionaries
     :return:
     '''
-    order_direction = False if request.args.get('order_direction') == 'asc' else True
-    order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
-    order_direction = 'ASC' if order_direction == False else 'DESC'
+    if str(request.url_rule) == '/':
+        q = """SELECT * FROM question ORDER BY submission_time DESC
+               LIMIT 5           
+            """
+        questions = data_handler.execute_query(q)
+        return render_template('list.html',
+                               sorted_questions=questions,
+                               order_by='submission_time',
+                               order_direction="DESC")
 
-    q = """SELECT * FROM question ORDER BY {order_by} {order_direction}   
-    """.format(order_by=order_by, order_direction=order_direction)
-    questions = data_handler.execute_query(q)
-    return render_template('list.html',
-                           sorted_questions=questions,
-                           order_by=order_by,
-                           order_direction=order_direction)
+    else:
+        order_direction = False if request.args.get('order_direction') == 'asc' else True
+        order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
+        order_direction = 'ASC' if order_direction == False else 'DESC'
+
+        q = """SELECT * FROM question ORDER BY {order_by} {order_direction}   
+        """.format(order_by=order_by, order_direction=order_direction)
+        questions = data_handler.execute_query(q)
+        return render_template('list.html',
+                               sorted_questions=questions,
+                               order_by=order_by,
+                               order_direction=order_direction)
 
 
 @app.route('/add-question', methods=["GET", "POST"])
