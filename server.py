@@ -188,6 +188,24 @@ def comment_question(id):
     return render_template("add-comment.html", qid=id, type=comment_type)
 
 
+@app.route('/answer/<answer_id>', methods=["GET", "POST"])
+def edit_answer(answer_id):
+
+    if request.method == 'POST':
+        edited_answer_data = request.form.to_dict()
+        edited_answer_data['id'] = int(edited_answer_data['id'])
+        edited_answer_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        util.handle_edit_entry(edited_answer_data, is_answer=True)
+        question_id = edited_answer_data['question_id']
+
+        return redirect("/question/" + str(question_id))
+
+    answer = data_handler.get_answer(answer_id)[0]
+    question_id = answer['question_id']
+
+    return render_template('add-answer.html', qid=question_id, answer=answer, answer_id=answer_id)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
