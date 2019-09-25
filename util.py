@@ -117,9 +117,9 @@ def handle_add_question(req):
     data_handler.add_entry(question)
 
 
-def handle_edit_question(req):
+def handle_edit_entry(req, is_answer=False):
     handle_upload(req)
-    data_handler.update_record(req, is_answer=False)
+    data_handler.update_record(req, is_answer)
 
 
 def get_answer_related_question_ids(keywords, answer_database, attribute):
