@@ -9,25 +9,26 @@
         <h1>Add tag</h1>
         <br>
         <form action="/question/{{qid}}/new-tag" method="post">
-            <input type="hidden" name="question_id" value="{{qid}}"> <!--- ez kell?? qid továbbpasszolása--->
             <br/>
             <br/>
             <label for="tag-selector">Choose a tag</label>
             <br/>
-            <select id="tag-selector" name="tag_selector"> <!-- selected_tag-->
+            <select id="tag-selector" name="selected_tag_name"> <!-- selected_tag-->
                 {% for tag in existing_tags %}
-                    <option value="{{ tag['name'] }}">{{ tag['name'] }}</option>
+                    <option value="{{ tag }}">{{ tag['name'] }}</option>
                 {% endfor %}
             </select>
-            </br>
+            <input type="submit" value="Add your tag">
+        </form>
+            <br/>
             <br/>
             <label>or</label>
-            </br>
             <br/>
+            <br/>
+        <form action="/question/{{qid}}/new-tag" method="post">
             <label for="add-new-tag">Enter a new tag</label>
-            </br>
+            <br/>
             <input id="add-new-tag" name="add_new_tag" type="text" rows="2" cols="8">
-            </br>
             <br/>
             <input type="submit" value="Add your tag">
             <br/>

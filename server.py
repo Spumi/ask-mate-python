@@ -7,6 +7,7 @@ from util import handle_delete_question, handle_add_answer, handle_add_question,
 
 from util import handle_add_answer, handle_add_question
 from data_handler import handle_add_comment
+import ast
 
 app = Flask(__name__)
 app.debug = True
@@ -194,29 +195,40 @@ def comment_question(id):
 
 @app.route("/question/<id>/new-tag", methods=["GET", "POST"])
 def tag_question(id):
-    existing_tags = data_handler.execute_query("""SELECT name FROM tag""")
+    existing_tags = data_handler.execute_query("""SELECT id, name FROM tag""")
     print(existing_tags)
+
     if request.method == 'POST':
-        MAX_ID = 0
+
+        # When chosen from existing tags
+        if request.form.get('selected_tag_name'):
+            selected_tag = ast.literal_eval(request.form.to_dict('selected_tag_name')['selected_tag_name']) # data of selected tag
+            selected_tag_id = selected_tag['id']
+            print(selected_tag_id)
+            # Add new tag id and related question id to question_tag database
+            q = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag 
+                WHERE question_id = {q_id} AND tag_id = {t_id}""".format(q_id=id, t_id=selected_tag_id))
+            print(q)
+            if q == []:
+                data_handler.execute_query("""INSERT INTO question_tag (question_id, tag_id) 
+                VALUES({q_id}, {t_id})""".format(q_id=id, t_id=selected_tag_id))
+
+        # When the user entered
         new_tag_id = data_handler.execute_query("""SELECT MAX(id) FROM tag""")[0]['max'] + 1
-
-
-        # if existing tag => dont insert in the tag database, only in the question_tag database (done later)
-        # if completely new tag => insert into both databases
-
-        # Add data to tag database
-        existing_tags_list = [tag['name'] for tag in [tags_name for tags_name in existing_tags]]
-        if request.form.get('add_new_tag') not in existing_tags_list:
-            new_tag_name = '\'' + request.form.get('add_new_tag') + '\''
-            data_handler.execute_query("""INSERT INTO tag (id, name) VALUES ({new_tag_id}, {new_tag_name})"""
+        print(request.form.get('add_new_tag'))
+        new_tag_name = '\'' + request.form.get('add_new_tag') + '\''
+        print(new_tag_name)
+        q = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag
+            WHERE question_id = {q_id} AND tag_id = (SELECT id FROM tag 
+                                                    WHERE name = {t_name})""".format(q_id=id, t_name=new_tag_name))
+        if q == []:
+            data_handler.execute_query("""INSERT INTO tag (id, name) VALUES({new_tag_id}, {new_tag_name})"""
                                        .format(new_tag_id=new_tag_id, new_tag_name=new_tag_name))
 
-        # Add new tag id and related question id to question_tag database
-        ids_for_question_tag_database = """INSERT INTO question_tag (question_id, tag_id) VALUES ({question_id}, {tag_id})
-        """.format(question_id=id, tag_id=new_tag_id)
-        data_handler.execute_query(ids_for_question_tag_database)
+            data_handler.execute_query("""INSERT INTO question_tag (question_id, tag_id) 
+            VALUES({q_id}, {t_id})""".format(q_id=id, t_id=new_tag_id))
 
-
+        return redirect("/question/" + id)
 
     return render_template("tag-question.html", qid=id, existing_tags=existing_tags)
 
