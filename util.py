@@ -169,10 +169,11 @@ def search_keywords_in_attribute(keywords, id_s, database, attribute_1, attribut
 def string_builder(lst, is_key=True):
     result = ""
     for element in lst:
+        escaped_element = element.replace("'", "''")
         if is_key:
-            result += "" + element + ", "
+            result += "" + escaped_element + ", "
         else:
-            result += "\'" + element + "\', "
+            result += "\'" + escaped_element + "\', "
     return result[:-2]
 
 
