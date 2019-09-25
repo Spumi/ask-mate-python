@@ -3,6 +3,8 @@ import time
 from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 import util
+from util import handle_delete_question, handle_add_answer, handle_add_question, create_check_keywords_in_database_string
+
 from util import handle_add_answer, handle_add_question
 from data_handler import handle_add_comment
 
@@ -149,21 +151,16 @@ def delete_answer(answer_id):
 
 @app.route('/search-for-questions', methods=['GET', 'POST'])
 def search_for_questions():
-
-    q_query = """SELECT * FROM question
-    """
-    question_database = data_handler.execute_query(q_query)
-    a_query = """SELECT * FROM answer
-    """
-    answer_database = data_handler.execute_query(a_query)
-
     keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
-    answer_related_question_id = util.get_answer_related_question_ids(keywords, answer_database, 'message')
-    questions_containing_keywords = util.search_keywords_in_attribute(keywords,
-                                                                      answer_related_question_id,
-                                                                      question_database,
-                                                                      'title',
-                                                                      'message')
+    questions_containing_keywords_query = """SELECT DISTINCT question.* FROM question
+                                             JOIN answer ON question.id = answer.question_id
+                                             WHERE (question.title LIKE {string_1})
+                                             OR (question.message LIKE {string_2}) 
+                                             OR (answer.message LIKE {string_3})
+    """.format(string_1=create_check_keywords_in_database_string(keywords, 'question', 'title'),
+               string_2=create_check_keywords_in_database_string(keywords, 'question', 'message'),
+               string_3=create_check_keywords_in_database_string(keywords, 'answer', 'message'))
+    questions_containing_keywords = data_handler.execute_query(questions_containing_keywords_query)
 
     return render_template('search_for_keywords_in_questions.html',
                            keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords)
