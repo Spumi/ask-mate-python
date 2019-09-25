@@ -1,0 +1,10 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<div class="header">
+    <h1 id="title">Ask Mate</h1>
+    <br>
+    <div class="spacer">
+    <a class="nav-link" href="{{ url_for("list_questions") }}">Home</a>
+    <a class="nav-link" href="/">Hot</a>
+    <a class="nav-link" href="{{ url_for("search_for_questions") }}">Search</a>
+    </div>
+</div>

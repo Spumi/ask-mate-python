@@ -7,8 +7,9 @@
     <title>Question</title>
 </head>
 <body>
+    {% include "banner.html" %}
     <h1 style="text-align: center">{{ question.title }}</h1>
-    <div style="padding-bottom: 50px;padding-left: 20%">
+    <div style="padding-bottom: 50px;padding-left: 20%; position: absolute; height: auto" >
     <table width="80%">
         <thead>
             <tr>
@@ -117,7 +118,6 @@
             {% endfor %}
         </tr>
     </table>
-    </div>
 
 
     {% set answer_headers = ['Vote', 'Answer', 'Image', 'Submission'] %}
@@ -126,7 +126,7 @@
     <h2 style="text-align:center">Answers to the question</h2>
 
     {% if answers | length != 0 %}
-    <div style="padding-left: 20%">
+    <div style="padding-left: 0px; position: absolute">
     <table width="80%" >
         <thead>
             <tr>
@@ -217,6 +217,7 @@
     <br>
 
 
+    </div>
 </body>
 </html>
 
