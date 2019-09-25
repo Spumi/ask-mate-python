@@ -184,3 +184,8 @@ def get_related_question_id(id):
     result = data_handler.execute_query(query)
     print(result)
     return result.pop()["question_id"]
+
+def get_question_related_tags(question_id):
+    question_related_tags = data_handler.execute_query("""SELECT tag.name FROM question_tag LEFT JOIN tag 
+        ON question_tag.tag_id = tag.id WHERE question_tag.question_id = {id}""".format(id=question_id))
+    return question_related_tags

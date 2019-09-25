@@ -72,13 +72,17 @@
                     <input type="submit" value="Comment">
                 </form>
             </td>
-        </tr>
-        <tr>
             <td>
                 <form action={{"/question/"}}{{question.id}}{{"/new-tag"}}>
                         <input type="submit" value="Add tag">
                 </form>
             </td>
+        </tr>
+        <tr>
+            <label>Tags: </label>
+            {% for related_tag in question_related_tags %}
+                {{ related_tag['name'] + ',' }}
+            {% endfor %}
         </tr>
     </table>
     <table width="80%" >
