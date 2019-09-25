@@ -194,17 +194,31 @@ def comment_question(id):
 
 @app.route("/question/<id>/new-tag", methods=["GET", "POST"])
 def tag_question(id):
-    MAX_ID = 0
-    new_tag_id = data_handler.execute_query("""SELECT MAX(id) FROM tag""")[0]['max'] + 1
-
-    # Add new tag id and related question id to question_tag database
-    ids_for_question_tag_database = """INSERT INTO question_tag (question_id, tag_id) VALUES ({question_id}, {tag_id})
-    """.format(question_id=id, tag_id=new_tag_id)
-    data_handler.execute_query(ids_for_question_tag_database)
+    existing_tags = data_handler.execute_query("""SELECT name FROM tag""")
+    print(existing_tags)
+    if request.method == 'POST':
+        MAX_ID = 0
+        new_tag_id = data_handler.execute_query("""SELECT MAX(id) FROM tag""")[0]['max'] + 1
 
 
+        # if existing tag => dont insert in the tag database, only in the question_tag database (done later)
+        # if completely new tag => insert into both databases
 
-    return new_tag_id
+        # Add data to tag database
+        existing_tags_list = [tag['name'] for tag in [tags_name for tags_name in existing_tags]]
+        if request.form.get('add_new_tag') not in existing_tags_list:
+            new_tag_name = '\'' + request.form.get('add_new_tag') + '\''
+            data_handler.execute_query("""INSERT INTO tag (id, name) VALUES ({new_tag_id}, {new_tag_name})"""
+                                       .format(new_tag_id=new_tag_id, new_tag_name=new_tag_name))
+
+        # Add new tag id and related question id to question_tag database
+        ids_for_question_tag_database = """INSERT INTO question_tag (question_id, tag_id) VALUES ({question_id}, {tag_id})
+        """.format(question_id=id, tag_id=new_tag_id)
+        data_handler.execute_query(ids_for_question_tag_database)
+
+
+
+    return render_template("tag-question.html", qid=id, existing_tags=existing_tags)
 
 
 if __name__ == '__main__':
