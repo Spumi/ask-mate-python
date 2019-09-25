@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div align="center">
+        <h1>Add tag</h1>
+        <br>
+        <form action="/question/{{qid}}/new-tag" method="post">
+            <input type="hidden" name="question_id" value="{{qid}}"> <!--- ez kell?? qid továbbpasszolása--->
+            <br/>
+            <br/>
+            <label for="tag-selector">Choose a tag</label>
+            <br/>
+            <select id="tag-selector" name="tag_selector"> <!-- selected_tag-->
+                {% for tag in existing_tags %}
+                    <option value="{{ tag['name'] }}">{{ tag['name'] }}</option>
+                {% endfor %}
+            </select>
+            </br>
+            <br/>
+            <label>or</label>
+            </br>
+            <br/>
+            <label for="add-new-tag">Enter a new tag</label>
+            </br>
+            <input id="add-new-tag" name="add_new_tag" type="text" rows="2" cols="8">
+            </br>
+            <br/>
+            <input type="submit" value="Add your tag">
+            <br/>
+        </form>
+    </div>
+</body>
+</html>
