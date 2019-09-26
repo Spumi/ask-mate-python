@@ -204,21 +204,23 @@ def comment_question(id):
 
 @app.route("/question/<id>/new-tag", methods=["GET", "POST"])
 def tag_question(id):
-    existing_tags = data_handler.execute_query("""SELECT id, name FROM tag""")
+    existing_tags = [name['name'] for name in [tag for tag in data_handler.execute_query("""SELECT id, name FROM tag""")]]
     if request.method == 'POST':
         # If the user chooses a tag from the existing tags
-        if request.form.get('selected_tag'):
-            selected_tag = ast.literal_eval(request.form.to_dict('selected_tag')['selected_tag']) # data of selected tag
-            selected_tag_id = selected_tag['id']
+        if request.form.get('selected_tag_name'):
+            selected_tag_name = '\'' + request.form.to_dict('selected_tag_name')['selected_tag_name'] + '\''
+            selected_tag_id = data_handler.execute_query("""SELECT id FROM tag 
+            LEFT JOIN question_tag ON tag.id = question_tag.tag_id WHERE tag.name = {selected_tag}"""
+                                                         .format(selected_tag=selected_tag_name))[0]['id']
 
-            print(type(request.form.to_dict('selected_tag')))
+
             form = 'select existing tag'
             # Check in question_tag database whether there is a tag to the current question and get the ids...
-            get_quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag 
+            quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag 
                 WHERE question_id = {q_id} AND tag_id = {t_id}""".format(q_id=id, t_id=selected_tag_id))
 
             # ... if there is not then add new tag id and related question id to question_tag database
-            if get_quest_tag_id_combination == []:
+            if quest_tag_id_combination == []:
                 data_handler.execute_query("""INSERT INTO question_tag (question_id, tag_id) 
                 VALUES({q_id}, {t_id})""".format(q_id=id, t_id=selected_tag_id))
 
@@ -228,29 +230,26 @@ def tag_question(id):
             new_tag_name = '\'' + request.form.get('add_new_tag') + '\'' # ' is needed for the SQL query
 
             ### almost same as above
-            get_quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag
+            quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag
                 WHERE question_id = {q_id} AND tag_id = (SELECT id FROM tag 
                                                         WHERE name = {t_name})""".format(q_id=id, t_name=new_tag_name))
-            if get_quest_tag_id_combination == []:
+            if quest_tag_id_combination == []:
                 data_handler.execute_query("""INSERT INTO tag (id, name) VALUES({new_tag_id}, {new_tag_name})"""
                                            .format(new_tag_id=new_tag_id, new_tag_name=new_tag_name))
+            ###
 
                 data_handler.execute_query("""INSERT INTO question_tag (question_id, tag_id) 
                 VALUES({q_id}, {t_id})""".format(q_id=id, t_id=new_tag_id))
 
-## REFACTOR
-# def get_quest_tag_id_combination(form, selected_tag_id):
-#     if form == 'select existing tag':
-#         selected_tag_id =
-#
-#     else:
+## Refactor in progress
+# def add_data_to_tag_database():
 #     quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag
-#         WHERE question_id = {q_id} AND tag_id =
-#     if get_quest_tag_id_combination == []:
+#         WHERE question_id = {q_id} AND tag_id = (SELECT id FROM tag
+#                                                 WHERE name = {t_name})""".format(q_id=id, t_name=new_tag_name))
+#     if quest_tag_id_combination == []:
 #         data_handler.execute_query("""INSERT INTO tag (id, name) VALUES({new_tag_id}, {new_tag_name})"""
 #                                    .format(new_tag_id=new_tag_id, new_tag_name=new_tag_name))
-#
-#     return quest_tag_id_combination
+
 
 
         return redirect("/question/" + id)
