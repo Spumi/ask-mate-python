@@ -1,33 +1,8 @@
-import os
 from datetime import datetime
-
 from psycopg2 import sql
 
 import connection
 from util import string_builder
-
-ANSWER_DATA_FILE_PATH = os.getcwd() + "/data/answer.csv"
-QUESTION_DATA_FILE_PATH = os.getcwd() + "/data/question.csv"
-
-
-def get_answers():
-    database = connection.csv_to_dict(ANSWER_DATA_FILE_PATH)
-    return database
-
-
-def get_questions():
-    database = connection.csv_to_dict(QUESTION_DATA_FILE_PATH)
-    return database
-
-
-def save_questions(data):
-    database = connection.dict_to_csv(QUESTION_DATA_FILE_PATH, data)
-    return database
-
-
-def save_answers(data):
-    database = connection.dict_to_csv(ANSWER_DATA_FILE_PATH, data, True)
-    return database
 
 
 def add_entry(entry, is_answer=False):
@@ -35,7 +10,6 @@ def add_entry(entry, is_answer=False):
     if not is_answer:
         table = "question"
 
-    # entry = escape_single_quotes(entry)
     query = """INSERT INTO {table}
     ({columns}) VALUES ({values});
     """.format(columns=string_builder(entry.keys()),
@@ -109,7 +83,6 @@ def delete_record(id, answer=False, delete=False):
 
 @connection.connection_handler
 def execute_query(cursor, query):
-    # print(query.startswith("INSERT"))
     if query.startswith("SELECT"):
         cursor.execute(
             sql.SQL(query)
@@ -123,7 +96,7 @@ def execute_query(cursor, query):
 
 def handle_add_comment(req):
     req.update(submission_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    query ="""INSERT INTO comment ({columns}) 
+    query = """INSERT INTO comment ({columns}) 
     VALUES ({value_list})""".format(columns=string_builder(req.keys(), True),
                                     value_list=string_builder(req.values(), False)
                                     )
@@ -142,7 +115,6 @@ def get_comments(comment_tpe, _id):
     query = """SELECT message, submission_time, edited_count, comment.question_id, comment.answer_id, comment.id  FROM comment
     WHERE {col} = {id} ORDER BY submission_time DESC 
     """.format(col=comment_tpe, id=_id)
-    #qid aid
     return execute_query(query)
 
 
@@ -151,5 +123,5 @@ def handle_edit_comment(id, msg):
     SET message = {msg},
      edited_count = COALESCE (edited_count, 0) +1 
     WHERE id = {id}
-    """.format(id=id,msg=("'" + msg["message"].replace("'", "''")) + "'")
+    """.format(id=id, msg=("'" + msg["message"].replace("'", "''")) + "'")
     execute_query(query)
