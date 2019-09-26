@@ -20,30 +20,27 @@ def list_questions():
     :param questions:list of dictionaries
     :return:
     '''
+    order_direction = False if request.args.get('order_direction') == 'asc' else True
+    order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
+    order_direction = 'ASC' if order_direction == False else 'DESC'
     if str(request.url_rule) == '/':
+        is_main = True
         q = """SELECT * FROM question ORDER BY submission_time DESC
                LIMIT 5           
             """
         questions = data_handler.execute_query(q)
-        return render_template('list.html',
-                               sorted_questions=questions,
-                               order_by='submission_time',
-                               order_direction="DESC",
-                               is_main=True)
 
     else:
-        order_direction = False if request.args.get('order_direction') == 'asc' else True
-        order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
-        order_direction = 'ASC' if order_direction == False else 'DESC'
 
+        is_main = False
         q = """SELECT * FROM question ORDER BY {order_by} {order_direction}   
         """.format(order_by=order_by, order_direction=order_direction)
         questions = data_handler.execute_query(q)
-        return render_template('list.html',
-                               sorted_questions=questions,
-                               order_by=order_by,
-                               order_direction=order_direction,
-                               is_main=False)
+    return render_template('list.html',
+                           sorted_questions=questions,
+                           order_by=order_by,
+                           order_direction=order_direction,
+                           is_main=is_main)
 
 
 @app.route('/add-question', methods=["GET", "POST"])
@@ -71,7 +68,7 @@ def question_display(question_id):
     question = data_handler.get_question(question_id)
     related_answers = data_handler.get_question_related_answers(question_id)
     question_comments = data_handler.get_comments("question", question_id)
-    question_related_tags = util.get_question_related_tags(question_id)
+    question_related_tags = data_handler.get_question_related_tags(question_id)
 
     return render_template('display_question.html',
                            question=question.pop(),
@@ -83,14 +80,14 @@ def question_display(question_id):
 
 @app.route("/question/<question_id>/vote-up")
 def vote_up_question(question_id):
-    util.vote_question(question_id, 1)
+    data_handler.vote_question(question_id, 1)
 
     return redirect("/question/" + question_id)
 
 
 @app.route("/question/<question_id>/vote-down")
 def vote_down_question(question_id):
-    util.vote_question(question_id, -1)
+    data_handler.vote_question(question_id, -1)
 
     return redirect("/question/" + question_id)
 
@@ -99,7 +96,7 @@ def vote_down_question(question_id):
 def vote_answer():
     if request.method == 'POST':
         req = request.form.to_dict()
-        util.vote_answer(req["id"], req["vote"])
+        data_handler.vote_answer(req["id"], req["vote"])
         question_id = req['question_id']
         return redirect("/question/" + question_id)
 
@@ -164,19 +161,14 @@ def upload_image():
 @app.route("/answer/<id>/new-comment", methods=["GET", "POST"])
 def comment_question(id):
     comment_type = "question"
-    question_id = id
     ref_question_id = request.args.get("qid")
     if "answer" in str(request.url_rule):
         comment_type = "answer"
-        # question_id = util.get_related_question_id(id)
-        print(question_id)
     if request.method == 'POST':
         req = request.form.to_dict()
         ref_question_id = req["qid"]
         del req["qid"]
         data_handler.handle_add_comment(req)
-        # question_id = req["qid"]
-        # return redirect(url_for("question_display", question_id=question_id))
         return redirect("/question/" + str(ref_question_id))
     return render_template("add-comment.html", qid=id, type=comment_type, question_id=ref_question_id)
 
@@ -220,7 +212,6 @@ def edit_comment(id):
     message =request.args.get("message")
     if "answer" in str(request.url_rule):
         comment_type = "answer"
-#        question_id = util.get_related_question_id(id)
     if request.method == 'POST':
         req = request.form.to_dict()
         question_id = req["qid"]
@@ -234,9 +225,7 @@ def edit_comment(id):
 @app.route("/comments/<comment_id>/delete", methods=["GET"])
 def delete_comment(comment_id):
     question_id = request.args.get("qid")
-    query = """DELETE FROM comment WHERE id = {comment_id}
-    """.format(comment_id=comment_id)
-    data_handler.execute_query(query)
+    data_handler.delete_comment(comment_id)
     return redirect("/question/" + str(question_id))
 
 
