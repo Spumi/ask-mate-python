@@ -252,7 +252,13 @@
                         <col style="width: 5%; text-align: right">
                         <col style="width: 5%; text-align: right">
                     </colgroup>
-                    <tbody>
+                    <tr>
+                    {% set titles = ["Comment", "Date", "Edits", "" ] %}
+                    <tr></tr>
+                    {% for title_id in comments[0].keys() %}
+                        <th>{{ titles[loop.index - 1] }}</th>
+                    {% endfor %}
+                    </tr>
                     {% for comment in comments %}
                         <tr>
 {#                            <td colspan="4">#}
@@ -262,6 +268,9 @@
                             <td>
 {#                            <td colspan="4">#}
                                 {{ comment["submission_time"] }}
+                            </td>
+                            <td>
+                                {{ comment["edited_count"] }}
                             </td>
                             <td>
                                 <form action="/comments/{{ comment["id"] }}/edit" method="get">
