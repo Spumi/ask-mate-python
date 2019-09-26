@@ -1,13 +1,10 @@
 import os
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
+import ast
+
 import data_handler
 import util
-from util import create_check_keywords_in_database_string
-
-import ast
-from util import handle_add_answer, handle_add_question, get_question_related_tags
-from data_handler import handle_add_comment, handle_edit_comment
 
 app = Flask(__name__)
 app.debug = True
@@ -54,7 +51,7 @@ def list_questions():
 def add_question():
     if request.method == 'POST':
         req = request.form.to_dict()
-        handle_add_question(req)
+        util.handle_add_question(req)
         return redirect(url_for("list_questions"))
 
     return render_template("edit-question.html", qid="")
@@ -64,7 +61,7 @@ def add_question():
 def add_answer(question_id):
     if request.method == 'POST':
         req = request.form.to_dict()
-        handle_add_answer(req)
+        util.handle_add_answer(req)
         return redirect("/question/" + question_id)
 
     return render_template("add-answer.html", qid=question_id)
@@ -75,7 +72,7 @@ def question_display(question_id):
     question = data_handler.get_question(question_id)
     related_answers = data_handler.get_question_related_answers(question_id)
     question_comments = data_handler.get_comments("question", question_id)
-    question_related_tags = get_question_related_tags(question_id)
+    question_related_tags = util.get_question_related_tags(question_id)
 
     return render_template('display_question.html',
                            question=question.pop(),
@@ -171,9 +168,9 @@ def search_for_questions():
                                              WHERE (question.title ILIKE {string_1})
                                              OR (question.message ILIKE {string_2}) 
                                              OR (answer.message ILIKE {string_3})
-    """.format(string_1=create_check_keywords_in_database_string(keywords, 'question', 'title'),
-               string_2=create_check_keywords_in_database_string(keywords, 'question', 'message'),
-               string_3=create_check_keywords_in_database_string(keywords, 'answer', 'message'))
+    """.format(string_1=util.create_check_keywords_in_database_string(keywords, 'question', 'title'),
+               string_2=util.create_check_keywords_in_database_string(keywords, 'question', 'message'),
+               string_3=util.create_check_keywords_in_database_string(keywords, 'answer', 'message'))
     questions_containing_keywords = data_handler.execute_query(questions_containing_keywords_query)
 
     return render_template('search_for_keywords_in_questions.html',
@@ -199,7 +196,7 @@ def comment_question(id):
         print(question_id)
     if request.method == 'POST':
         req = request.form.to_dict()
-        handle_add_comment(req)
+        data_handler.handle_add_comment(req)
         # return redirect(url_for("question_display", question_id=question_id))
         return redirect("/question/" + str(question_id))
     return render_template("add-comment.html", qid=id, type=comment_type)
@@ -291,7 +288,7 @@ def edit_comment(id):
         req = request.form.to_dict()
         question_id = req["qid"]
         del req["qid"]
-        handle_edit_comment(id,req)
+        data_handler.handle_edit_comment(id,req)
         return redirect("/question/" + str(question_id))
 
     return render_template("add-comment.html", qid=id, type=comment_type, message=message, question_id = ref_question_id)
@@ -304,8 +301,6 @@ def delete_comment(comment_id):
     """.format(comment_id=comment_id)
     data_handler.execute_query(query)
     return redirect("/question/" + str(question_id))
-
-    return query
 
 
 if __name__ == '__main__':
