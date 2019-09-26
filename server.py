@@ -197,7 +197,7 @@ def comment_question(id):
         req = request.form.to_dict()
         ref_question_id = req["qid"]
         del req["qid"]
-        handle_add_comment(req)
+        data_handler.handle_add_comment(req)
         # question_id = req["qid"]
         # return redirect(url_for("question_display", question_id=question_id))
         return redirect("/question/" + str(ref_question_id))

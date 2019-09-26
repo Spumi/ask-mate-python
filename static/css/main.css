@@ -191,7 +191,12 @@ table.center {
     margin-top: 15px;
 }
 
+.tags{
+    text-align: center;
+    font-style: italic;
+    color: deepskyblue;
 
+}
 
 /*td{*/
 /*    border: 1px solid black;*/

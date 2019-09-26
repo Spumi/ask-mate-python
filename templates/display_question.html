@@ -55,6 +55,15 @@
     <br/>
     <table class="control_buttons">
         <tr>
+            <td colspan="5" class="tags">
+                {% for related_tag in question_related_tags %}
+                    {{ related_tag['name'] + ',' }}
+                {% endfor %}
+            </td>
+            </label>
+            </td>
+        </tr>
+        <tr>
             <td>
                 <form action={{"/question/"}}{{question.id}}{{"/new-answer"}}>
                     <input type="submit" value="Answer question">
@@ -80,12 +89,6 @@
                         <input type="submit" value="Add tag">
                 </form>
             </td>
-        </tr>
-        <tr>
-            <label>Tags: </label>
-            {% for related_tag in question_related_tags %}
-                {{ related_tag['name'] + ',' }}
-            {% endfor %}
         </tr>
     </table>
 {#    </div>#}
@@ -262,7 +265,6 @@
                                 {{ comment["submission_time"] }}
                             </td>
                             <td>
-                                <form action="/comments/{{ comment["id"] }}/delete" method="get">
                                 <form action="/comments/{{ comment["id"] }}/edit" method="get">
                                     <input type="hidden" name="qid" value="{{ question["id"] }}">
                                     <input type="hidden" name="message" value="{{ comment["message"] }}">
