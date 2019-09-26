@@ -56,8 +56,6 @@ def generate_answer_dict(data):
 def handle_add_answer(reqv):
     handle_upload(reqv)
     answer = generate_answer_dict(reqv)
-    answers = data_handler.get_answers()
-    answers.append(answer)
     data_handler.add_entry(answer, True)
 
 
