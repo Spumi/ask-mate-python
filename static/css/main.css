@@ -7,6 +7,12 @@ body{
     /*background-color: #484848;*/
 }
 
+table.center {
+    margin-left:auto;
+    margin-right:auto;
+    width: 95%;
+}
+
 .header{
     border-bottom-left-radius: 50px;
     border-bottom-right-radius: 50px;
@@ -34,6 +40,8 @@ body{
     margin-block-end: 0.27em;
 }
 
+
+
 .spacer{
     display: flex;
     justify-content: space-evenly;
@@ -56,6 +64,35 @@ body{
     border: 3px solid darkgray;
     border-bottom-left-radius: 13px;
     border-bottom-right-radius: 13px;
+    min-height: auto;
+}
+
+.answer_display{
+    position: relative;
+    /*padding-left: 15%;*/
+    width: 95%;
+    border-radius: 25px;
+    background-color: #e8e8bcff;
+    border: 3px solid darkgray;
+    border-bottom-left-radius: 13px;
+    border-bottom-right-radius: 13px;
+    margin: auto;
+}
+
+
+.answer{
+    position: relative;
+    /*padding-left: 15%;*/
+    width: 95%;
+    border-radius: 25px;
+    background-color: #e8e8bcff;
+    border: 3px solid darkgray;
+    border-bottom-left-radius: 13px;
+    border-bottom-right-radius: 13px;
+    margin: auto;
+    align-content: center;
+    /*margin-top: 15px;*/
+    margin-bottom: 15px;
 }
 
 .control_buttons{
@@ -76,6 +113,30 @@ body{
     border-top-left-radius: 75px;
     border-top-right-radius: 75px;
 }
+
+.answer_title_single{
+    margin-top: 25px;
+    text-align: right;
+    width: 25%;
+    text-align: center;
+    background-color: #ecc0578c;
+    margin-right: 10%;
+    border-top: 1px solid;
+    border-top-left-radius: 75px;
+    border-top-right-radius: 75px;
+    padding: 0%;
+    margin-left: 69%;
+    margin-top: 66px;
+}
+
+
+.answer_title{
+    width: 90%;
+    margin: auto;
+    /*position: relative;*/
+    /*padding: auto;*/
+}
+
 
 .control_buttons input {
     border-radius: 50px;
@@ -98,7 +159,16 @@ body{
     margin-bottom: 10px;
 }
 
+.comment{
+    position: relative;
+    width: 90%;
+    background-color: #fdff4f;
+    margin: auto;
+    margin-top: -15px;
+    border-radius: 15px 15px 15px 15px;
+    /*margin-bottom: 66px;*/
 
+}
 
 /*td{*/
 /*    border: 1px solid black;*/
