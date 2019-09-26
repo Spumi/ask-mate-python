@@ -191,3 +191,37 @@ def tag_question_when_user_enter_new_tag(id):
         execute_query("""INSERT INTO question_tag (question_id, tag_id) 
          VALUES({q_id}, {t_id})""".format(q_id=id, t_id=new_tag_id))
 
+
+def vote_question(_id, vote):
+    query = """UPDATE question SET vote_number = question.vote_number +{vote}
+    WHERE id = {id}
+    """.format(vote=vote,id=_id)
+    execute_query(query)
+
+
+def vote_answer(_id, vote):
+    delta = 1 if vote == "up" else -1
+    query = """UPDATE answer SET vote_number = vote_number +{vote}
+    WHERE id = {id}
+    """.format(vote=delta,id=_id)
+    execute_query(query)
+
+
+def get_related_question_id(id):
+    query = """SELECT answer.question_id FROM  answer JOIN comment ON comment.answer_id = answer.id
+               WHERE answer.id = {id}
+            """.format(id=id)
+    result = execute_query(query)
+    return result.pop()["question_id"]
+
+
+def get_question_related_tags(question_id):
+    question_related_tags = execute_query("""SELECT tag.name FROM question_tag LEFT JOIN tag 
+        ON question_tag.tag_id = tag.id WHERE question_tag.question_id = {id}""".format(id=question_id))
+    return question_related_tags
+
+
+def delete_comment(comment_id):
+    query = """DELETE FROM comment WHERE id = {comment_id}
+    """.format(comment_id=comment_id)
+    execute_query(query)
