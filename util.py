@@ -117,9 +117,9 @@ def handle_add_question(req):
     data_handler.add_entry(question)
 
 
-def handle_edit_question(req):
+def handle_edit_entry(req, is_answer=False):
     handle_upload(req)
-    data_handler.update_record(req, is_answer=False)
+    data_handler.update_record(req, is_answer)
 
 
 def get_answer_related_question_ids(keywords, answer_database, attribute):
@@ -169,10 +169,11 @@ def search_keywords_in_attribute(keywords, id_s, database, attribute_1, attribut
 def string_builder(lst, is_key=True):
     result = ""
     for element in lst:
+        escaped_element = element.replace("'", "''")
         if is_key:
-            result += "" + element + ", "
+            result += "" + escaped_element + ", "
         else:
-            result += "\'" + element + "\', "
+            result += "\'" + escaped_element + "\', "
     return result[:-2]
 
 

@@ -2,18 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{"Edit answer" if answer else "Answer question" }}</title>
 </head>
 <body>
     <div align="center">
-        <h1>Answer question</h1>
+        <h1>{{"Edit answer" if answer else "Answer question" }}</h1>
         <br>
-        <form action="/question/{{qid}}/new-answer" method="post" enctype="multipart/form-data">
+        <form action="{{url_for('edit_answer', answer_id = answer.id) if answer else url_for('add_answer', question_id = qid)}}" method="post" enctype="multipart/form-data">
             <input type="hidden" name="question_id" value="{{qid}}">
+            {% if answer %}
+            <input type="hidden" name="id" value="{{answer.id}}">
+            {% endif %}
             <br/>
             <br/>
-            <textarea name="message" rows="4" cols="50"></textarea>
-            <input type="hidden" name="image" value="">
+            <textarea name="message" rows="4" cols="50">{{ answer.message if answer else "" }}</textarea>
+            <input type="hidden" name="image" value={{answer.image if answer else ""}}>
             <br/>
             <input type="file" name="image"/><BR>
             <input type="submit" value="Upload"/>

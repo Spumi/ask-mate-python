@@ -3,14 +3,15 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 import util
-from util import handle_delete_question, handle_add_answer, handle_add_question, create_check_keywords_in_database_string
+from util import create_check_keywords_in_database_string
 
-from util import handle_add_answer, handle_add_question,  get_question_related_tags
-from data_handler import handle_add_comment
 import ast
+from util import handle_add_answer, handle_add_question, get_question_related_tags
+from data_handler import handle_add_comment, handle_edit_comment
 
 app = Flask(__name__)
 app.debug = True
+
 
 @app.route('/')
 @app.route('/list')
@@ -23,17 +24,30 @@ def list_questions():
     :param questions:list of dictionaries
     :return:
     '''
-    order_direction = False if request.args.get('order_direction') == 'asc' else True
-    order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
-    order_direction = 'ASC' if order_direction == False else 'DESC'
+    if str(request.url_rule) == '/':
+        q = """SELECT * FROM question ORDER BY submission_time DESC
+               LIMIT 5           
+            """
+        questions = data_handler.execute_query(q)
+        return render_template('list.html',
+                               sorted_questions=questions,
+                               order_by='submission_time',
+                               order_direction="DESC",
+                               is_main=True)
 
-    q = """SELECT * FROM question ORDER BY {order_by} {order_direction}   
-    """.format(order_by=order_by, order_direction=order_direction)
-    questions = data_handler.execute_query(q)
-    return render_template('list.html',
-                           sorted_questions=questions,
-                           order_by=order_by,
-                           order_direction=order_direction)
+    else:
+        order_direction = False if request.args.get('order_direction') == 'asc' else True
+        order_by = 'submission_time' if request.args.get('order_by') == None else request.args.get('order_by')
+        order_direction = 'ASC' if order_direction == False else 'DESC'
+
+        q = """SELECT * FROM question ORDER BY {order_by} {order_direction}   
+        """.format(order_by=order_by, order_direction=order_direction)
+        questions = data_handler.execute_query(q)
+        return render_template('list.html',
+                               sorted_questions=questions,
+                               order_by=order_by,
+                               order_direction=order_direction,
+                               is_main=False)
 
 
 @app.route('/add-question', methods=["GET", "POST"])
@@ -93,6 +107,7 @@ def vote_answer():
         question_id = req['question_id']
         return redirect("/question/" + question_id)
 
+
 @app.route('/question/<question_id>/delete', methods=['GET', 'POST'])
 def delete_question(question_id):
     if request.method == 'POST':
@@ -127,14 +142,9 @@ def edit_question(question_id):
         edited_question_data = request.form.to_dict()
         edited_question_data['id'] = int(edited_question_data['id'])
         edited_question_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        util.handle_edit_question(edited_question_data)
-        question = data_handler.get_question(question_id)[0]
-        related_answers = data_handler.get_question_related_answers(question_id)
+        util.handle_edit_entry(edited_question_data)
 
-        return render_template('display_question.html',
-                               question=question,
-                               answers=related_answers,
-                               get_comments=data_handler.get_comments)
+        return redirect("/question/" + str(question_id))
 
     question = data_handler.get_question(question_id)[0]
 
@@ -248,6 +258,53 @@ def tag_question(id):
         return redirect("/question/" + id)
 
     return render_template("tag-question.html", qid=id, existing_tags=existing_tags)
+
+
+@app.route('/answer/<answer_id>/edit', methods=["GET", "POST"])
+def edit_answer(answer_id):
+
+    if request.method == 'POST':
+        edited_answer_data = request.form.to_dict()
+        edited_answer_data['id'] = int(edited_answer_data['id'])
+        edited_answer_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        util.handle_edit_entry(edited_answer_data, is_answer=True)
+        question_id = edited_answer_data['question_id']
+
+        return redirect("/question/" + str(question_id))
+
+    answer = data_handler.get_answer(answer_id)[0]
+    question_id = answer['question_id']
+
+    return render_template('add-answer.html', qid=question_id, answer=answer, answer_id=answer_id)
+
+
+@app.route("/comments/<id>/edit", methods=["GET", "POST"])
+def edit_comment(id):
+    comment_type = "question"
+    ref_question_id = request.args.get('qid')
+    message =request.args.get("message")
+    if "answer" in str(request.url_rule):
+        comment_type = "answer"
+#        question_id = util.get_related_question_id(id)
+    if request.method == 'POST':
+        req = request.form.to_dict()
+        question_id = req["qid"]
+        del req["qid"]
+        handle_edit_comment(id,req)
+        return redirect("/question/" + str(question_id))
+
+    return render_template("add-comment.html", qid=id, type=comment_type, message=message, question_id = ref_question_id)
+
+
+@app.route("/comments/<comment_id>/delete", methods=["GET"])
+def delete_comment(comment_id):
+    question_id = request.args.get("qid")
+    query = """DELETE FROM comment WHERE id = {comment_id}
+    """.format(comment_id=comment_id)
+    data_handler.execute_query(query)
+    return redirect("/question/" + str(question_id))
+
+    return query
 
 
 if __name__ == '__main__':
