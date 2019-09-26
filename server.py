@@ -208,19 +208,19 @@ def comment_question(id):
 @app.route("/question/<id>/new-tag", methods=["GET", "POST"])
 def tag_question(id):
     existing_tags = data_handler.execute_query("""SELECT id, name FROM tag""")
-    print(existing_tags)
-
     if request.method == 'POST':
-
         # If the user chooses a tag from the existing tags
-        if request.form.get('selected_tag_name'):
-            selected_tag = ast.literal_eval(request.form.to_dict('selected_tag_name')['selected_tag_name']) # data of selected tag
+        if request.form.get('selected_tag'):
+            selected_tag = ast.literal_eval(request.form.to_dict('selected_tag')['selected_tag']) # data of selected tag
             selected_tag_id = selected_tag['id']
 
-            # Add new tag id and related question id to question_tag database
+            print(request.form.to_dict('selected_tag'))
             form = 'select existing tag'
+            # Check in question_tag database whether there is a tag to the current question and get the ids...
             get_quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag 
-                WHERE question_id = {q_id} AND tag_id = {t_id}""".format(q_id=id, t_id=selected_tag_id)) # Check in question_tag database whether there is a tag to the current question and get the ids
+                WHERE question_id = {q_id} AND tag_id = {t_id}""".format(q_id=id, t_id=selected_tag_id))
+
+            # ... if there is not then add new tag id and related question id to question_tag database
             if get_quest_tag_id_combination == []:
                 data_handler.execute_query("""INSERT INTO question_tag (question_id, tag_id) 
                 VALUES({q_id}, {t_id})""".format(q_id=id, t_id=selected_tag_id))
@@ -230,6 +230,7 @@ def tag_question(id):
             new_tag_id = data_handler.execute_query("""SELECT MAX(id) FROM tag""")[0]['max'] + 1
             new_tag_name = '\'' + request.form.get('add_new_tag') + '\'' # ' is needed for the SQL query
 
+            ### almost same as above
             get_quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag
                 WHERE question_id = {q_id} AND tag_id = (SELECT id FROM tag 
                                                         WHERE name = {t_name})""".format(q_id=id, t_name=new_tag_name))
