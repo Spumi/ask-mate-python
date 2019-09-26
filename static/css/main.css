@@ -109,6 +109,7 @@ table.center {
     align-content: center;
     /*margin-top: 15px;*/
     margin-bottom: 15px;
+    min-height: 150px;
 }
 
 .control_buttons{

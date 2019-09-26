@@ -5,6 +5,7 @@
         <title>Title</title>
     </head>
     <body>
+    {% include "banner.html" %}
         <h1>Your keywords were found in the following questions:</h1>
         <table style="width: 90%">
             {% set fieldnames = ['title', 'message', 'image', 'vote_number', 'view_number', 'submission_time'] %}
