@@ -74,13 +74,14 @@ table.center {
 }
 
 .question_detail{
-    width: 90%;
+    width: 95%;
     border-radius: 25px;
     background-color: #e8e8bcfa;
     border: 3px solid darkgray;
     border-bottom-left-radius: 13px;
     border-bottom-right-radius: 13px;
     min-height: auto;
+    padding-bottom: 25px;
 }
 
 .answer_display{
