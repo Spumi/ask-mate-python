@@ -13,6 +13,22 @@ table.center {
     width: 95%;
 }
 
+
+
+.comment_buttons input {
+    padding: 5px;
+    background: transparent;
+    border: 2px solid;
+    color: #e26901;
+
+}
+
+.comment_buttons input:hover {
+    background: orange;
+    border-color: orange;
+    color: black;
+}
+
 .header{
     border-bottom-left-radius: 50px;
     border-bottom-right-radius: 50px;
@@ -131,10 +147,11 @@ table.center {
 
 
 .answer_title{
-    width: 90%;
+    width: 93%;
     margin: auto;
     /*position: relative;*/
     /*padding: auto;*/
+    margin-top: 25px;
 }
 
 
@@ -169,6 +186,12 @@ table.center {
     /*margin-bottom: 66px;*/
 
 }
+
+.pt15{
+    margin-top: 15px;
+}
+
+
 
 /*td{*/
 /*    border: 1px solid black;*/

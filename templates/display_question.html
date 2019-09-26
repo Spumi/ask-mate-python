@@ -78,7 +78,14 @@
         </tr>
     </table>
 {#    </div>#}
-    <table width="80%" >
+            <div class="answer comment pt15 comment_buttons">
+                <table class="center">
+                    <colgroup>
+                        <col style="width: 60%; text-align: center">
+                        <col style="width: 20%; text-align: center">
+                        <col style="width: 5%; text-align: right">
+                        <col style="width: 5%; text-align: right">
+                    </colgroup>
         <tr align="center" >
                 {% if question_comments | length > 0 %}
                     {% for title in question_comments[0].keys() %}
@@ -91,6 +98,8 @@
                 {% endif %}
         </tr>
         <tr>
+                    <tbody>
+
             {%  for comment in question_comments %}
                 <tr>
                     {% for key in comment.keys() %}
@@ -120,7 +129,9 @@
                 </tr>
             {% endfor %}
         </tr>
-    </table>
+                    </tbody>
+                </table>
+            </div>
 
 
     {% set answer_headers = ['Vote', 'Answer', 'Image', 'Submission'] %}
@@ -156,7 +167,7 @@
 
         {% for answer in answers %}
             <h2 class="answer_title_single">	&nbsp;</h2>
-            <div class="answer_detail answer">
+            <div class="answer_detail answer comment_buttons ">
             <table class="center">
             <colgroup>
                 <col style="width: 5.5%">
@@ -214,7 +225,7 @@
             </div>
                         {% set comments = get_comments("answer",answer["id"]) %}
             {% if comments %}
-            <div class="answer comment">
+            <div class="answer comment comment_buttons">
                 <table class="center">
                     <colgroup>
                         <col style="width: 60%; text-align: center">

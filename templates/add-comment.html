@@ -14,9 +14,7 @@
             <br/>
             <textarea name="message" rows="4" cols="50">{{ message if message else "" }}</textarea>
             <br/>
-            {% if question_id %}
             <input type="hidden" name="qid", value="{{ question_id }}">
-            {% endif %}
             <input type="submit" value="Upload"/>
 {#            {{ "<input type=\"hidden\"  name=\"ref\" value=\"{{ ref }} n\">" if message else ""}}#}
         </form>
