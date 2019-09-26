@@ -6,26 +6,7 @@
     </head>
     <body>
         {% include "banner.html" %}
-        <div align="center">
-            <h1>Ask Mate</h1>
-        </div>
-
-        <div align="center">
-            <form action="/search-for-questions">
-                <label for="search-for-questions">Enter the keywords your problem contains (separated with ',' and space):</label><br>
-                <input type="text" id="search-for-questions" name="keywords" size="56px">
-                <br>
-                <input type="submit" value="Search for questions">
-            </form>
-            <br>
-            <p>
-            <form action="/add-question">
-                <label for="add-new-question">If your question isn't in the list:</label>
-                <br>
-                <input type="submit" id="add-new-question" value="Add New Question">
-            </form>
-            </p>
-        </div>
+        {% include "search.html" %}
         {% set fieldnames = ['title', 'message', 'image', 'vote_number', 'view_number', 'submission_time'] %}
 
         {% if is_main %}
@@ -34,10 +15,10 @@
                 <input type="submit" value="Click to view and sort all questions">
             </form>
         {% else %}
-
+        <div class="answer padTop2p comment_buttons rowHeight">
             <p>
-                <label for="attribute-selector">Sort questions by: </label>
-                <form action="/list" method="get">
+                <label for="attribute-selector" class="padLeft2p">Sort questions by: </label>
+                <form action="/list" method="get" class="padLeft2p">
                         <select id="attribute-selector" name="order_by">
                             {% for header in fieldnames %}
                                 <option value="{{ header }}" {{ 'selected' if header == order_by}}>{{ header|capitalize|replace('_',' ') }}</option>
@@ -53,7 +34,15 @@
             </p>
         {% endif %}
 
-        <table style="width: 90%">
+        <table class="center pt15">
+            <colgroup>
+                <col style="width: 20%">
+                <col style="width: 50%">
+                <col style="width: 20%">
+                <col style="width: 16.5%">
+                <col style="width: 11%">
+                <col style="width: 11%">
+            </colgroup>
             <tr>
                 {% for header in fieldnames %}
                     <th>{{ header|capitalize|replace('_', ' ') }}</th>
@@ -81,5 +70,6 @@
             {% endfor %}
             </tr>
         </table>
+        </div>
     </body>
 </html>

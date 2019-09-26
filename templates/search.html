@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="control_buttons search search_button">
+    <form action="/search-for-questions">
+        <label for="search-for-questions">Enter the keywords your problem contains (separated with ',' and space):</label><br>
+        <input type="text" id="search-for-questions" name="keywords" size="56px">
+        <br>
+        <input type="submit" value="Search for questions">
+    </form>
+    <br>
+    <p>
+    <form action="/add-question">
+        <label for="add-new-question">If your question isn't in the list:</label>
+        <br>
+        <input type="submit" id="add-new-question" value="Add New Question">
+    </form>
+    </p>
+</div>
