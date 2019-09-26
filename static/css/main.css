@@ -29,6 +29,15 @@ table.center {
     color: black;
 }
 
+.comment_buttons select {
+    border-radius: 25px;
+    padding: 5px;
+    background: transparent;
+    border: 2px solid;
+    color: #e26901;
+    /*background-color: #e26901;*/
+}
+
 .header{
     border-bottom-left-radius: 50px;
     border-bottom-right-radius: 50px;
@@ -66,7 +75,7 @@ table.center {
 .question_display{
     align-content: center;
     padding-bottom: 50px;
-    padding-left: 10%;
+    padding-left: 5%;
     position: absolute;
     height: auto;
 
@@ -82,6 +91,26 @@ table.center {
     border-bottom-right-radius: 13px;
     min-height: auto;
     padding-bottom: 25px;
+}
+
+
+.search{
+    width: 40%;
+    margin-top: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 25px;
+    background-color: #e8e8bcfa;
+    border: 3px solid darkgray;
+    border-bottom-left-radius: 13px;
+    border-bottom-right-radius: 13px;
+    min-height: auto;
+    padding-bottom: 25px;
+    text-align-last: center;
+}
+
+.search_buttons input{
+    width: auto;
 }
 
 .answer_display{
@@ -113,20 +142,25 @@ table.center {
     min-height: 150px;
 }
 
+.rowHeight tr{
+    height: 4rem;
+}
+
 .control_buttons{
     /*border: 1px solid black;*/
-    width: 100%;
+    /*width: 100%;*/
     align-content: center;
     text-align: center;
 }
 
+
 .question_title{
     margin-top: 25px;
     text-align: center;
-    width: 79%;
+    width: 88.5%;
     text-align: center;
     background-color: #ecc0578c;
-    margin-left: 11.2%;
+    margin-left: 6%;
     border-top: 1px solid;
     border-top-left-radius: 75px;
     border-top-right-radius: 75px;
@@ -166,6 +200,7 @@ table.center {
     /*text-shadow: 2px 0px #000000;*/
     text-shadow: 1px 0px rgba(63, 107, 169, 0.5);
     font-weight: bold;
+    margin-top: 5px;
 }
 
 .control_buttons input:hover {
@@ -173,6 +208,20 @@ table.center {
     border-color: orange;
     color: black;
 }
+
+input::-webkit-file-upload-button {
+    border-radius: 50px;
+    /*padding: 10px;*/
+    background: transparent;
+    border: 2px solid;
+    color: #e26901;
+    /*text-shadow: 2px 0px #000000;*/
+    text-shadow: 1px 0px rgba(63, 107, 169, 0.5);
+    font-weight: bold;
+    /*margin-top: 5px;*/
+}
+
+
 
 .control_buttons {
     margin-bottom: 10px;
@@ -186,7 +235,7 @@ table.center {
     margin-top: -15px;
     border-radius: 15px 15px 15px 15px;
     /*margin-bottom: 66px;*/
-
+    min-height: 0;
 }
 
 .pt15{
@@ -198,6 +247,41 @@ table.center {
     font-style: italic;
     color: deepskyblue;
 
+}
+
+.w100p{
+    width: 100%;
+}
+
+.padLeft2p{
+    padding-left: 2%;
+}
+
+
+.padTop2p{
+    padding-top: 2%;
+}
+
+.edit_page{
+    text-align: center;
+    margin-top: 25px;
+}
+
+#title{
+    width: 25%;
+    text-align: center;
+}
+
+.control_buttons textarea{
+    border-radius: 40px;
+    padding: 10px;
+    background: transparent;
+    border: 2px solid;
+    border-color: #e26901;
+    /*text-shadow: 2px 0px #000000;*/
+    text-shadow: 1px 0px rgba(63, 107, 169, 0.5);
+    font-weight: bold;
+    margin-top: 5px;
 }
 
 /*td{*/

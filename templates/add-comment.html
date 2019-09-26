@@ -6,7 +6,8 @@
 </head>
 <body>
 {% include "banner.html" %}
-    <div align="center">
+{#    <div align="center">#}
+<div class="answer_display edit_page control_buttons">
         <h1>Comment</h1>
         <br>
         <form action="/{{ "comments" if message else ('question' if type=='question' else 'answer') }}/{{qid}}/{{  "new-comment" if not message else "edit" }}" method="post" enctype="multipart/form-data">
