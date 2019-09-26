@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
-
 import data_handler
 import util
 
@@ -166,16 +165,20 @@ def upload_image():
 def comment_question(id):
     comment_type = "question"
     question_id = id
+    ref_question_id = request.args.get("qid")
     if "answer" in str(request.url_rule):
         comment_type = "answer"
-        question_id = util.get_related_question_id(id)
+        # question_id = util.get_related_question_id(id)
         print(question_id)
     if request.method == 'POST':
         req = request.form.to_dict()
+        ref_question_id = req["qid"]
+        del req["qid"]
         data_handler.handle_add_comment(req)
+        # question_id = req["qid"]
         # return redirect(url_for("question_display", question_id=question_id))
-        return redirect("/question/" + str(question_id))
-    return render_template("add-comment.html", qid=id, type=comment_type)
+        return redirect("/question/" + str(ref_question_id))
+    return render_template("add-comment.html", qid=id, type=comment_type, question_id=ref_question_id)
 
 
 @app.route("/question/<id>/new-tag", methods=["GET", "POST"])

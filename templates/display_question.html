@@ -7,9 +7,11 @@
     <title>Question</title>
 </head>
 <body>
-    <h1 style="text-align: center">{{ question.title }}</h1>
-    <div style="padding-bottom: 50px;padding-left: 20%">
-    <table width="80%">
+    {% include "banner.html" %}
+    <h1 class="question_title">{{ question.title }}</h1>
+    <div class="question_display" >
+        <div class="question_detail">
+        <table >
         <thead>
             <tr>
                 {% for header in headers %}
@@ -49,8 +51,18 @@
             </tr>
         </tbody>
     </table>
+
     <br/>
-    <table>
+    <table class="control_buttons">
+        <tr>
+            <td colspan="5" class="tags">
+                {% for related_tag in question_related_tags %}
+                    {{ related_tag['name'] + ',' }}
+                {% endfor %}
+            </td>
+            </label>
+            </td>
+        </tr>
         <tr>
             <td>
                 <form action={{"/question/"}}{{question.id}}{{"/new-answer"}}>
@@ -78,14 +90,16 @@
                 </form>
             </td>
         </tr>
-        <tr>
-            <label>Tags: </label>
-            {% for related_tag in question_related_tags %}
-                {{ related_tag['name'] + ',' }}
-            {% endfor %}
-        </tr>
     </table>
-    <table width="80%" >
+{#    </div>#}
+            <div class="answer comment pt15 comment_buttons">
+                <table class="center">
+                    <colgroup>
+                        <col style="width: 60%; text-align: center">
+                        <col style="width: 20%; text-align: center">
+                        <col style="width: 5%; text-align: right">
+                        <col style="width: 5%; text-align: right">
+                    </colgroup>
         <tr align="center" >
                 {% if question_comments | length > 0 %}
                     {% for title in question_comments[0].keys() %}
@@ -98,6 +112,8 @@
                 {% endif %}
         </tr>
         <tr>
+                    <tbody>
+
             {%  for comment in question_comments %}
                 <tr>
                     {% for key in comment.keys() %}
@@ -128,18 +144,28 @@
                 </tr>
             {% endfor %}
         </tr>
-    </table>
-    </div>
+                    </tbody>
+                </table>
+            </div>
 
 
     {% set answer_headers = ['Vote', 'Answer', 'Image', 'Submission'] %}
     {% set answer_keys = [('vote_number', '10%', 'left'), ('message', '55%', 'left'), ('image', '20%', 'center'), ('submission_time', '10%', 'center')] %}
 
-    <h2 style="text-align:center">Answers to the question</h2>
+    <h2 class="question_title answer_title" >Answers to the question</h2>
 
+    <div class="question_display, answer_display">
     {% if answers | length != 0 %}
-    <div style="padding-left: 20%">
     <table width="80%" >
+        <colgroup>
+            <col style="width: 5.5%">
+            <col style="width: 11%">
+            <col style="width: 33%">
+            <col style="width: 16.5%">
+            <col style="width: 11%">
+            <col style="width: 11%">
+            <col style="width: 11%">
+        </colgroup>
         <thead>
             <tr>
                 {% for header in answer_headers %}
@@ -151,8 +177,22 @@
                 {%  endfor %}
             </tr>
         </thead>
-        <tbody>
-            {% for answer in answers %}
+    </table>
+{#        <tbody>#}
+
+        {% for answer in answers %}
+            <h2 class="answer_title_single">	&nbsp;</h2>
+            <div class="answer_detail answer comment_buttons ">
+            <table class="center">
+            <colgroup>
+                <col style="width: 5.5%">
+                <col style="width: 11%">
+                <col style="width: 33%">
+                <col style="width: 16.5%">
+                <col style="width: 11%">
+                <col style="width: 11%">
+                <col style="width: 11%">
+            </colgroup>
             <tr>
                  <td>
                     <form action="/vote-answer" method="post">
@@ -201,12 +241,28 @@
                     </form>
                 </td>
                 </tr>
+            </table>
+            </div>
                         {% set comments = get_comments("answer",answer["id"]) %}
-                        {% for comment in comments %}
+            {% if comments %}
+            <div class="answer comment comment_buttons">
+                <table class="center">
+                    <colgroup>
+                        <col style="width: 60%; text-align: center">
+                        <col style="width: 20%; text-align: center">
+                        <col style="width: 5%; text-align: right">
+                        <col style="width: 5%; text-align: right">
+                    </colgroup>
+                    <tbody>
+                    {% for comment in comments %}
                         <tr>
-                            <td></td>
-                            <td colspan="4">
+{#                            <td colspan="4">#}
+                            <td>
                             {{ comment["message"] }}
+                            </td>
+                            <td>
+{#                            <td colspan="4">#}
+                                {{ comment["submission_time"] }}
                             </td>
                             <td>
                                 <form action="/comments/{{ comment["id"] }}/edit" method="get">
@@ -223,16 +279,18 @@
                             </td>
                         </tr>
                         {% endfor %}
-            {% endfor %}
-        </tbody>
-    </table>
-    </div>
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        {% endfor %}
     {%  else  %}
         <p style="text-align: center">{{ "There is no answer to this question" }}</p>
     {% endif %}
     <br>
 
 
+    </div>
 </body>
 </html>
 
