@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
-import ast
 
 import data_handler
 import util
