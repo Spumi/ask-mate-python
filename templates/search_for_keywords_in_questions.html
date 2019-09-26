@@ -6,8 +6,18 @@
     </head>
     <body>
     {% include "banner.html" %}
+    {% include "search.html" %}
         <h1>Your keywords were found in the following questions:</h1>
-        <table style="width: 90%">
+    <div class="answer_display edit_page control_buttons">
+        <table class="center">
+            <colgroup>
+                <col style="width: 20%">
+                <col style="width: 50%">
+                <col style="width: 20%">
+                <col style="width: 16.5%">
+                <col style="width: 11%">
+                <col style="width: 11%">
+            </colgroup>
             {% set fieldnames = ['title', 'message', 'image', 'vote_number', 'view_number', 'submission_time'] %}
             <tr>
                 {% for cell in fieldnames %}
@@ -26,5 +36,6 @@
             {% endfor %}
             </tr>
         </table>
+    </div>
     </body>
 </html>
