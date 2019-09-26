@@ -25,17 +25,10 @@ def list_questions():
     order_direction = 'ASC' if order_direction == False else 'DESC'
     if str(request.url_rule) == '/':
         is_main = True
-        q = """SELECT * FROM question ORDER BY submission_time DESC
-               LIMIT 5           
-            """
-        questions = data_handler.execute_query(q)
-
+        questions = data_handler.order_questions('submission_time', 'DESC', True)
     else:
-
         is_main = False
-        q = """SELECT * FROM question ORDER BY {order_by} {order_direction}   
-        """.format(order_by=order_by, order_direction=order_direction)
-        questions = data_handler.execute_query(q)
+        questions = data_handler.order_questions(order_by, order_direction, False)
     return render_template('list.html',
                            sorted_questions=questions,
                            order_by=order_by,

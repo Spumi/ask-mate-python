@@ -2,7 +2,7 @@ from datetime import datetime
 from psycopg2 import sql
 
 import connection
-from util import string_builder, create_check_keywords_in_database_string
+from util import string_builder, create_check_keywords_in_database_string, escape_single_quotes
 from flask import request
 
 
@@ -102,13 +102,6 @@ def handle_add_comment(req):
                                     value_list=string_builder(req.values(), False)
                                     )
     execute_query(query)
-
-
-def escape_single_quotes(dictionary):
-    for key, value in dictionary.items():
-        if type(value) == str and "'" in value:
-            dictionary[key] = value.replace("'", "''")
-    return dictionary
 
 
 def get_comments(comment_tpe, _id):
@@ -225,3 +218,11 @@ def delete_comment(comment_id):
     query = """DELETE FROM comment WHERE id = {comment_id}
     """.format(comment_id=comment_id)
     execute_query(query)
+
+
+def order_questions(order_by, order_direction, is_main):
+    limit = 'LIMIT 5' if is_main == True else ''
+    q = """SELECT * FROM question ORDER BY {order_by} {order_direction} {limit}
+    """.format(order_by=order_by, order_direction=order_direction, limit=limit)
+    questions = execute_query(q)
+    return questions

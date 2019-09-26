@@ -73,3 +73,8 @@ def string_builder(lst, is_key=True):
     return result[:-2]
 
 
+def escape_single_quotes(dictionary):
+    for key, value in dictionary.items():
+        if type(value) == str and "'" in value:
+            dictionary[key] = value.replace("'", "''")
+    return dictionary
