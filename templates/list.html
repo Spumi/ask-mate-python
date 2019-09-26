@@ -8,14 +8,14 @@
         {% include "banner.html" %}
         {% include "search.html" %}
         {% set fieldnames = ['title', 'message', 'image', 'vote_number', 'view_number', 'submission_time'] %}
-
+         <div class="answer padTop2p comment_buttons rowHeight">
         {% if is_main %}
             <h2>The most recent 5 questions</h2>
             <form action={{"/list"}}>
                 <input type="submit" value="Click to view and sort all questions">
             </form>
         {% else %}
-        <div class="answer padTop2p comment_buttons rowHeight">
+
             <p>
                 <label for="attribute-selector" class="padLeft2p">Sort questions by: </label>
                 <form action="/list" method="get" class="padLeft2p">

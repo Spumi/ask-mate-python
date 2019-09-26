@@ -6,11 +6,12 @@
 </head>
 <body>
     {% include "banner.html" %}
-    <div align="center">
+{#    <div align="center">#}
+        <div class="answer_display edit_page control_buttons">
         <h1>{{"Edit question" if question else "Ask your Question" }}</h1>
         <br>
         <form action="/{{ question.id|string + '/edit' if question else 'add-question' }}" method="post" enctype="multipart/form-data">
-            <label for="title"><b>Question title:<b></b></label>
+            <label for="title" class="title"><b>Question title:<b></b></label>
             <br/>
             <input type="text" id="title" name="title" size="40" value="{{ question.title  if question else ""}}">
             <input type="hidden" name="id" value="{{question.id if question else ''}}">

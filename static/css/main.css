@@ -209,6 +209,20 @@ table.center {
     color: black;
 }
 
+input::-webkit-file-upload-button {
+    border-radius: 50px;
+    /*padding: 10px;*/
+    background: transparent;
+    border: 2px solid;
+    color: #e26901;
+    /*text-shadow: 2px 0px #000000;*/
+    text-shadow: 1px 0px rgba(63, 107, 169, 0.5);
+    font-weight: bold;
+    /*margin-top: 5px;*/
+}
+
+
+
 .control_buttons {
     margin-bottom: 10px;
 }
@@ -221,7 +235,7 @@ table.center {
     margin-top: -15px;
     border-radius: 15px 15px 15px 15px;
     /*margin-bottom: 66px;*/
-
+    min-height: 0;
 }
 
 .pt15{
@@ -246,6 +260,28 @@ table.center {
 
 .padTop2p{
     padding-top: 2%;
+}
+
+.edit_page{
+    text-align: center;
+    margin-top: 25px;
+}
+
+#title{
+    width: 25%;
+    text-align: center;
+}
+
+.control_buttons textarea{
+    border-radius: 40px;
+    padding: 10px;
+    background: transparent;
+    border: 2px solid;
+    border-color: #e26901;
+    /*text-shadow: 2px 0px #000000;*/
+    text-shadow: 1px 0px rgba(63, 107, 169, 0.5);
+    font-weight: bold;
+    margin-top: 5px;
 }
 
 /*td{*/
