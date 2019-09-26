@@ -3,9 +3,8 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 import util
-from util import create_check_keywords_in_database_string
 
-import ast
+
 from util import handle_add_answer, handle_add_question, get_question_related_tags
 from data_handler import handle_add_comment, handle_edit_comment
 
@@ -112,26 +111,10 @@ def vote_answer():
 def delete_question(question_id):
     if request.method == 'POST':
         if request.form.get('delete') == 'Yes':
-
-            q = """DELETE FROM comment WHERE question_id = {question_id} OR answer_id = (SELECT id FROM answer WHERE id = {question_id}) 
-            """.format(question_id=question_id)
-            data_handler.execute_query(q)
-            q = """DELETE FROM answer WHERE question_id = {question_id}
-            """.format(question_id=question_id)
-            data_handler.execute_query(q)
-            q = """DELETE FROM question_tag WHERE question_id = {question_id}
-            """.format(question_id=question_id)
-            data_handler.execute_query(q)
-            q = """DELETE FROM question WHERE id = {question_id}
-            """.format(question_id=question_id)
-            data_handler.execute_query(q)
-
-            # handle_delete_question(question_id)
+            data_handler.delete_question(question_id)
             return redirect(url_for('list_questions'))
-
         else:
             return redirect(url_for('question_display', question_id=question_id))
-
     return render_template('asking_if_delete_entry.html', question_id=question_id)
 
 
@@ -166,16 +149,8 @@ def delete_answer(answer_id):
 @app.route('/search-for-questions', methods=['GET', 'POST'])
 def search_for_questions():
     keywords = str(request.args.get('keywords')).replace(',', '').split(' ')
-    questions_containing_keywords_query = """SELECT DISTINCT question.* FROM question
-                                             LEFT JOIN answer ON question.id = answer.question_id
-                                             WHERE (question.title ILIKE {string_1})
-                                             OR (question.message ILIKE {string_2}) 
-                                             OR (answer.message ILIKE {string_3})
-    """.format(string_1=create_check_keywords_in_database_string(keywords, 'question', 'title'),
-               string_2=create_check_keywords_in_database_string(keywords, 'question', 'message'),
-               string_3=create_check_keywords_in_database_string(keywords, 'answer', 'message'))
+    questions_containing_keywords_query = data_handler.create_questions_containing_keywords_query(keywords)
     questions_containing_keywords = data_handler.execute_query(questions_containing_keywords_query)
-
     return render_template('search_for_keywords_in_questions.html',
                            keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords)
 
@@ -207,53 +182,12 @@ def comment_question(id):
 
 @app.route("/question/<id>/new-tag", methods=["GET", "POST"])
 def tag_question(id):
-    existing_tags = [name['name'] for name in [tag for tag in data_handler.execute_query("""SELECT id, name FROM tag""")]]
+    existing_tags = data_handler.get_existing_tags()
     if request.method == 'POST':
-        # If the user chooses a tag from the existing tags
         if request.form.get('selected_tag_name'):
-            selected_tag_name = '\'' + request.form.to_dict('selected_tag_name')['selected_tag_name'] + '\''
-            selected_tag_id = data_handler.execute_query("""SELECT id FROM tag 
-            LEFT JOIN question_tag ON tag.id = question_tag.tag_id WHERE tag.name = {selected_tag}"""
-                                                         .format(selected_tag=selected_tag_name))[0]['id']
-
-
-            form = 'select existing tag'
-            # Check in question_tag database whether there is a tag to the current question and get the ids...
-            quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag 
-                WHERE question_id = {q_id} AND tag_id = {t_id}""".format(q_id=id, t_id=selected_tag_id))
-
-            # ... if there is not then add new tag id and related question id to question_tag database
-            if quest_tag_id_combination == []:
-                data_handler.execute_query("""INSERT INTO question_tag (question_id, tag_id) 
-                VALUES({q_id}, {t_id})""".format(q_id=id, t_id=selected_tag_id))
-
-        # When the user enter a tag
+            data_handler.tag_question_when_user_choose_from_existing_tags(id)
         elif request.form.get('add_new_tag'):
-            new_tag_id = data_handler.execute_query("""SELECT MAX(id) FROM tag""")[0]['max'] + 1
-            new_tag_name = '\'' + request.form.get('add_new_tag') + '\'' # ' is needed for the SQL query
-
-            ### almost same as above
-            quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag
-                WHERE question_id = {q_id} AND tag_id = (SELECT id FROM tag 
-                                                        WHERE name = {t_name})""".format(q_id=id, t_name=new_tag_name))
-            if quest_tag_id_combination == []:
-                data_handler.execute_query("""INSERT INTO tag (id, name) VALUES({new_tag_id}, {new_tag_name})"""
-                                           .format(new_tag_id=new_tag_id, new_tag_name=new_tag_name))
-            ###
-
-                data_handler.execute_query("""INSERT INTO question_tag (question_id, tag_id) 
-                VALUES({q_id}, {t_id})""".format(q_id=id, t_id=new_tag_id))
-
-## Refactor in progress
-# def add_data_to_tag_database():
-#     quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag
-#         WHERE question_id = {q_id} AND tag_id = (SELECT id FROM tag
-#                                                 WHERE name = {t_name})""".format(q_id=id, t_name=new_tag_name))
-#     if quest_tag_id_combination == []:
-#         data_handler.execute_query("""INSERT INTO tag (id, name) VALUES({new_tag_id}, {new_tag_name})"""
-#                                    .format(new_tag_id=new_tag_id, new_tag_name=new_tag_name))
-
-
+            data_handler.tag_question_when_user_enter_new_tag(id)
 
         return redirect("/question/" + id)
 
