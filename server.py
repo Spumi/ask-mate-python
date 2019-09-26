@@ -214,7 +214,7 @@ def tag_question(id):
             selected_tag = ast.literal_eval(request.form.to_dict('selected_tag')['selected_tag']) # data of selected tag
             selected_tag_id = selected_tag['id']
 
-            print(request.form.to_dict('selected_tag'))
+            print(type(request.form.to_dict('selected_tag')))
             form = 'select existing tag'
             # Check in question_tag database whether there is a tag to the current question and get the ids...
             get_quest_tag_id_combination = data_handler.execute_query("""SELECT question_id, tag_id FROM question_tag 
