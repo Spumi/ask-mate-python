@@ -156,14 +156,17 @@
 
     <div class="question_display, answer_display">
     {% if answers | length != 0 %}
-    <table width="80%" >
+{#        <tbody>#}
+
+        {% for answer in answers %}
+            <h2 class="answer_title_single">	&nbsp;</h2>
+            <div class="answer_detail answer comment_buttons ">
+                <table  >
         <colgroup>
-            <col style="width: 5.5%">
-            <col style="width: 11%">
+            <col style="width: 15%;">
+            <col style="width: 50%">
             <col style="width: 33%">
             <col style="width: 16.5%">
-            <col style="width: 11%">
-            <col style="width: 11%">
             <col style="width: 11%">
         </colgroup>
         <thead>
@@ -178,12 +181,7 @@
             </tr>
         </thead>
     </table>
-{#        <tbody>#}
-
-        {% for answer in answers %}
-            <h2 class="answer_title_single">	&nbsp;</h2>
-            <div class="answer_detail answer comment_buttons ">
-            <table class="center">
+<table class="center">
             <colgroup>
                 <col style="width: 5.5%">
                 <col style="width: 11%">
