@@ -81,6 +81,7 @@
             </td>
             <td>
                 <form action={{"/question/"}}{{question.id}}{{"/new-comment"}}>
+                    <input type="hidden" name="qid" value="{{ question.id }}">
                     <input type="submit" value="Comment">
                 </form>
             </td>
