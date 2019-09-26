@@ -13,9 +13,9 @@
             <br/>
             <label for="tag-selector">Choose a tag</label>
             <br/>
-            <select id="tag-selector" name="selected_tag">
+            <select id="tag-selector" name="selected_tag_name">
                 {% for tag in existing_tags %}
-                    <option value="{{ tag }}">{{ tag['name'] }}</option>
+                    <option value="{{ tag }}">{{ tag }}</option>
                 {% endfor %}
             </select>
             <input type="submit" value="Add your tag">
