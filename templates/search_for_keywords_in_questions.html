@@ -29,6 +29,10 @@
                 {% for cell in fieldnames %}
                     {% if cell == 'submission_time' %}
                         <td>{{ question[cell] }}</td>
+                    {% elif cell == 'image' and question.get(cell) %}
+                        <td>
+                        <img src="/static/{{ question.get(cell) }}" width="50%" height="auto" alt="Picture">
+                        </td>
                     {% else %}
                         <td>{{ question[cell] }}</td>
                     {% endif %}
