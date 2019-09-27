@@ -7,298 +7,301 @@
     <title>Question</title>
 </head>
 <body>
-    {% include "banner.html" %}
-    <h1 class="question_title">{{ question.title }}</h1>
-    <div class="question_display" >
-        <div class="question_detail">
-        <table >
-        <thead>
+{% include "banner.html" %}
+<h1 class="question_title">{{ question.title }}</h1>
+<div class="question_display">
+    <div class="question_detail">
+        <table>
+            <thead>
             <tr>
                 {% for header in headers %}
                     {% if header == "Vote" %}
                         <th colspan="2" style="padding-bottom: 20px;padding-right: 40px">{{ header }}</th>
-                    {%  else %}
+                    {% else %}
                         <th style=" padding-bottom: 20px">{{ header }}</th>
                     {% endif %}
                 {% endfor %}
             </tr>
-        </thead>
+            </thead>
 
-        <tbody>
+            <tbody>
             <tr>
-                <td align="center"><form action="{{"/question/"}}{{ question.id }}{{"/vote-up"}}">
+                <td align="center">
+                    <form action="{{ "/question/" }}{{ question.id }}{{ "/vote-up" }}">
                         <input type="hidden" name="id" value="{{ question.id }}">
                         <input type="submit" value="↑">
                     </form>
-                    <form action="{{"/question/"}}{{ question.id }}{{"/vote-down"}}">
+                    <form action="{{ "/question/" }}{{ question.id }}{{ "/vote-down" }}">
                         <input type="hidden" name="id" value="{{ question.id }}">
                         <input type="submit" value="↓">
                     </form>
                 </td>
                 {% for key, width, align in keys %}
                     {% if key == 'submission_time' %}
-                        <td align={{align}} width={{width}}>{{ question.get(key) }}</td>
+                        <td align={{ align }} width={{ width }}>{{ question.get(key) }}</td>
                     {% elif key == 'image' %}
-                        <td align={{align}} width={{width}}>
+                        <td align={{ align }} width={{ width }}>
                             {% if question.get(key) != "" %}
-                            <img src="/static/{{ question.get(key) }}" width="50%" height="auto" alt="Picture">
+                                <img src="/static/{{ question.get(key) }}" width="50%" height="auto" alt="Picture">
                             {% endif %}
                         </td>
                     {% else %}
                         <td align="{{ align }}" width="{{ width }}">{{ question.get(key) }}</td>
                     {% endif %}
-                {%  endfor %}
-            </tr>
-        </tbody>
-    </table>
-
-    <br/>
-    <table class="control_buttons w100p">
-        <tr>
-            <td colspan="5" class="tags">
-                {% for related_tag in question_related_tags %}
-                    {{ related_tag['name'] + ',' }}
                 {% endfor %}
-            </td>
-            </label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <form action={{"/question/"}}{{question.id}}{{"/new-answer"}}>
-                    <input type="submit" value="Answer question">
-                </form>
-            </td>
-            <td>
-                <form action={{"/"}}{{question.id}}{{"/edit"}}>
-                    <input type="submit" value="Edit question">
-                </form>
-            </td>
-            <td>
-                <form action={{"/question/"}}{{question.id}}{{"/delete"}}>
-                    <input type="submit" value="Delete question">
-                </form>
-            </td>
-            <td>
-                <form action={{"/question/"}}{{question.id}}{{"/new-comment"}}>
-                    <input type="hidden" name="qid" value="{{ question.id }}">
-                    <input type="submit" value="Comment">
-                </form>
-            </td>
-            <td>
-                <form action={{"/question/"}}{{question.id}}{{"/new-tag"}}>
-                        <input type="submit" value="Add tag">
-                </form>
-            </td>
-        </tr>
-    </table>
-{#    </div>#}
-            <div class="answer comment pt15 comment_buttons">
-                <table class="center">
-                    <colgroup>
-                        <col style="width: 60%; text-align: center">
-                        <col style="width: 20%; text-align: center">
-                        <col style="width: 5%; text-align: right">
-                        <col style="width: 5%; text-align: right">
-                    </colgroup>
-        <tr align="center" >
-                {% if question_comments | length > 0 %}
-                    {% for title in question_comments[0].keys() %}
-                        {% if "id" not in title %}
-                        <th>
-                        {{ title }}
-                        </th>
-                        {% endif %}
+            </tr>
+            </tbody>
+        </table>
+
+        <br/>
+        <table class="control_buttons w100p">
+            <tr>
+                <td colspan="5" class="tags">
+                    {% for related_tag in question_related_tags %}
+                        {{ related_tag['name'] + ',' }}
                     {% endfor %}
-                {% endif %}
-        </tr>
-        <tr>
+                </td>
+                </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <form action={{ "/question/" }}{{ question.id }}{{ "/new-answer" }}>
+                        <input type="submit" value="Answer question">
+                    </form>
+                </td>
+                <td>
+                    <form action={{ "/" }}{{ question.id }}{{ "/edit" }}>
+                        <input type="submit" value="Edit question">
+                    </form>
+                </td>
+                <td>
+                    <form action={{ "/question/" }}{{ question.id }}{{ "/delete" }}>
+                        <input type="submit" value="Delete question">
+                    </form>
+                </td>
+                <td>
+                    <form action={{ "/question/" }}{{ question.id }}{{ "/new-comment" }}>
+                        <input type="hidden" name="qid" value="{{ question.id }}">
+                        <input type="submit" value="Comment">
+                    </form>
+                </td>
+                <td>
+                    <form action={{ "/question/" }}{{ question.id }}{{ "/new-tag" }}>
+                        <input type="submit" value="Add tag">
+                    </form>
+                </td>
+            </tr>
+        </table>
+        {#    </div>#}
+        <div class="answer comment pt15 comment_buttons">
+            <table class="center">
+                <colgroup>
+                    <col style="width: 60%; text-align: center">
+                    <col style="width: 20%; text-align: center">
+                    <col style="width: 5%; text-align: right">
+                    <col style="width: 5%; text-align: right">
+                </colgroup>
+                <tr align="center">
+                    {% if question_comments | length > 0 %}
+                        {% for title in question_comments[0].keys() %}
+                            {% if "id" not in title %}
+                                <th>
+                                    {{ title }}
+                                </th>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </tr>
+                <tr>
                     <tbody>
 
-            {%  for comment in question_comments %}
-                <tr>
-                    {% for key in comment.keys() %}
-                      {% if "id" not in key %}
-                        <td>
-                            {% if key != "edited_count" %}
-                                {{ comment[key] }}
-                            {% else %}
-                                {{ comment[key] if comment[key] else "0"}}
-                            {% endif %}
-                        </td>
-                        {% endif %}
-                    {% endfor %}
-                    <td>
-                        <form action="/comments/{{ comment["id"] }}/edit" method="get">
-                            <input type="hidden" name="qid" value="{{ comment["question_id"] }}">
-                            <input type="hidden" name="message" value="{{ comment["message"] }}">
-                            <input type="submit" value="Edit">
-                        </form>
-                    </td>
-                    <td>
-                        <form action="/comments/{{ comment["id"] }}/delete" method="get">
-                            <input type="hidden" name="qid" value="{{ comment["question_id"] }}">
-                            <input type="submit" value="Delete">
-                        </form>
-                    </td>
-
-                </tr>
-            {% endfor %}
-        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-
-    {% set answer_headers = ['Vote', 'Answer', 'Image', 'Submission'] %}
-    {% set answer_keys = [('vote_number', '10%', 'left'), ('message', '55%', 'left'), ('image', '20%', 'center'), ('submission_time', '10%', 'center')] %}
-
-    <h2 class="question_title answer_title" >Answers to the question</h2>
-
-    <div class="question_display, answer_display">
-    {% if answers | length != 0 %}
-{#        <tbody>#}
-
-        {% for answer in answers %}
-            <h2 class="answer_title_single">	&nbsp;</h2>
-            <div class="answer_detail answer comment_buttons ">
-                <table  >
-        <colgroup>
-            <col style="width: 15%;">
-            <col style="width: 50%">
-            <col style="width: 33%">
-            <col style="width: 16.5%">
-            <col style="width: 11%">
-        </colgroup>
-        <thead>
-            <tr>
-                {% for header in answer_headers %}
-                    {% if header =="Vote" %}
-                    <th colspan="2" style="padding-bottom: 20px;padding-right: 40px">{{ header}}</th>
-                    {% else %}
-                    <th style="padding-bottom: 20px">{{ header}}</th>
-                    {% endif %}
-                {%  endfor %}
-            </tr>
-        </thead>
-    </table>
-<table class="center">
-            <colgroup>
-                <col style="width: 5.5%">
-                <col style="width: 11%">
-                <col style="width: 33%">
-                <col style="width: 16.5%">
-                <col style="width: 11%">
-                <col style="width: 11%">
-                <col style="width: 11%">
-            </colgroup>
-            <tr>
-                 <td>
-                    <form action="/vote-answer" method="post">
-                        <input type="hidden" name="id" value="{{ answer.id }}">
-                        <input type="submit" value="↑">
-                        <input type="hidden" name="vote" value="up">
-                        <input type="hidden" name="question_id" value="{{question.id}}">
-                    </form>
-                    <form action="/vote-answer" method="post">
-                        <input type="hidden" name="id" value="{{ answer.id }}">
-                        <input type="submit" value="↓">
-                        <input type="hidden" name="vote" value="down">
-                        <input type="hidden" name="question_id" value="{{question.id}}">
-                    </form>
-                </td>
-                {% for key, width, align in answer_keys %}
-                    {% if key == 'submission_time' %}
-                        <td align={{align}} width={{width}}>{{ answer.get(key) }}</td>
-                    {% elif key == 'image' %}
-                        <td align={{align}} width={{width}}>
-                            {% if answer.get(key) %}
-                            <img src="/static/{{ answer.get(key) }}" width="50%" height="auto" alt="Picture">
-                            {% endif %}
-                        </td>
-                    {% else %}
-                        <td align="{{ align }}" width="{{ width }}">{{ answer.get(key) }}</td>
-                    {% endif %}
-
-
-                {%  endfor %}
-                <td>
-                    <form action={{"/answer/"}}{{answer.id}}{{ "/edit" }}>
-                        <input type="submit" value="Edit">
-                    </form>
-                </td>
-                <td>
-                    <form action={{"/answer/"}}{{answer.id}}{{"/delete"}}>
-                        <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
-                        <input type="submit" value="Delete">
-                    </form>
-                </td>
-                <td>
-                    <form action={{"/answer/"}}{{answer.id}}{{"/new-comment"}}>
-                        <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
-                        <input type="submit" value="comment">
-                    </form>
-                </td>
-                </tr>
-            </table>
-            </div>
-                        {% set comments = get_comments("answer",answer["id"]) %}
-            {% if comments %}
-            <div class="answer comment comment_buttons">
-                <table class="center">
-                    <colgroup>
-                        <col style="width: 60%; text-align: center">
-                        <col style="width: 20%; text-align: center">
-                        <col style="width: 5%; text-align: right">
-                        <col style="width: 5%; text-align: right">
-                    </colgroup>
-                    <tr>
-                    {% set titles = ["Comment", "Date", "Edits", "" ] %}
-                    <tr></tr>
-                    {% for title_id in comments[0].keys() %}
-                        <th>{{ titles[loop.index - 1] }}</th>
-                    {% endfor %}
-                    </tr>
-                    {% for comment in comments %}
+                    {% for comment in question_comments %}
                         <tr>
-{#                            <td colspan="4">#}
-                            <td>
-                            {{ comment["message"] }}
-                            </td>
-                            <td>
-{#                            <td colspan="4">#}
-                                {{ comment["submission_time"] }}
-                            </td>
-                            <td>
-                                {{ comment["edited_count"] }}
-                            </td>
+                            {% for key in comment.keys() %}
+                                {% if "id" not in key %}
+                                    <td>
+                                        {% if key != "edited_count" %}
+                                            {{ comment[key] }}
+                                        {% else %}
+                                            {{ comment[key] if comment[key] else "0" }}
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
                             <td>
                                 <form action="/comments/{{ comment["id"] }}/edit" method="get">
-                                    <input type="hidden" name="qid" value="{{ question["id"] }}">
+                                    <input type="hidden" name="qid" value="{{ comment["question_id"] }}">
                                     <input type="hidden" name="message" value="{{ comment["message"] }}">
                                     <input type="submit" value="Edit">
                                 </form>
                             </td>
                             <td>
                                 <form action="/comments/{{ comment["id"] }}/delete" method="get">
-                                    <input type="hidden" name="qid" value="{{ question["id"] }}">
+                                    <input type="hidden" name="qid" value="{{ comment["question_id"] }}">
                                     <input type="submit" value="Delete">
                                 </form>
                             </td>
+
                         </tr>
-                        {% endfor %}
+                    {% endfor %}
+                    </tr>
                     </tbody>
-                </table>
-            </div>
+            </table>
+        </div>
+
+
+        {% set answer_headers = ['Vote', 'Answer', 'Image', 'Submission'] %}
+        {% set answer_keys = [('vote_number', '10%', 'left'), ('message', '55%', 'left'), ('image', '20%', 'center'), ('submission_time', '10%', 'center')] %}
+
+        <h2 class="question_title answer_title">Answers to the question</h2>
+
+        <div class="question_display, answer_display">
+            {% if answers | length != 0 %}
+                {#        <tbody>#}
+
+                {% for answer in answers %}
+                    <h2 class="answer_title_single"> &nbsp;</h2>
+                    <div class="answer_detail answer comment_buttons ">
+                        <table>
+                            <colgroup>
+                                <col style="width: 15%;">
+                                <col style="width: 50%">
+                                <col style="width: 33%">
+                                <col style="width: 16.5%">
+                                <col style="width: 11%">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                {% for header in answer_headers %}
+                                    {% if header =="Vote" %}
+                                        <th colspan="2"
+                                            style="padding-bottom: 20px;padding-right: 40px">{{ header }}</th>
+                                    {% else %}
+                                        <th style="padding-bottom: 20px">{{ header }}</th>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                        </table>
+                        <table class="center">
+                            <colgroup>
+                                <col style="width: 5.5%">
+                                <col style="width: 11%">
+                                <col style="width: 33%">
+                                <col style="width: 16.5%">
+                                <col style="width: 11%">
+                                <col style="width: 11%">
+                                <col style="width: 11%">
+                            </colgroup>
+                            <tr>
+                                <td>
+                                    <form action="/vote-answer" method="post">
+                                        <input type="hidden" name="id" value="{{ answer.id }}">
+                                        <input type="submit" value="↑">
+                                        <input type="hidden" name="vote" value="up">
+                                        <input type="hidden" name="question_id" value="{{ question.id }}">
+                                    </form>
+                                    <form action="/vote-answer" method="post">
+                                        <input type="hidden" name="id" value="{{ answer.id }}">
+                                        <input type="submit" value="↓">
+                                        <input type="hidden" name="vote" value="down">
+                                        <input type="hidden" name="question_id" value="{{ question.id }}">
+                                    </form>
+                                </td>
+                                {% for key, width, align in answer_keys %}
+                                    {% if key == 'submission_time' %}
+                                        <td align={{ align }} width={{ width }}>{{ answer.get(key) }}</td>
+                                    {% elif key == 'image' %}
+                                        <td align={{ align }} width={{ width }}>
+                                            {% if answer.get(key) %}
+                                                <img src="/static/{{ answer.get(key) }}" width="50%" height="auto"
+                                                     alt="Picture">
+                                            {% endif %}
+                                        </td>
+                                    {% else %}
+                                        <td align="{{ align }}" width="{{ width }}">{{ answer.get(key) }}</td>
+                                    {% endif %}
+
+
+                                {% endfor %}
+                                <td>
+                                    <form action={{ "/answer/" }}{{ answer.id }}{{ "/edit" }}>
+                                        <input type="submit" value="Edit">
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action={{ "/answer/" }}{{ answer.id }}{{ "/delete" }}>
+                                        <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
+                                        <input type="submit" value="Delete">
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action={{ "/answer/" }}{{ answer.id }}{{ "/new-comment" }}>
+                                        <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
+                                        <input type="submit" value="comment">
+                                    </form>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    {% set comments = get_comments("answer",answer["id"]) %}
+                    {% if comments %}
+                        <div class="answer comment comment_buttons">
+                            <table class="center">
+                                <colgroup>
+                                    <col style="width: 60%; text-align: center">
+                                    <col style="width: 20%; text-align: center">
+                                    <col style="width: 5%; text-align: right">
+                                    <col style="width: 5%; text-align: right">
+                                </colgroup>
+                                <tr>
+                                    {% set titles = ["Comment", "Date", "Edits", "" ] %}
+                                <tr></tr>
+                                {% for title_id in comments[0].keys() %}
+                                    <th>{{ titles[loop.index - 1] }}</th>
+                                {% endfor %}
+                                </tr>
+                                {% for comment in comments %}
+                                    <tr>
+                                        {#                            <td colspan="4">#}
+                                        <td>
+                                            {{ comment["message"] }}
+                                        </td>
+                                        <td>
+                                            {#                            <td colspan="4">#}
+                                            {{ comment["submission_time"] }}
+                                        </td>
+                                        <td>
+                                            {{ comment["edited_count"] }}
+                                        </td>
+                                        <td>
+                                            <form action="/comments/{{ comment["id"] }}/edit" method="get">
+                                                <input type="hidden" name="qid" value="{{ question["id"] }}">
+                                                <input type="hidden" name="message" value="{{ comment["message"] }}">
+                                                <input type="submit" value="Edit">
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <form action="/comments/{{ comment["id"] }}/delete" method="get">
+                                                <input type="hidden" name="qid" value="{{ question["id"] }}">
+                                                <input type="submit" value="Delete">
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center">{{ "There is no answer to this question" }}</p>
             {% endif %}
-        {% endfor %}
-    {%  else  %}
-        <p style="text-align: center">{{ "There is no answer to this question" }}</p>
-    {% endif %}
-    <br>
+            <br>
 
 
-    </div>
+        </div>
 </body>
 </html>
 
