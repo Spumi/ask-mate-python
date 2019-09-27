@@ -6,7 +6,9 @@
 </head>
 <body>
    {% include "banner.html" %}
-    <div align="center">
+   <div class="comment_buttons answer_display edit_page control_buttons">
+{#    <div align="center">#}
+
         <h1>Add tag</h1>
         <br>
         <form action="/question/{{qid}}/new-tag" method="post">

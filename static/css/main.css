@@ -38,6 +38,8 @@ table.center {
     /*background-color: #e26901;*/
 }
 
+
+
 .header{
     border-bottom-left-radius: 50px;
     border-bottom-right-radius: 50px;
@@ -140,6 +142,16 @@ table.center {
     /*margin-top: 15px;*/
     margin-bottom: 15px;
     min-height: 150px;
+}
+
+.answer select {
+    border-radius: 25px;
+    padding: 5px;
+    background: transparent;
+    border: 2px solid;
+    color: #e26901;
+    /*background-color: #e26901;*/
+}
 }
 
 .rowHeight tr{
@@ -282,6 +294,10 @@ input::-webkit-file-upload-button {
     text-shadow: 1px 0px rgba(63, 107, 169, 0.5);
     font-weight: bold;
     margin-top: 5px;
+}
+
+.bold{
+    font-weight: bold;
 }
 
 /*td{*/
