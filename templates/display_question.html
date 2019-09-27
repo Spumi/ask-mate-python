@@ -212,7 +212,7 @@
                         <td align={{align}} width={{width}}>{{ answer.get(key) }}</td>
                     {% elif key == 'image' %}
                         <td align={{align}} width={{width}}>
-                            {% if answer.get(key) != "" %}
+                            {% if answer.get(key) %}
                             <img src="/static/{{ answer.get(key) }}" width="50%" height="auto" alt="Picture">
                             {% endif %}
                         </td>
