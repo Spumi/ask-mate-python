@@ -385,8 +385,8 @@ COPY public.tag (id, name) FROM stdin;
 --
 
 COPY public.users (id, name, password, reg_date, reputation) FROM stdin;
-0	Admin	admin	2019-10-07 00:00:00	0
-1	user	user	2019-10-07 00:00:00	0
+0	Admin	$2b$12$WnD.WnpkstOjJ942BWBNDOavvV1txRHaV3O27uRVge9.6tyuFtSRW	2019-10-07 00:00:00	0
+1	user	$2b$12$1hSkXN6wc5xagujdbP2DEeXmj4MUisS2bX5dLcl.bJMH5eEJnh962	2019-10-07 00:00:00	0
 \.
 
 
