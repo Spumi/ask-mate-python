@@ -129,6 +129,7 @@ def vote_answer():
 
 
 @app.route('/question/<question_id>/delete', methods=['GET', 'POST'])
+@auth_required
 def delete_question(question_id):
     if request.method == 'POST':
         if request.form.get('delete') == 'Yes':
@@ -136,7 +137,12 @@ def delete_question(question_id):
             return redirect(url_for('list_questions'))
         else:
             return redirect(url_for('question_display', question_id=question_id))
-    return render_template('asking_if_delete_entry.html', question_id=question_id)
+
+    if data_handler.get_user_by_question_id(question_id)['id'] == session['id']:
+        return render_template('asking_if_delete_entry.html', question_id=question_id)
+    else:
+        flash('You are not entitled to delete this question')
+        return redirect("/question/" + str(question_id))
 
 
 @app.route('/<question_id>/edit', methods=['GET', 'POST'])
