@@ -71,7 +71,6 @@ def add_answer(question_id):
 
 
 @app.route('/question/<question_id>')
-@auth_required
 def question_display(question_id):
     question = data_handler.get_question(question_id)
     related_answers = data_handler.get_question_related_answers(question_id)
@@ -121,12 +120,14 @@ def delete_question(question_id):
 
 
 @app.route('/<question_id>/edit', methods=['GET', 'POST'])
+@auth_required
 def edit_question(question_id):
 
     if request.method == 'POST':
         edited_question_data = request.form.to_dict()
         edited_question_data['id'] = int(edited_question_data['id'])
         edited_question_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        edited_question_data['user_id'] = session['id']
         util.handle_edit_entry(edited_question_data)
 
         return redirect("/question/" + str(question_id))
