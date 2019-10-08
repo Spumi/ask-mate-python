@@ -300,6 +300,12 @@ input::-webkit-file-upload-button {
     font-weight: bold;
 }
 
+.commentAuthor{
+    font-weight: bold;
+    font-style: italic;
+    text-decoration: underline;
+}
+
 /*td{*/
 /*    border: 1px solid black;*/
 /*}*/
