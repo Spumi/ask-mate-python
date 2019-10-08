@@ -203,7 +203,7 @@ table.center {
 }
 
 
-.control_buttons input {
+.control_buttons input,button{
     border-radius: 50px;
     padding: 10px;
     background: transparent;
