@@ -1,13 +1,13 @@
 import os
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import data_handler
 import util
 from data_handler import register
 
 app = Flask(__name__)
 app.debug = True
-app.secret_key = os.environ.get(b"SECRET_KEY")
+app.secret_key = os.environ.get("SECRET_KEY")
 
 @app.route('/')
 @app.route('/list')
@@ -231,9 +231,21 @@ def user_registration():
         else:
             return redirect('/')
 
-@app.route('/login', methods=["POST"]):
+@app.route('/login', methods=["GET","POST"])
 def login():
-    
+    if request.method == "POST":
+        username = request.form.get("username","")
+        pwd = request.form.get("password","")
+        if username != "" and pwd != "":
+            auth_query = """SELECT id FROM users
+            WHERE users.name = '%s' AND users.password = '%s';
+            """ % (username, util.verify_password(pwd, util.hash_password(pwd)))
+            result = data_handler.execute_query(auth_query)
+            # session["username"] = username
+            print(util.hash_password(pwd))
+            print(result)
+            # return result[0]["id"]
+    return render_template("dev/login.html")
 
 
 if __name__ == '__main__':
