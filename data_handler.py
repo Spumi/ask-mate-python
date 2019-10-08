@@ -240,3 +240,16 @@ def register(username, password):
         return False
     else:
         return True
+
+
+def get_user_by_question_id(question_id):
+    sql_expression = """SELECT users.id, users.name
+                        FROM users
+                        JOIN question
+                        ON (users.id = question.user_id)
+                        WHERE question.id = %(question_id)s;""" % {'question_id': question_id}
+
+    user_data = execute_query(sql_expression)[0]
+    return user_data
+
+
