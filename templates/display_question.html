@@ -92,6 +92,17 @@
                     </form>
                 </td>
             </tr>
+            <tr>
+                <td colspan="5">
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        {%  endif %}
+                    {% endwith %}
+                </td>
+            </tr>
         </table>
         {#    </div>#}
         <div class="answer comment pt15 comment_buttons">
