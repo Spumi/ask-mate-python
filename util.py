@@ -27,6 +27,7 @@ def generate_question_dict(data):
     question_data.update(title=data["title"])
     question_data.update(message=data["message"])
     question_data.update(image=data["image"])
+    question_data.update(user_id=data["user_id"])
     return question_data
 
 
