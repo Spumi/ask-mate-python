@@ -1,5 +1,7 @@
 import os
 from datetime import datetime
+
+import bcrypt as bcrypt
 from flask import request
 import data_handler
 
@@ -78,3 +80,8 @@ def escape_single_quotes(dictionary):
         if type(value) == str and "'" in value:
             dictionary[key] = value.replace("'", "''")
     return dictionary
+
+
+def hash_password(plain_text_password):
+    hashed_bytes = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
+    return hashed_bytes.decode('utf-8')
