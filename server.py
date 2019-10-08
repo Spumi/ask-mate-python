@@ -7,7 +7,7 @@ from data_handler import register
 
 app = Flask(__name__)
 app.debug = True
-
+app.secret_key = os.environ.get(b"SECRET_KEY")
 
 @app.route('/')
 @app.route('/list')
@@ -230,6 +230,10 @@ def user_registration():
             return 'Fail'
         else:
             return redirect('/')
+
+@app.route('/login', methods=["POST"]):
+def login():
+    
 
 
 if __name__ == '__main__':

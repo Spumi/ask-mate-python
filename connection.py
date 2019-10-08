@@ -27,7 +27,6 @@ def append_to_csv(file_path, data):
 # Creates a decorator to handle the database connection/cursor opening/closing.
 # Creates the cursor with RealDictCursor, thus it returns real dictionaries, where the column names are the keys.
 
-
 def get_connection_string():
     # setup connection string
     # to do this, please define these environment variables first
@@ -72,3 +71,5 @@ def connection_handler(function):
         return ret_value
 
     return wrapper
+
+
