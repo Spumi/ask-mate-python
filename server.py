@@ -23,6 +23,24 @@ def auth_required(f):
     return decorated_function
 
 
+#  GIVE UP TO SOLVE USER AUTH FOR ENTRY MODIFICATION WITH A DECORATOR
+#  def auth_user_check(action_id, action_type):
+#    def _auth_user_check(f):
+#          @wraps(f)
+#          def decorated_function(*args, **kwargs):
+#              if session and action_type == 'question':
+#                  username = data_handler.get_user_of_question(action_id)['name']
+#              else:
+#                  username = ''
+#              auth = request.authorization
+#              if auth.username != username:
+#                  return "You are not entitled to modify this entry"
+#              else:
+#                  return f(*args, **kwargs)
+#          return decorated_function
+#      return _auth_user_check
+
+
 @app.route('/')
 @app.route('/list')
 @app.route('/?order_by=<order_by>&order_direction=<order_direction>', methods=['GET', 'POST'])
@@ -132,9 +150,14 @@ def edit_question(question_id):
 
         return redirect("/question/" + str(question_id))
 
-    question = data_handler.get_question(question_id)[0]
+    if data_handler.get_user_by_question_id(question_id)['id'] == session['id']:
+        question = data_handler.get_question(question_id)[0]
 
-    return render_template('edit-question.html', question=question)
+        return render_template('edit-question.html', question=question)
+
+    else:
+        flash('You are not entitled to edit this question')
+        return redirect("/question/" + str(question_id))
 
 
 @app.route('/answer/<answer_id>/delete', methods=['GET', 'POST'])
