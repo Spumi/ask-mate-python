@@ -231,20 +231,27 @@ def user_registration():
         else:
             return redirect('/')
 
+
 @app.route('/login', methods=["GET","POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username","")
         pwd = request.form.get("password","")
         if username != "" and pwd != "":
-            auth_query = """SELECT id FROM users
-            WHERE users.name = '%s' AND users.password = '%s';
-            """ % (username, util.verify_password(pwd, util.hash_password(pwd)))
+            auth_query = """SELECT id, name, password FROM users
+            WHERE users.name = '%s';
+            """ % username
             result = data_handler.execute_query(auth_query)
-            # session["username"] = username
-            print(util.hash_password(pwd))
-            print(result)
-            # return result[0]["id"]
+            if not result:
+            #TODO: handle error
+                return "error"
+            else:
+                result = result.pop()
+            if util.verify_password(pwd, result["password"]):
+                session["username"] = result["name"]
+                session["id"] = result["id"]
+                return redirect("/")
+
     return render_template("dev/login.html")
 
 
