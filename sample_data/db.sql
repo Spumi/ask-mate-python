@@ -1654,3 +1654,1155 @@ ALTER TABLE ONLY public.question
 -- PostgreSQL database dump complete
 --
 
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.10 (Ubuntu 10.10-0ubuntu0.18.04.1)
+-- Dumped by pg_dump version 10.10 (Ubuntu 10.10-0ubuntu0.18.04.1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+ALTER TABLE ONLY public.question DROP CONSTRAINT fk_user_id;
+ALTER TABLE ONLY public.comment DROP CONSTRAINT fk_user_id;
+ALTER TABLE ONLY public.answer DROP CONSTRAINT fk_user_id;
+ALTER TABLE ONLY public.question_tag DROP CONSTRAINT fk_tag_id;
+ALTER TABLE ONLY public.comment DROP CONSTRAINT fk_question_id;
+ALTER TABLE ONLY public.question_tag DROP CONSTRAINT fk_question_id;
+ALTER TABLE ONLY public.answer DROP CONSTRAINT fk_question_id;
+ALTER TABLE ONLY public.comment DROP CONSTRAINT fk_answer_id;
+ALTER TABLE ONLY public.users DROP CONSTRAINT users_pkey;
+ALTER TABLE ONLY public.users DROP CONSTRAINT users_name_key;
+ALTER TABLE ONLY public.tag DROP CONSTRAINT pk_tag_id;
+ALTER TABLE ONLY public.question_tag DROP CONSTRAINT pk_question_tag_id;
+ALTER TABLE ONLY public.question DROP CONSTRAINT pk_question_id;
+ALTER TABLE ONLY public.comment DROP CONSTRAINT pk_comment_id;
+ALTER TABLE ONLY public.answer DROP CONSTRAINT pk_answer_id;
+ALTER TABLE public.users ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.tag ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.question ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.comment ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.answer ALTER COLUMN id DROP DEFAULT;
+DROP SEQUENCE public.users_id_seq;
+DROP TABLE public.users;
+DROP SEQUENCE public.tag_id_seq;
+DROP TABLE public.tag;
+DROP TABLE public.question_tag;
+DROP SEQUENCE public.question_id_seq;
+DROP TABLE public.question;
+DROP SEQUENCE public.comment_id_seq;
+DROP TABLE public.comment;
+DROP SEQUENCE public.answer_id_seq;
+DROP TABLE public.answer;
+DROP EXTENSION plpgsql;
+DROP SCHEMA public;
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA public;
+
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON SCHEMA public IS 'standard public schema';
+
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: answer; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.answer (
+    id integer NOT NULL,
+    submission_time timestamp without time zone,
+    vote_number integer,
+    question_id integer,
+    message text,
+    image text,
+    user_id integer NOT NULL,
+    accepted boolean DEFAULT false
+);
+
+
+--
+-- Name: answer_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.answer_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: answer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.answer_id_seq OWNED BY public.answer.id;
+
+
+--
+-- Name: comment; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.comment (
+    id integer NOT NULL,
+    question_id integer,
+    answer_id integer,
+    message text,
+    submission_time timestamp without time zone,
+    edited_count integer,
+    user_id integer NOT NULL
+);
+
+
+--
+-- Name: comment_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.comment_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: comment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.comment_id_seq OWNED BY public.comment.id;
+
+
+--
+-- Name: question; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question (
+    id integer NOT NULL,
+    submission_time timestamp without time zone,
+    view_number integer,
+    vote_number integer,
+    title text,
+    message text,
+    image text,
+    user_id integer
+);
+
+
+--
+-- Name: question_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.question_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: question_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.question_id_seq OWNED BY public.question.id;
+
+
+--
+-- Name: question_tag; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question_tag (
+    question_id integer NOT NULL,
+    tag_id integer NOT NULL
+);
+
+
+--
+-- Name: tag; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.tag (
+    id integer NOT NULL,
+    name text
+);
+
+
+--
+-- Name: tag_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.tag_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: tag_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.tag_id_seq OWNED BY public.tag.id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    name character varying(32) NOT NULL,
+    password character varying NOT NULL,
+    reg_date timestamp(6) without time zone DEFAULT now() NOT NULL,
+    reputation integer DEFAULT 0
+);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: answer id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.answer ALTER COLUMN id SET DEFAULT nextval('public.answer_id_seq'::regclass);
+
+
+--
+-- Name: comment id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comment ALTER COLUMN id SET DEFAULT nextval('public.comment_id_seq'::regclass);
+
+
+--
+-- Name: question id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question ALTER COLUMN id SET DEFAULT nextval('public.question_id_seq'::regclass);
+
+
+--
+-- Name: tag id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tag ALTER COLUMN id SET DEFAULT nextval('public.tag_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Data for Name: answer; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.answer VALUES (2, '2017-04-25 14:42:00', 35, 1, 'Look it up in the Python docs', 'images/image2.jpg', 0, false);
+INSERT INTO public.answer VALUES (3, '2019-09-24 11:04:49', 8, 1, 'sajt', '', 0, false);
+INSERT INTO public.answer VALUES (4, '2019-09-24 11:05:30', 13, 1, 'sajt', '', 0, false);
+INSERT INTO public.answer VALUES (5, '2019-09-24 15:08:42', 0, 0, 'sanyi', '', 0, false);
+INSERT INTO public.answer VALUES (6, '2019-09-25 10:47:03', 0, 1, 'asd''''asd', '', 0, false);
+INSERT INTO public.answer VALUES (7, '2019-09-25 10:47:29', 0, 1, '''''a', '', 0, false);
+INSERT INTO public.answer VALUES (8, '2019-09-25 10:48:47', 0, 1, 'a''''1', '', 0, false);
+INSERT INTO public.answer VALUES (9, '2019-09-25 10:51:21', 0, 3, 'a''1', '', 0, false);
+INSERT INTO public.answer VALUES (10, '2019-09-25 13:53:01', 1, 2, 'bump', '', 0, false);
+INSERT INTO public.answer VALUES (1, '2019-09-25 14:16:42', 4, 1, 'You need to use brackets: my_list = [] changed -----', '', 0, false);
+INSERT INTO public.answer VALUES (11, '2019-09-26 11:02:47', 0, 5, 'sajt', '', 0, false);
+INSERT INTO public.answer VALUES (12, '2019-09-26 11:02:55', 0, 5, 'sajt2', '', 0, false);
+INSERT INTO public.answer VALUES (13, '2019-09-26 13:28:16', 0, 4, 'salata', '', 0, false);
+INSERT INTO public.answer VALUES (14, '2019-09-26 14:27:16', 0, 6, 'nanaaaaaaaan', '', 0, false);
+
+
+--
+-- Data for Name: comment; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.comment VALUES (73, 1, NULL, 'asd', '2019-09-25 14:48:11', NULL, 0);
+INSERT INTO public.comment VALUES (2, NULL, 1, 'I think you could use my_list = list() as well.', '2017-05-02 16:55:00', NULL, 0);
+INSERT INTO public.comment VALUES (4, NULL, 2, 'asdsa', '2019-09-24 11:29:23', NULL, 0);
+INSERT INTO public.comment VALUES (5, NULL, 2, 'asdsa', '2019-09-24 11:32:29', NULL, 0);
+INSERT INTO public.comment VALUES (6, 2, NULL, 'asdas', '2019-09-24 11:37:48', NULL, 0);
+INSERT INTO public.comment VALUES (7, 2, NULL, 'asdsada', '2019-09-24 11:38:15', NULL, 0);
+INSERT INTO public.comment VALUES (68, 1, NULL, 'sajotskeksz 3', '2019-09-25 13:26:20', 2, 0);
+INSERT INTO public.comment VALUES (11, NULL, 1, 'sadsad', '2019-09-24 11:40:05', NULL, 0);
+INSERT INTO public.comment VALUES (22, NULL, 1, 'bliblubla', '2019-09-24 13:29:56', 2, 0);
+INSERT INTO public.comment VALUES (16, 2, NULL, 'asdas', '2019-09-24 13:17:55', NULL, 0);
+INSERT INTO public.comment VALUES (76, NULL, 1, 'komment edit', '2019-09-26 12:51:10', 1, 0);
+INSERT INTO public.comment VALUES (77, 1, NULL, 'komment q edit', '2019-09-26 12:51:20', 1, 0);
+INSERT INTO public.comment VALUES (34, NULL, 4, 'asdsa', '2019-09-24 14:50:51', NULL, 0);
+INSERT INTO public.comment VALUES (79, NULL, 3, 'asdsa', '2019-09-26 13:20:45', NULL, 0);
+INSERT INTO public.comment VALUES (82, NULL, 7, 'aaaaaaaaaaaaaaaaqqqqqqqqqqqqq', '2019-09-26 13:26:56', NULL, 0);
+INSERT INTO public.comment VALUES (85, NULL, 13, 'nokedli + porkolt', '2019-09-26 13:28:24', 1, 0);
+INSERT INTO public.comment VALUES (45, NULL, 4, 'asdsasdsa', '2019-09-24 14:59:37', NULL, 0);
+INSERT INTO public.comment VALUES (46, NULL, 4, 'asdsasdsa', '2019-09-24 15:00:06', NULL, 0);
+INSERT INTO public.comment VALUES (31, NULL, 4, '123 edited hope it owrks', '2019-09-24 14:48:44', 1, 0);
+INSERT INTO public.comment VALUES (49, NULL, 4, 'asdsadsad', '2019-09-24 15:03:19', NULL, 0);
+INSERT INTO public.comment VALUES (87, 5, NULL, 'asdsad', '2019-09-26 14:41:18', NULL, 0);
+INSERT INTO public.comment VALUES (51, NULL, 2, 'asdsa', '2019-09-24 15:04:44', NULL, 0);
+INSERT INTO public.comment VALUES (88, 5, NULL, 'asdsa', '2019-09-26 14:43:27', NULL, 0);
+INSERT INTO public.comment VALUES (89, NULL, 1, 'gdsvsdv', '2019-09-27 13:45:42', NULL, 0);
+INSERT INTO public.comment VALUES (57, NULL, 5, 'asdsadas', '2019-09-24 15:10:54', NULL, 0);
+INSERT INTO public.comment VALUES (58, NULL, 5, 'sajt', '2019-09-25 09:39:09', NULL, 0);
+INSERT INTO public.comment VALUES (59, NULL, 5, 'sajtsdfds', '2019-09-25 09:39:48', NULL, 0);
+INSERT INTO public.comment VALUES (63, 1, NULL, 'as''asdsa', '2019-09-25 10:46:37', NULL, 0);
+INSERT INTO public.comment VALUES (65, 3, NULL, 'a''1', '2019-09-25 10:51:27', NULL, 0);
+INSERT INTO public.comment VALUES (66, NULL, 5, 'new comment test #1', '2019-09-25 11:11:42', NULL, 0);
+INSERT INTO public.comment VALUES (64, 1, NULL, 'asd', '2019-09-25 10:48:37', NULL, 0);
+INSERT INTO public.comment VALUES (61, 0, NULL, 'asd', '2019-09-25 10:34:48', NULL, 0);
+INSERT INTO public.comment VALUES (12, 1, NULL, '123asd123', '2019-09-24 11:42:07', NULL, 0);
+INSERT INTO public.comment VALUES (14, 1, NULL, 'asd', '2019-09-24 13:08:58', NULL, 0);
+INSERT INTO public.comment VALUES (19, 1, NULL, 'asdsad', '2019-09-24 13:21:06', NULL, 0);
+INSERT INTO public.comment VALUES (20, 1, NULL, 'selele', '2019-09-24 13:21:14', NULL, 0);
+INSERT INTO public.comment VALUES (21, 1, NULL, 'asdasdsadzxcxzc', '2019-09-24 13:29:38', NULL, 0);
+INSERT INTO public.comment VALUES (15, 2, NULL, 'alma lama', '2019-09-24 13:10:00', NULL, 0);
+INSERT INTO public.comment VALUES (18, 2, NULL, 'asd', '2019-09-24 13:20:58', 2, 0);
+INSERT INTO public.comment VALUES (17, 2, NULL, 'sadsadas', '2019-09-24 13:19:41', 1, 0);
+INSERT INTO public.comment VALUES (3, 2, NULL, 'lajos', '2019-09-24 11:27:46', 1, 0);
+INSERT INTO public.comment VALUES (69, NULL, 10, 'sajt', '2019-09-25 13:56:41', 1, 0);
+
+
+--
+-- Data for Name: question; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.question VALUES (1, '2019-09-25 10:47:48', 15, 9, 'Wordpress loading multiple jQuery Versions', 'I''asd developed a plugin that uses the jquery booklet plugin (http://builtbywill.com/booklet/#/) this plugin binds a function to $ so I cann call $(".myBook").booklet();
+
+I could easy managing the loading order with wp_enqueue_script so first I load jquery then I load booklet so everything is fine.
+
+BUT in my theme i also using jquery via webpack so the loading order is now following:
+
+jquery
+booklet
+app.js (bundled file with webpack, including jquery)', '', 0);
+INSERT INTO public.question VALUES (3, '2019-09-25 10:53:11', 0, 0, 'asd''12', 'qwe''%123', '', 0);
+INSERT INTO public.question VALUES (0, '2017-04-28 08:29:00', 29, 8, 'How to make lists in Python?', 'I am totally new to this, any hints?', NULL, 0);
+INSERT INTO public.question VALUES (2, '2017-05-01 10:41:00', 1364, 62, 'Drawing canvas with an image picked with Cordova Camera Plugin', 'I''m getting an image from device and drawing a canvas with filters using Pixi JS. It works all well using computer to get an image. But when I''m on IOS, it throws errors such as cross origin issue, or that I''m trying to use an unknown format.
+', NULL, 0);
+INSERT INTO public.question VALUES (4, '2019-09-25 17:23:31', 0, 0, 'sadsa', 'asdsad', '', 0);
+INSERT INTO public.question VALUES (5, '2019-09-25 17:23:36', 0, 0, 'asdasd', 'asqdas', '', 0);
+INSERT INTO public.question VALUES (6, '2019-09-26 17:21:03', 0, 0, '1234', '12345', 'images/Screenshot from 2019-07-04 14-41-52.png', 0);
+
+
+--
+-- Data for Name: question_tag; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.question_tag VALUES (0, 1);
+INSERT INTO public.question_tag VALUES (1, 3);
+INSERT INTO public.question_tag VALUES (2, 3);
+
+
+--
+-- Data for Name: tag; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.tag VALUES (1, 'python');
+INSERT INTO public.tag VALUES (2, 'sql');
+INSERT INTO public.tag VALUES (3, 'css');
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.users VALUES (0, 'Admin', '$2b$12$WnD.WnpkstOjJ942BWBNDOavvV1txRHaV3O27uRVge9.6tyuFtSRW', '2019-10-07 00:00:00', 0);
+INSERT INTO public.users VALUES (1, 'user', '$2b$12$1hSkXN6wc5xagujdbP2DEeXmj4MUisS2bX5dLcl.bJMH5eEJnh962', '2019-10-07 00:00:00', 0);
+INSERT INTO public.users VALUES (5, 'bela', '$2b$12$FkUkOgEq.3kLq7ugKwpwWOBi/spbcFMmCLXnJ2wmzjsuvHY68a8Lq', '2019-10-08 11:14:26.76269', 0);
+INSERT INTO public.users VALUES (6, 'mari', '$2b$12$11s2Gdwpb.6qrSVmJoDUM.JS7HET.sTb0ZNe9HwpVPepPKKxXUzIy', '2019-10-08 11:26:33.846485', 0);
+INSERT INTO public.users VALUES (9, 'lajos', '$2b$12$9rGBOOl48kD5UJy76oqFAOTONik8aku3jd5bvcA4lPS5OsjZAbl3K', '2019-10-08 11:40:41.51719', 0);
+
+
+--
+-- Name: answer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.answer_id_seq', 14, true);
+
+
+--
+-- Name: comment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.comment_id_seq', 89, true);
+
+
+--
+-- Name: question_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.question_id_seq', 6, true);
+
+
+--
+-- Name: tag_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.tag_id_seq', 3, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 9, true);
+
+
+--
+-- Name: answer pk_answer_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.answer
+    ADD CONSTRAINT pk_answer_id PRIMARY KEY (id);
+
+
+--
+-- Name: comment pk_comment_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comment
+    ADD CONSTRAINT pk_comment_id PRIMARY KEY (id);
+
+
+--
+-- Name: question pk_question_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question
+    ADD CONSTRAINT pk_question_id PRIMARY KEY (id);
+
+
+--
+-- Name: question_tag pk_question_tag_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_tag
+    ADD CONSTRAINT pk_question_tag_id PRIMARY KEY (question_id, tag_id);
+
+
+--
+-- Name: tag pk_tag_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tag
+    ADD CONSTRAINT pk_tag_id PRIMARY KEY (id);
+
+
+--
+-- Name: users users_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_name_key UNIQUE (name);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: comment fk_answer_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comment
+    ADD CONSTRAINT fk_answer_id FOREIGN KEY (answer_id) REFERENCES public.answer(id);
+
+
+--
+-- Name: answer fk_question_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.answer
+    ADD CONSTRAINT fk_question_id FOREIGN KEY (question_id) REFERENCES public.question(id);
+
+
+--
+-- Name: question_tag fk_question_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_tag
+    ADD CONSTRAINT fk_question_id FOREIGN KEY (question_id) REFERENCES public.question(id);
+
+
+--
+-- Name: comment fk_question_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comment
+    ADD CONSTRAINT fk_question_id FOREIGN KEY (question_id) REFERENCES public.question(id);
+
+
+--
+-- Name: question_tag fk_tag_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_tag
+    ADD CONSTRAINT fk_tag_id FOREIGN KEY (tag_id) REFERENCES public.tag(id);
+
+
+--
+-- Name: answer fk_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.answer
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: comment fk_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comment
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: question fk_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.10 (Ubuntu 10.10-0ubuntu0.18.04.1)
+-- Dumped by pg_dump version 10.10 (Ubuntu 10.10-0ubuntu0.18.04.1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+ALTER TABLE ONLY public.question DROP CONSTRAINT fk_user_id;
+ALTER TABLE ONLY public.comment DROP CONSTRAINT fk_user_id;
+ALTER TABLE ONLY public.answer DROP CONSTRAINT fk_user_id;
+ALTER TABLE ONLY public.question_tag DROP CONSTRAINT fk_tag_id;
+ALTER TABLE ONLY public.comment DROP CONSTRAINT fk_question_id;
+ALTER TABLE ONLY public.question_tag DROP CONSTRAINT fk_question_id;
+ALTER TABLE ONLY public.answer DROP CONSTRAINT fk_question_id;
+ALTER TABLE ONLY public.comment DROP CONSTRAINT fk_answer_id;
+ALTER TABLE ONLY public.users DROP CONSTRAINT users_pkey;
+ALTER TABLE ONLY public.users DROP CONSTRAINT users_name_key;
+ALTER TABLE ONLY public.tag DROP CONSTRAINT pk_tag_id;
+ALTER TABLE ONLY public.question_tag DROP CONSTRAINT pk_question_tag_id;
+ALTER TABLE ONLY public.question DROP CONSTRAINT pk_question_id;
+ALTER TABLE ONLY public.comment DROP CONSTRAINT pk_comment_id;
+ALTER TABLE ONLY public.answer DROP CONSTRAINT pk_answer_id;
+ALTER TABLE public.users ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.tag ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.question ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.comment ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.answer ALTER COLUMN id DROP DEFAULT;
+DROP SEQUENCE public.users_id_seq;
+DROP TABLE public.users;
+DROP SEQUENCE public.tag_id_seq;
+DROP TABLE public.tag;
+DROP TABLE public.question_tag;
+DROP SEQUENCE public.question_id_seq;
+DROP TABLE public.question;
+DROP SEQUENCE public.comment_id_seq;
+DROP TABLE public.comment;
+DROP SEQUENCE public.answer_id_seq;
+DROP TABLE public.answer;
+DROP EXTENSION plpgsql;
+DROP SCHEMA public;
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA public;
+
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON SCHEMA public IS 'standard public schema';
+
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: answer; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.answer (
+    id integer NOT NULL,
+    submission_time timestamp without time zone,
+    vote_number integer,
+    question_id integer,
+    message text,
+    image text,
+    user_id integer NOT NULL,
+    accepted boolean DEFAULT false
+);
+
+
+--
+-- Name: answer_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.answer_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: answer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.answer_id_seq OWNED BY public.answer.id;
+
+
+--
+-- Name: comment; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.comment (
+    id integer NOT NULL,
+    question_id integer,
+    answer_id integer,
+    message text,
+    submission_time timestamp without time zone,
+    edited_count integer,
+    user_id integer NOT NULL
+);
+
+
+--
+-- Name: comment_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.comment_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: comment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.comment_id_seq OWNED BY public.comment.id;
+
+
+--
+-- Name: question; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question (
+    id integer NOT NULL,
+    submission_time timestamp without time zone,
+    view_number integer,
+    vote_number integer,
+    title text,
+    message text,
+    image text,
+    user_id integer
+);
+
+
+--
+-- Name: question_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.question_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: question_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.question_id_seq OWNED BY public.question.id;
+
+
+--
+-- Name: question_tag; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question_tag (
+    question_id integer NOT NULL,
+    tag_id integer NOT NULL
+);
+
+
+--
+-- Name: tag; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.tag (
+    id integer NOT NULL,
+    name text
+);
+
+
+--
+-- Name: tag_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.tag_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: tag_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.tag_id_seq OWNED BY public.tag.id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    name character varying(32) NOT NULL,
+    password character varying NOT NULL,
+    reg_date timestamp(6) without time zone DEFAULT now() NOT NULL,
+    reputation integer DEFAULT 0
+);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: answer id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.answer ALTER COLUMN id SET DEFAULT nextval('public.answer_id_seq'::regclass);
+
+
+--
+-- Name: comment id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comment ALTER COLUMN id SET DEFAULT nextval('public.comment_id_seq'::regclass);
+
+
+--
+-- Name: question id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question ALTER COLUMN id SET DEFAULT nextval('public.question_id_seq'::regclass);
+
+
+--
+-- Name: tag id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tag ALTER COLUMN id SET DEFAULT nextval('public.tag_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Data for Name: answer; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.answer VALUES (2, '2017-04-25 14:42:00', 35, 1, 'Look it up in the Python docs', 'images/image2.jpg', 0, false);
+INSERT INTO public.answer VALUES (3, '2019-09-24 11:04:49', 8, 1, 'sajt', '', 0, false);
+INSERT INTO public.answer VALUES (4, '2019-09-24 11:05:30', 13, 1, 'sajt', '', 0, false);
+INSERT INTO public.answer VALUES (5, '2019-09-24 15:08:42', 0, 0, 'sanyi', '', 0, false);
+INSERT INTO public.answer VALUES (6, '2019-09-25 10:47:03', 0, 1, 'asd''''asd', '', 0, false);
+INSERT INTO public.answer VALUES (7, '2019-09-25 10:47:29', 0, 1, '''''a', '', 0, false);
+INSERT INTO public.answer VALUES (8, '2019-09-25 10:48:47', 0, 1, 'a''''1', '', 0, false);
+INSERT INTO public.answer VALUES (9, '2019-09-25 10:51:21', 0, 3, 'a''1', '', 0, false);
+INSERT INTO public.answer VALUES (10, '2019-09-25 13:53:01', 1, 2, 'bump', '', 0, false);
+INSERT INTO public.answer VALUES (1, '2019-09-25 14:16:42', 4, 1, 'You need to use brackets: my_list = [] changed -----', '', 0, false);
+INSERT INTO public.answer VALUES (11, '2019-09-26 11:02:47', 0, 5, 'sajt', '', 0, false);
+INSERT INTO public.answer VALUES (12, '2019-09-26 11:02:55', 0, 5, 'sajt2', '', 0, false);
+INSERT INTO public.answer VALUES (13, '2019-09-26 13:28:16', 0, 4, 'salata', '', 0, false);
+INSERT INTO public.answer VALUES (14, '2019-09-26 14:27:16', 0, 6, 'nanaaaaaaaan', '', 0, false);
+
+
+--
+-- Data for Name: comment; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.comment VALUES (73, 1, NULL, 'asd', '2019-09-25 14:48:11', NULL, 0);
+INSERT INTO public.comment VALUES (2, NULL, 1, 'I think you could use my_list = list() as well.', '2017-05-02 16:55:00', NULL, 0);
+INSERT INTO public.comment VALUES (4, NULL, 2, 'asdsa', '2019-09-24 11:29:23', NULL, 0);
+INSERT INTO public.comment VALUES (5, NULL, 2, 'asdsa', '2019-09-24 11:32:29', NULL, 0);
+INSERT INTO public.comment VALUES (6, 2, NULL, 'asdas', '2019-09-24 11:37:48', NULL, 0);
+INSERT INTO public.comment VALUES (7, 2, NULL, 'asdsada', '2019-09-24 11:38:15', NULL, 0);
+INSERT INTO public.comment VALUES (68, 1, NULL, 'sajotskeksz 3', '2019-09-25 13:26:20', 2, 0);
+INSERT INTO public.comment VALUES (11, NULL, 1, 'sadsad', '2019-09-24 11:40:05', NULL, 0);
+INSERT INTO public.comment VALUES (22, NULL, 1, 'bliblubla', '2019-09-24 13:29:56', 2, 0);
+INSERT INTO public.comment VALUES (16, 2, NULL, 'asdas', '2019-09-24 13:17:55', NULL, 0);
+INSERT INTO public.comment VALUES (76, NULL, 1, 'komment edit', '2019-09-26 12:51:10', 1, 0);
+INSERT INTO public.comment VALUES (77, 1, NULL, 'komment q edit', '2019-09-26 12:51:20', 1, 0);
+INSERT INTO public.comment VALUES (34, NULL, 4, 'asdsa', '2019-09-24 14:50:51', NULL, 0);
+INSERT INTO public.comment VALUES (79, NULL, 3, 'asdsa', '2019-09-26 13:20:45', NULL, 0);
+INSERT INTO public.comment VALUES (82, NULL, 7, 'aaaaaaaaaaaaaaaaqqqqqqqqqqqqq', '2019-09-26 13:26:56', NULL, 0);
+INSERT INTO public.comment VALUES (85, NULL, 13, 'nokedli + porkolt', '2019-09-26 13:28:24', 1, 0);
+INSERT INTO public.comment VALUES (45, NULL, 4, 'asdsasdsa', '2019-09-24 14:59:37', NULL, 0);
+INSERT INTO public.comment VALUES (46, NULL, 4, 'asdsasdsa', '2019-09-24 15:00:06', NULL, 0);
+INSERT INTO public.comment VALUES (31, NULL, 4, '123 edited hope it owrks', '2019-09-24 14:48:44', 1, 0);
+INSERT INTO public.comment VALUES (49, NULL, 4, 'asdsadsad', '2019-09-24 15:03:19', NULL, 0);
+INSERT INTO public.comment VALUES (87, 5, NULL, 'asdsad', '2019-09-26 14:41:18', NULL, 0);
+INSERT INTO public.comment VALUES (51, NULL, 2, 'asdsa', '2019-09-24 15:04:44', NULL, 0);
+INSERT INTO public.comment VALUES (88, 5, NULL, 'asdsa', '2019-09-26 14:43:27', NULL, 0);
+INSERT INTO public.comment VALUES (89, NULL, 1, 'gdsvsdv', '2019-09-27 13:45:42', NULL, 0);
+INSERT INTO public.comment VALUES (57, NULL, 5, 'asdsadas', '2019-09-24 15:10:54', NULL, 0);
+INSERT INTO public.comment VALUES (58, NULL, 5, 'sajt', '2019-09-25 09:39:09', NULL, 0);
+INSERT INTO public.comment VALUES (59, NULL, 5, 'sajtsdfds', '2019-09-25 09:39:48', NULL, 0);
+INSERT INTO public.comment VALUES (63, 1, NULL, 'as''asdsa', '2019-09-25 10:46:37', NULL, 0);
+INSERT INTO public.comment VALUES (65, 3, NULL, 'a''1', '2019-09-25 10:51:27', NULL, 0);
+INSERT INTO public.comment VALUES (66, NULL, 5, 'new comment test #1', '2019-09-25 11:11:42', NULL, 0);
+INSERT INTO public.comment VALUES (64, 1, NULL, 'asd', '2019-09-25 10:48:37', NULL, 0);
+INSERT INTO public.comment VALUES (61, 0, NULL, 'asd', '2019-09-25 10:34:48', NULL, 0);
+INSERT INTO public.comment VALUES (12, 1, NULL, '123asd123', '2019-09-24 11:42:07', NULL, 0);
+INSERT INTO public.comment VALUES (14, 1, NULL, 'asd', '2019-09-24 13:08:58', NULL, 0);
+INSERT INTO public.comment VALUES (19, 1, NULL, 'asdsad', '2019-09-24 13:21:06', NULL, 0);
+INSERT INTO public.comment VALUES (20, 1, NULL, 'selele', '2019-09-24 13:21:14', NULL, 0);
+INSERT INTO public.comment VALUES (21, 1, NULL, 'asdasdsadzxcxzc', '2019-09-24 13:29:38', NULL, 0);
+INSERT INTO public.comment VALUES (15, 2, NULL, 'alma lama', '2019-09-24 13:10:00', NULL, 0);
+INSERT INTO public.comment VALUES (18, 2, NULL, 'asd', '2019-09-24 13:20:58', 2, 0);
+INSERT INTO public.comment VALUES (17, 2, NULL, 'sadsadas', '2019-09-24 13:19:41', 1, 0);
+INSERT INTO public.comment VALUES (3, 2, NULL, 'lajos', '2019-09-24 11:27:46', 1, 0);
+INSERT INTO public.comment VALUES (69, NULL, 10, 'sajt', '2019-09-25 13:56:41', 1, 0);
+
+
+--
+-- Data for Name: question; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.question VALUES (1, '2019-09-25 10:47:48', 15, 9, 'Wordpress loading multiple jQuery Versions', 'I''asd developed a plugin that uses the jquery booklet plugin (http://builtbywill.com/booklet/#/) this plugin binds a function to $ so I cann call $(".myBook").booklet();
+
+I could easy managing the loading order with wp_enqueue_script so first I load jquery then I load booklet so everything is fine.
+
+BUT in my theme i also using jquery via webpack so the loading order is now following:
+
+jquery
+booklet
+app.js (bundled file with webpack, including jquery)', '', 0);
+INSERT INTO public.question VALUES (3, '2019-09-25 10:53:11', 0, 0, 'asd''12', 'qwe''%123', '', 0);
+INSERT INTO public.question VALUES (0, '2017-04-28 08:29:00', 29, 8, 'How to make lists in Python?', 'I am totally new to this, any hints?', NULL, 0);
+INSERT INTO public.question VALUES (2, '2017-05-01 10:41:00', 1364, 62, 'Drawing canvas with an image picked with Cordova Camera Plugin', 'I''m getting an image from device and drawing a canvas with filters using Pixi JS. It works all well using computer to get an image. But when I''m on IOS, it throws errors such as cross origin issue, or that I''m trying to use an unknown format.
+', NULL, 0);
+INSERT INTO public.question VALUES (4, '2019-09-25 17:23:31', 0, 0, 'sadsa', 'asdsad', '', 0);
+INSERT INTO public.question VALUES (5, '2019-09-25 17:23:36', 0, 0, 'asdasd', 'asqdas', '', 0);
+INSERT INTO public.question VALUES (6, '2019-09-26 17:21:03', 0, 0, '1234', '12345', 'images/Screenshot from 2019-07-04 14-41-52.png', 0);
+
+
+--
+-- Data for Name: question_tag; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.question_tag VALUES (0, 1);
+INSERT INTO public.question_tag VALUES (1, 3);
+INSERT INTO public.question_tag VALUES (2, 3);
+
+
+--
+-- Data for Name: tag; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.tag VALUES (1, 'python');
+INSERT INTO public.tag VALUES (2, 'sql');
+INSERT INTO public.tag VALUES (3, 'css');
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.users VALUES (0, 'Admin', '$2b$12$WnD.WnpkstOjJ942BWBNDOavvV1txRHaV3O27uRVge9.6tyuFtSRW', '2019-10-07 00:00:00', 0);
+INSERT INTO public.users VALUES (1, 'user', '$2b$12$1hSkXN6wc5xagujdbP2DEeXmj4MUisS2bX5dLcl.bJMH5eEJnh962', '2019-10-07 00:00:00', 0);
+INSERT INTO public.users VALUES (5, 'bela', '$2b$12$FkUkOgEq.3kLq7ugKwpwWOBi/spbcFMmCLXnJ2wmzjsuvHY68a8Lq', '2019-10-08 11:14:26.76269', 0);
+INSERT INTO public.users VALUES (6, 'mari', '$2b$12$11s2Gdwpb.6qrSVmJoDUM.JS7HET.sTb0ZNe9HwpVPepPKKxXUzIy', '2019-10-08 11:26:33.846485', 0);
+INSERT INTO public.users VALUES (9, 'lajos', '$2b$12$9rGBOOl48kD5UJy76oqFAOTONik8aku3jd5bvcA4lPS5OsjZAbl3K', '2019-10-08 11:40:41.51719', 0);
+
+
+--
+-- Name: answer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.answer_id_seq', 14, true);
+
+
+--
+-- Name: comment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.comment_id_seq', 89, true);
+
+
+--
+-- Name: question_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.question_id_seq', 6, true);
+
+
+--
+-- Name: tag_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.tag_id_seq', 3, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 9, true);
+
+
+--
+-- Name: answer pk_answer_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.answer
+    ADD CONSTRAINT pk_answer_id PRIMARY KEY (id);
+
+
+--
+-- Name: comment pk_comment_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comment
+    ADD CONSTRAINT pk_comment_id PRIMARY KEY (id);
+
+
+--
+-- Name: question pk_question_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question
+    ADD CONSTRAINT pk_question_id PRIMARY KEY (id);
+
+
+--
+-- Name: question_tag pk_question_tag_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_tag
+    ADD CONSTRAINT pk_question_tag_id PRIMARY KEY (question_id, tag_id);
+
+
+--
+-- Name: tag pk_tag_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tag
+    ADD CONSTRAINT pk_tag_id PRIMARY KEY (id);
+
+
+--
+-- Name: users users_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_name_key UNIQUE (name);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: comment fk_answer_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comment
+    ADD CONSTRAINT fk_answer_id FOREIGN KEY (answer_id) REFERENCES public.answer(id);
+
+
+--
+-- Name: answer fk_question_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.answer
+    ADD CONSTRAINT fk_question_id FOREIGN KEY (question_id) REFERENCES public.question(id);
+
+
+--
+-- Name: question_tag fk_question_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_tag
+    ADD CONSTRAINT fk_question_id FOREIGN KEY (question_id) REFERENCES public.question(id);
+
+
+--
+-- Name: comment fk_question_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comment
+    ADD CONSTRAINT fk_question_id FOREIGN KEY (question_id) REFERENCES public.question(id);
+
+
+--
+-- Name: question_tag fk_tag_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_tag
+    ADD CONSTRAINT fk_tag_id FOREIGN KEY (tag_id) REFERENCES public.tag(id);
+
+
+--
+-- Name: answer fk_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.answer
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: comment fk_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comment
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: question fk_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
