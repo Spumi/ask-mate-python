@@ -85,10 +85,3 @@ def escape_single_quotes(dictionary):
 def hash_password(plain_text_password):
     hashed_bytes = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
     return hashed_bytes.decode('utf-8')
-
-
-def register(username, password):
-    sql_expression = """ INSERT INTO users (name, password)
-                         VALUES ('%s', '%s')                   
-                     """ % (username.lower(), hash_password(password))
-    data_handler.execute_query(sql_expression)

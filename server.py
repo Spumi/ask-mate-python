@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 import data_handler
 import util
-from util import register
+from data_handler import register
 
 app = Flask(__name__)
 app.debug = True
@@ -226,8 +226,10 @@ def delete_comment(comment_id):
 def user_registration():
     if request.method == "POST":
         credentials = request.form.to_dict()
-        register(credentials['username'], credentials['password'])
-    return render_template('dev/reg.html')
+        if not register(credentials['username'], credentials['password']):
+            return 'Fail'
+        else:
+            return redirect('/')
 
 
 if __name__ == '__main__':

@@ -1,8 +1,10 @@
 from datetime import datetime
+
+import psycopg2
 from psycopg2 import sql
 
 import connection
-from util import string_builder, create_check_keywords_in_database_string, escape_single_quotes
+from util import string_builder, create_check_keywords_in_database_string, escape_single_quotes, hash_password
 from flask import request
 
 
@@ -226,3 +228,15 @@ def order_questions(order_by, order_direction, is_main):
     """.format(order_by=order_by, order_direction=order_direction, limit=limit)
     questions = execute_query(q)
     return questions
+
+
+def register(username, password):
+    sql_expression = """ INSERT INTO users (name, password)
+                         VALUES ('%s', '%s')                   
+                     """ % (username.lower(), hash_password(password))
+    try:
+        execute_query(sql_expression)
+    except psycopg2.IntegrityError:
+        return False
+    else:
+        return True
