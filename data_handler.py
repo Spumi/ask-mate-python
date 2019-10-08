@@ -22,8 +22,10 @@ def add_entry(entry, is_answer=False):
 
 
 def get_question(question_id):
-    question_query = f"""SELECT * FROM question
-                         WHERE id={int(question_id)};"""
+    question_query = f"""SELECT question.*, users.name
+                         FROM question
+                         JOIN users ON question.user_id=users.id
+                         WHERE question.id={int(question_id)};"""
     question_data = execute_query(question_query)
     return question_data
 
