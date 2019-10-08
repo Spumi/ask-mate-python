@@ -1,5 +1,7 @@
 import os
 from datetime import datetime
+from functools import wraps
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import data_handler
 import util
@@ -8,6 +10,18 @@ from data_handler import register
 app = Flask(__name__)
 app.debug = True
 app.secret_key = os.environ.get("SECRET_KEY")
+
+
+def auth_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session:
+            # return redirect(url_for('login'))
+            return "not logged in"
+        else:
+            return f(*args, **kwargs)
+    return decorated_function
+
 
 @app.route('/')
 @app.route('/list')
@@ -57,6 +71,7 @@ def add_answer(question_id):
 
 
 @app.route('/question/<question_id>')
+@auth_required
 def question_display(question_id):
     question = data_handler.get_question(question_id)
     related_answers = data_handler.get_question_related_answers(question_id)
@@ -251,6 +266,12 @@ def login():
                 session["username"] = result["name"]
                 session["id"] = result["id"]
                 return redirect("/")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
 
 
 if __name__ == '__main__':
