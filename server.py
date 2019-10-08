@@ -69,9 +69,11 @@ def list_questions():
 
 
 @app.route('/add-question', methods=["GET", "POST"])
+@auth_required
 def add_question():
     if request.method == 'POST':
         req = request.form.to_dict()
+        req['user_id'] = str(session['id'])
         util.handle_add_question(req)
         return redirect(url_for("list_questions"))
 
