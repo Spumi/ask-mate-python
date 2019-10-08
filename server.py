@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import data_handler
 import util
 from data_handler import register
@@ -222,7 +222,7 @@ def delete_comment(comment_id):
     return redirect("/question/" + str(question_id))
 
 
-@app.route("/registration", methods=["GET", "POST"])
+@app.route("/registration", methods=["POST"])
 def user_registration():
     if request.method == "POST":
         credentials = request.form.to_dict()
@@ -232,7 +232,7 @@ def user_registration():
             return redirect('/')
 
 
-@app.route('/login', methods=["GET","POST"])
+@app.route('/login', methods=["POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username","")
@@ -244,15 +244,13 @@ def login():
             result = data_handler.execute_query(auth_query)
             if not result:
             #TODO: handle error
-                return "error"
+                return "Error"
             else:
                 result = result.pop()
             if util.verify_password(pwd, result["password"]):
                 session["username"] = result["name"]
                 session["id"] = result["id"]
                 return redirect("/")
-
-    return render_template("dev/login.html")
 
 
 if __name__ == '__main__':
