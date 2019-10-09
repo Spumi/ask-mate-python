@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 import bcrypt as bcrypt
-from flask import request
+from flask import request, session
 import data_handler
 
 
@@ -37,13 +37,13 @@ def generate_answer_dict(data):
     answer_data.update(question_id=data["question_id"])
     answer_data.update(message=data["message"])
     answer_data.update(image=data["image"])
+    answer_data.update(user_id=str(session["id"]))
     return answer_data
 
 
-def handle_add_answer(reqv, id):
+def handle_add_answer(reqv):
     handle_upload(reqv)
     answer = generate_answer_dict(reqv)
-    answer['user_id'] = id
     data_handler.add_entry(answer, True)
 
 

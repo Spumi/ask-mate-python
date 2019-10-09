@@ -240,8 +240,3 @@ def register(username, password):
     else:
         return True
 
-
-def bind_answer_to_user():
-    user_id = session['id']
-    query = """INSERT INTO answer (user_id) VALUES (%s)""" % (user_id)
-    execute_query(query)
