@@ -131,7 +131,7 @@ def vote_answer():
 @app.route('/question/<question_id>/delete', methods=['GET', 'POST'])
 @auth_required
 def delete_question(question_id):
-    if data_handler.get_user_by_question_id(question_id)['id'] == session['id']:
+    if data_handler.get_user_by_entry_id(question_id) == session['id']:
 
         if request.method == 'POST':
             if request.form.get('delete') == 'Yes':
@@ -150,7 +150,7 @@ def delete_question(question_id):
 @app.route('/<question_id>/edit', methods=['GET', 'POST'])
 @auth_required
 def edit_question(question_id):
-    if data_handler.get_user_by_question_id(question_id)['id'] == session['id']:
+    if data_handler.get_user_by_entry_id(question_id) == session['id']:
 
         if request.method == 'POST':
             edited_question_data = request.form.to_dict()

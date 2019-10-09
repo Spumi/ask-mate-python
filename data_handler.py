@@ -244,14 +244,12 @@ def register(username, password):
         return True
 
 
-def get_user_by_question_id(question_id):
-    sql_expression = """SELECT users.id, users.name
-                        FROM users
-                        JOIN question
-                        ON (users.id = question.user_id)
-                        WHERE question.id = %(question_id)s;""" % {'question_id': question_id}
+def get_user_by_entry_id(id, table='question'):
+    sql_expression = """SELECT user_id
+                        FROM %(table)s
+                        WHERE id = %(id)s;""" % {'id': id, 'table': table}
 
-    user_data = execute_query(sql_expression)[0]
-    return user_data
+    user_id = execute_query(sql_expression)[0]['user_id']
+    return user_id
 
 
