@@ -99,6 +99,7 @@ def question_display(question_id):
             answer_id_and_accepted_pairs[answer_id] = True
             print(answer_id_and_accepted_pairs)
             #then save it
+            data_handler.execute_query("""UPDATE answer SET accepted=%(accepted)s WHERE id=%(id)s""" % {'accepted': answer_id_and_accepted_pairs[answer_id], 'id': answer_id})
 
         else:
             flash('You are not entitled to mark this answer as accepted')
