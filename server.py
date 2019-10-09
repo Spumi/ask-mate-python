@@ -74,7 +74,6 @@ def add_answer(question_id):
 
 
 @app.route('/question/<question_id>')
-@auth_required
 def question_display(question_id):
     question = data_handler.get_question(question_id)
     related_answers = data_handler.get_question_related_answers(question_id)
@@ -233,6 +232,7 @@ def edit_answer(answer_id):
 
 
 @app.route("/comments/<id>/edit", methods=["GET", "POST"])
+@auth_required
 def edit_comment(id):
     comment_type = "question"
     ref_question_id = request.args.get('qid')
@@ -267,25 +267,34 @@ def user_registration():
             return redirect('/')
 
 
-@app.route('/login', methods=["POST"])
+@app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username","")
         pwd = request.form.get("password","")
-        if username != "" and pwd != "":
-            auth_query = """SELECT id, name, password FROM users
-            WHERE users.name = '%s';
-            """ % username
-            result = data_handler.execute_query(auth_query)
-            if not result:
-            #TODO: handle error
-                return "Error"
-            else:
-                result = result.pop()
-            if util.verify_password(pwd, result["password"]):
-                session["username"] = result["name"]
-                session["id"] = result["id"]
-                return redirect("/")
+        if not authenticated(username, pwd):
+            return redirect("/")
+        else:
+            return redirect("/")
+    else:
+        return redirect("/")
+
+
+def authenticated(username, pwd):
+    if username != "" and pwd != "":
+        auth_query = """SELECT id, name, password FROM users
+        WHERE users.name = '%s';
+        """ % username
+        result = data_handler.execute_query(auth_query)
+        if not result:
+            return False
+        else:
+            result = result.pop()
+        if util.verify_password(pwd, result["password"]):
+            session["username"] = result["name"]
+            session["id"] = result["id"]
+            return True
+    return False
 
 
 @app.route("/logout")
