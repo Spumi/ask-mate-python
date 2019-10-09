@@ -92,17 +92,6 @@
                     </form>
                 </td>
             </tr>
-            <tr>
-                <td colspan="5">
-                    {% with messages = get_flashed_messages() %}
-                        {% if messages %}
-                            {% for message in messages %}
-                                <p>{{ message }}</p>
-                            {% endfor %}
-                        {%  endif %}
-                    {% endwith %}
-                </td>
-            </tr>
         </table>
         {#    </div>#}
         <div class="answer comment pt15 comment_buttons">
@@ -320,9 +309,15 @@
                 <p style="text-align: center">{{ "There is no answer to this question" }}</p>
             {% endif %}
             <br>
-
-
         </div>
+        {% with message = get_flashed_messages()[0] %}
+            {% if message %}
+                <script type="text/javascript">
+                    let x = {{ message | tojson}}
+                    window.onload = function () {alert(x);}
+                </script>
+            {%  endif %}
+        {% endwith %}
 </body>
 </html>
 
