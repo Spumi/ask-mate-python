@@ -74,7 +74,7 @@ def add_answer(question_id):
     return render_template("add-answer.html", qid=question_id,
                            logged_in=session["username"] if session else "")
 
-
+@app.route('/question/<question_id>/accept-answer')
 @app.route('/question/<question_id>')
 def question_display(question_id):
     question = data_handler.get_question(question_id)
@@ -82,13 +82,23 @@ def question_display(question_id):
     question_comments = data_handler.get_comments("question", question_id)
     question_related_tags = data_handler.get_question_related_tags(question_id)
 
+    is_privilege_to_accept = ''
+    if str(request.url_rule) == '/question/<question_id>/accept-answer':
+        if data_handler.get_user_by_entry_id(question_id) == session['id']:
+            is_privilege_to_accept = True
+        else:
+            flash('You are not entitled to mark this answer as accepted')
+            return redirect('/question/' + str(question_id))
+
     return render_template('display_question.html',
                            question=question.pop(),
                            question_comments=question_comments,
                            answers=related_answers,
                            get_comments=data_handler.get_comments,
                            question_related_tags=question_related_tags,
-                           logged_in=session["username"] if session else "")
+                           logged_in=session["username"] if session else "",
+                           is_privilege_to_accept=is_privilege_to_accept)
+
 
 
 @app.route("/question/<question_id>/vote-up")
@@ -331,19 +341,6 @@ def list_users():
     return render_template('list-users.html', users=users,
                            logged_in=session["username"] if session else "")
 
-
-@app.route('/answer/<answer_id>/accept')
-@auth_required
-def accept_answer(answer_id):
-    question_id = data_handler.get_question_id(answer_id)
-    if data_handler.get_user_by_entry_id(question_id) == session['id']:
-
-        is_privilege_to_accept = True
-
-        #return render_template('display_question.html', is_privilege_to_accept=is_privilege_to_accept)
-    else:
-        flash('You are not entitled to mark this answer as accepted')
-    return redirect('/question/' + str(question_id))
 
 
 

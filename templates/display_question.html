@@ -249,9 +249,9 @@
                                 </td>
 
                                 <td>
-                                <form action={{"/answer/" }}{{ answer.id }}{{ "/accept" }}>
+                                <form action={{"/question/" }}{{ question.id }}{{ "/accept-answer" }}>
                                     <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
-                                    <input type="submit" value="Mark as accepted answer">
+                                    <input type="submit" name="accept-answer" value="Mark as accepted answer">
                                 </form>
                                 </td>
                             </tr>
