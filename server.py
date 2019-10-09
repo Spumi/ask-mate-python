@@ -131,15 +131,17 @@ def vote_answer():
 @app.route('/question/<question_id>/delete', methods=['GET', 'POST'])
 @auth_required
 def delete_question(question_id):
-    if request.method == 'POST':
-        if request.form.get('delete') == 'Yes':
-            data_handler.delete_question(question_id)
-            return redirect(url_for('list_questions'))
-        else:
-            return redirect(url_for('question_display', question_id=question_id))
-
     if data_handler.get_user_by_question_id(question_id)['id'] == session['id']:
+
+        if request.method == 'POST':
+            if request.form.get('delete') == 'Yes':
+                data_handler.delete_question(question_id)
+                return redirect(url_for('list_questions'))
+            else:
+                return redirect(url_for('question_display', question_id=question_id))
+
         return render_template('asking_if_delete_entry.html', question_id=question_id)
+
     else:
         flash('You are not entitled to delete this question')
         return redirect("/question/" + str(question_id))
@@ -148,17 +150,17 @@ def delete_question(question_id):
 @app.route('/<question_id>/edit', methods=['GET', 'POST'])
 @auth_required
 def edit_question(question_id):
-
-    if request.method == 'POST':
-        edited_question_data = request.form.to_dict()
-        edited_question_data['id'] = int(edited_question_data['id'])
-        edited_question_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        edited_question_data['user_id'] = session['id']
-        util.handle_edit_entry(edited_question_data)
-
-        return redirect("/question/" + str(question_id))
-
     if data_handler.get_user_by_question_id(question_id)['id'] == session['id']:
+
+        if request.method == 'POST':
+            edited_question_data = request.form.to_dict()
+            edited_question_data['id'] = int(edited_question_data['id'])
+            edited_question_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            edited_question_data['user_id'] = session['id']
+            util.handle_edit_entry(edited_question_data)
+
+            return redirect("/question/" + str(question_id))
+
         question = data_handler.get_question(question_id)[0]
 
         return render_template('edit-question.html', question=question)
