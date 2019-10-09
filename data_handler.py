@@ -66,6 +66,13 @@ def update_record(record, is_answer=False):
     execute_query(query)
 
 
+def get_question_id(id):
+    question_id_query = f"""SELECT question_id FROM answer
+                            WHERE id={id};"""
+    question_id = execute_query(question_id_query)[0]['question_id']
+    return question_id
+
+
 def delete_record(id, answer=False, delete=False):
     if answer:
         # question_id_query = f"""SELECT question_id FROM answer
@@ -251,8 +258,3 @@ def get_user_by_entry_id(id, table='question'):
     return user_id
 
 
-def get_question_id(id):
-    question_id_query = f"""SELECT question_id FROM answer
-                            WHERE id={id};"""
-    question_id = execute_query(question_id_query)[0]['question_id']
-    return question_id

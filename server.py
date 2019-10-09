@@ -203,21 +203,25 @@ def tag_question(id):
 
 @app.route('/answer/<answer_id>/edit', methods=["GET", "POST"])
 def edit_answer(answer_id):
+    if data_handler.get_user_by_entry_id(answer_id, table='answer') == session['id']:
+        if request.method == 'POST':
+            edited_answer_data = request.form.to_dict()
+            edited_answer_data['id'] = int(edited_answer_data['id'])
+            edited_answer_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            edited_answer_data['user_id'] = session['id']
+            util.handle_edit_entry(edited_answer_data, is_answer=True)
+            question_id = edited_answer_data['question_id']
 
-    if request.method == 'POST':
-        edited_answer_data = request.form.to_dict()
-        edited_answer_data['id'] = int(edited_answer_data['id'])
-        edited_answer_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        util.handle_edit_entry(edited_answer_data, is_answer=True)
-        question_id = edited_answer_data['question_id']
+            return redirect("/question/" + str(question_id))
 
+        answer = data_handler.get_answer(answer_id)[0]
+        question_id = answer['question_id']
+
+        return render_template('add-answer.html', qid=question_id, answer=answer, answer_id=answer_id)
+    else:
+        flash('You are not entitled to edit this question')
+        question_id = data_handler.get_question_id(answer_id)
         return redirect("/question/" + str(question_id))
-
-    answer = data_handler.get_answer(answer_id)[0]
-    question_id = answer['question_id']
-
-    return render_template('add-answer.html', qid=question_id, answer=answer, answer_id=answer_id)
-
 
 @app.route("/comments/<id>/edit", methods=["GET", "POST"])
 def edit_comment(id):
