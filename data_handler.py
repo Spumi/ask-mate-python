@@ -68,13 +68,14 @@ def update_record(record, is_answer=False):
 
 def delete_record(id, answer=False, delete=False):
     if answer:
-        question_id_query = f"""SELECT question_id FROM answer
-                                WHERE id={id};"""
+        # question_id_query = f"""SELECT question_id FROM answer
+        #                         WHERE id={id};"""
         delete_answer_query = f"""DELETE FROM answer
                                   WHERE id={id};"""
         delete_comment_query = f"""DELETE FROM comment
                                   WHERE answer_id={id};"""
-        question_id = execute_query(question_id_query)[0]['question_id']
+        # question_id = execute_query(question_id_query)[0]['question_id']
+        question_id = get_question_id(id)
 
         if delete:
             execute_query(delete_comment_query)
@@ -240,3 +241,18 @@ def register(username, password):
     else:
         return True
 
+
+def get_user_by_entry_id(id, table='question'):
+    sql_expression = """SELECT user_id
+                        FROM %(table)s
+                        WHERE id = %(id)s;""" % {'id': id, 'table': table}
+
+    user_id = execute_query(sql_expression)[0]['user_id']
+    return user_id
+
+
+def get_question_id(id):
+    question_id_query = f"""SELECT question_id FROM answer
+                            WHERE id={id};"""
+    question_id = execute_query(question_id_query)[0]['question_id']
+    return question_id

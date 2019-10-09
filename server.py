@@ -137,15 +137,21 @@ def edit_question(question_id):
 
 
 @app.route('/answer/<answer_id>/delete', methods=['GET', 'POST'])
+@auth_required
 def delete_answer(answer_id):
-    if request.method == 'POST':
-        delete = False
-        if request.form.get('delete') == 'Yes':
-            delete = True
-        question_id = data_handler.delete_record(answer_id, True, delete=delete)
-        return redirect('/question/' + str(question_id))
+    if data_handler.get_user_by_entry_id(answer_id, table='answer') == session['id']:
+        if request.method == 'POST':
+            delete = False
+            if request.form.get('delete') == 'Yes':
+                delete = True
+            question_id = data_handler.delete_record(answer_id, True, delete=delete)
+            return redirect('/question/' + str(question_id))
+        else:
+            return render_template('asking_if_delete_answer.html', answer_id=answer_id)
     else:
-        return render_template('asking_if_delete_answer.html', answer_id=answer_id)
+        flash('You are not entitled to delete this question')
+        question_id = data_handler.get_question_id(answer_id)
+        return redirect("/question/" + str(question_id))
 
 
 @app.route('/search-for-questions', methods=['GET', 'POST'])
