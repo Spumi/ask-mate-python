@@ -262,3 +262,7 @@ def get_user_by_entry_id(id, table='question'):
     return user_id
 
 
+def get_users():
+    query = """SELECT * FROM users"""
+    users = execute_query(query)
+    return users

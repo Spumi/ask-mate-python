@@ -325,6 +325,12 @@ def logout():
     return redirect("/")
 
 
+@app.route('/list-users')
+def list_users():
+    users = data_handler.get_users()
+    return render_template('list-users.html', users=users)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 

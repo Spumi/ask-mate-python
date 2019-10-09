@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>User list</title>
+    </head>
+    <div class="answer padTop2p comment_buttons rowHeight">
+        <body>
+            {% include "banner.html" %}
+            <br>
+            <div align="center">
+            <h1>User list</h1>
+            </div>
+            <br>
+            <table class="center pt15">
+                <colgroup>
+                    <col style="width: 3%">
+                    <col style="width: 4%">
+                    <col style="width: 10%">
+                    <col style="width: 10%">
+                    <col style="width: 9%">
+                </colgroup>
+                {% set fieldnames = ['name', 'reg_date', 'reputation'] %}
+                <thead>
+                    {%  for title in fieldnames %}
+                        <td>{{ title|capitalize }}</td>
+                    {% endfor %}
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            {% for title in fieldnames %}
+                                <td>{{ user[title] }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </body>
+    </div>
+</html>
