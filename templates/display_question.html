@@ -247,13 +247,18 @@
                                         <input type="submit" value="Comment">
                                     </form>
                                 </td>
-
-                                <td>
-                                <form action={{"/question/" }}{{ question.id }}{{ "/accept-answer" }}>
-                                    <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
-                                    <input type="submit" name="accept-answer" value="Mark as accepted answer">
-                                </form>
-                                </td>
+                                {% if is_answer_accepted == None %}
+                                    <td>
+                                    <form action={{"/question/" }}{{ question.id }}{{ "/accept-answer" }}>
+                                        <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
+                                        <input type="submit" name="accept-answer" value="Mark as accepted answer">
+                                    </form>
+                                    </td>
+                                {% elif is_answer_accepted == True %}
+                                    <td>
+                                        <input type="text" value="Answer is marked as accepted" readonly>
+                                    </td>
+                                {% endif %}
                             </tr>
 
                         </table>

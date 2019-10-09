@@ -82,10 +82,10 @@ def question_display(question_id):
     question_comments = data_handler.get_comments("question", question_id)
     question_related_tags = data_handler.get_question_related_tags(question_id)
 
-    is_privilege_to_accept = ''
+    is_answer_accepted = None
     if str(request.url_rule) == '/question/<question_id>/accept-answer':
         if data_handler.get_user_by_entry_id(question_id) == session['id']:
-            is_privilege_to_accept = True
+            is_answer_accepted = True
         else:
             flash('You are not entitled to mark this answer as accepted')
             return redirect('/question/' + str(question_id))
@@ -97,7 +97,7 @@ def question_display(question_id):
                            get_comments=data_handler.get_comments,
                            question_related_tags=question_related_tags,
                            logged_in=session["username"] if session else "",
-                           is_privilege_to_accept=is_privilege_to_accept)
+                           is_answer_accepted=is_answer_accepted)
 
 
 
