@@ -266,3 +266,10 @@ def get_users():
     query = """SELECT * FROM users"""
     users = execute_query(query)
     return users
+
+
+def get_answer_id(question_id):
+    answer_id_query = f"""SELECT id FROM answer
+                            WHERE question_id={question_id};"""
+    answer_id = execute_query(answer_id_query)[0]['id']
+    return answer_id
