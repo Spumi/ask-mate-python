@@ -23,24 +23,6 @@ def auth_required(f):
     return decorated_function
 
 
-#  GIVE UP TO SOLVE USER AUTH FOR ENTRY MODIFICATION WITH A DECORATOR
-#  def auth_user_check(action_id, action_type):
-#    def _auth_user_check(f):
-#          @wraps(f)
-#          def decorated_function(*args, **kwargs):
-#              if session and action_type == 'question':
-#                  username = data_handler.get_user_of_question(action_id)['name']
-#              else:
-#                  username = ''
-#              auth = request.authorization
-#              if auth.username != username:
-#                  return "You are not entitled to modify this entry"
-#              else:
-#                  return f(*args, **kwargs)
-#          return decorated_function
-#      return _auth_user_check
-
-
 @app.route('/')
 @app.route('/list')
 @app.route('/?order_by=<order_by>&order_direction=<order_direction>', methods=['GET', 'POST'])
@@ -65,7 +47,8 @@ def list_questions():
                            sorted_questions=questions,
                            order_by=order_by,
                            order_direction=order_direction,
-                           is_main=is_main)
+                           is_main=is_main,
+                           logged_in=session["username"] if session else "")
 
 
 @app.route('/add-question', methods=["GET", "POST"])
@@ -77,7 +60,8 @@ def add_question():
         util.handle_add_question(req)
         return redirect(url_for("list_questions"))
 
-    return render_template("edit-question.html", qid="")
+    return render_template("edit-question.html", qid="",
+                           logged_in=session["username"] if session else "")
 
 
 @app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
@@ -87,7 +71,8 @@ def add_answer(question_id):
         util.handle_add_answer(req)
         return redirect("/question/" + question_id)
 
-    return render_template("add-answer.html", qid=question_id)
+    return render_template("add-answer.html", qid=question_id,
+                           logged_in=session["username"] if session else "")
 
 
 @app.route('/question/<question_id>')
@@ -102,7 +87,8 @@ def question_display(question_id):
                            question_comments=question_comments,
                            answers=related_answers,
                            get_comments=data_handler.get_comments,
-                           question_related_tags=question_related_tags)
+                           question_related_tags=question_related_tags,
+                           logged_in=session["username"] if session else "")
 
 
 @app.route("/question/<question_id>/vote-up")
@@ -140,7 +126,8 @@ def delete_question(question_id):
             else:
                 return redirect(url_for('question_display', question_id=question_id))
 
-        return render_template('asking_if_delete_entry.html', question_id=question_id)
+        return render_template('asking_if_delete_entry.html', question_id=question_id,
+                           logged_in=session["username"] if session else "")
 
     else:
         flash('You are not entitled to delete this question')
@@ -163,7 +150,8 @@ def edit_question(question_id):
 
         question = data_handler.get_question(question_id)[0]
 
-        return render_template('edit-question.html', question=question)
+        return render_template('edit-question.html', question=question,
+                           logged_in=session["username"] if session else "")
 
     else:
         flash('You are not entitled to edit this question')
@@ -171,15 +159,23 @@ def edit_question(question_id):
 
 
 @app.route('/answer/<answer_id>/delete', methods=['GET', 'POST'])
+@auth_required
 def delete_answer(answer_id):
-    if request.method == 'POST':
-        delete = False
-        if request.form.get('delete') == 'Yes':
-            delete = True
-        question_id = data_handler.delete_record(answer_id, True, delete=delete)
-        return redirect('/question/' + str(question_id))
+    if data_handler.get_user_by_entry_id(answer_id, table='answer') == session['id']:
+        if request.method == 'POST':
+            delete = False
+            if request.form.get('delete') == 'Yes':
+                delete = True
+            question_id = data_handler.delete_record(answer_id, True, delete=delete)
+            return redirect('/question/' + str(question_id))
+
+        else:
+            return render_template('asking_if_delete_answer.html', answer_id=answer_id,
+                                   logged_in=session["username"] if session else "")
     else:
-        return render_template('asking_if_delete_answer.html', answer_id=answer_id)
+        flash('You are not entitled to delete this question')
+        question_id = data_handler.get_question_id(answer_id)
+        return redirect("/question/" + str(question_id))
 
 
 @app.route('/search-for-questions', methods=['GET', 'POST'])
@@ -188,7 +184,8 @@ def search_for_questions():
     questions_containing_keywords_query = data_handler.create_questions_containing_keywords_query(keywords)
     questions_containing_keywords = data_handler.execute_query(questions_containing_keywords_query)
     return render_template('search_for_keywords_in_questions.html',
-                           keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords)
+                           keywords=keywords, fieldnames=util.QUESTION_DATA_HEADER, questions=questions_containing_keywords,
+                           logged_in=session["username"] if session else "")
 
 
 @app.route("/upload", methods=["POST"])
@@ -213,7 +210,8 @@ def comment_question(id):
         del req["qid"]
         data_handler.handle_add_comment(req)
         return redirect("/question/" + str(ref_question_id))
-    return render_template("add-comment.html", qid=id, type=comment_type, question_id=ref_question_id)
+    return render_template("add-comment.html", qid=id, type=comment_type, question_id=ref_question_id,
+                           logged_in=session["username"] if session else "")
 
 
 @app.route("/question/<id>/new-tag", methods=["GET", "POST"])
@@ -227,28 +225,36 @@ def tag_question(id):
 
         return redirect("/question/" + id)
 
-    return render_template("tag-question.html", qid=id, existing_tags=existing_tags)
+    return render_template("tag-question.html", qid=id, existing_tags=existing_tags,
+                           logged_in=session["username"] if session else "")
 
 
 @app.route('/answer/<answer_id>/edit', methods=["GET", "POST"])
 def edit_answer(answer_id):
+    if data_handler.get_user_by_entry_id(answer_id, table='answer') == session['id']:
+        if request.method == 'POST':
+            edited_answer_data = request.form.to_dict()
+            edited_answer_data['id'] = int(edited_answer_data['id'])
+            edited_answer_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            edited_answer_data['user_id'] = session['id']
+            util.handle_edit_entry(edited_answer_data, is_answer=True)
+            question_id = edited_answer_data['question_id']
 
-    if request.method == 'POST':
-        edited_answer_data = request.form.to_dict()
-        edited_answer_data['id'] = int(edited_answer_data['id'])
-        edited_answer_data['submission_time'] = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        util.handle_edit_entry(edited_answer_data, is_answer=True)
-        question_id = edited_answer_data['question_id']
+            return redirect("/question/" + str(question_id))
 
+        answer = data_handler.get_answer(answer_id)[0]
+        question_id = answer['question_id']
+
+        return render_template('add-answer.html', qid=question_id, answer=answer, answer_id=answer_id,
+                               logged_in=session["username"] if session else "")
+
+    else:
+        flash('You are not entitled to edit this question')
+        question_id = data_handler.get_question_id(answer_id)
         return redirect("/question/" + str(question_id))
 
-    answer = data_handler.get_answer(answer_id)[0]
-    question_id = answer['question_id']
-
-    return render_template('add-answer.html', qid=question_id, answer=answer, answer_id=answer_id)
-
-
 @app.route("/comments/<id>/edit", methods=["GET", "POST"])
+@auth_required
 def edit_comment(id):
     comment_type = "question"
     ref_question_id = request.args.get('qid')
@@ -262,7 +268,8 @@ def edit_comment(id):
         data_handler.handle_edit_comment(id,req)
         return redirect("/question/" + str(question_id))
 
-    return render_template("add-comment.html", qid=id, type=comment_type, message=message, question_id = ref_question_id)
+    return render_template("add-comment.html", qid=id, type=comment_type, message=message, question_id = ref_question_id,
+                           logged_in=session["username"] if session else "")
 
 
 @app.route("/comments/<comment_id>/delete", methods=["GET"])
@@ -282,25 +289,34 @@ def user_registration():
             return redirect('/')
 
 
-@app.route('/login', methods=["POST"])
+@app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username","")
         pwd = request.form.get("password","")
-        if username != "" and pwd != "":
-            auth_query = """SELECT id, name, password FROM users
-            WHERE users.name = '%s';
-            """ % username
-            result = data_handler.execute_query(auth_query)
-            if not result:
-            #TODO: handle error
-                return "Error"
-            else:
-                result = result.pop()
-            if util.verify_password(pwd, result["password"]):
-                session["username"] = result["name"]
-                session["id"] = result["id"]
-                return redirect("/")
+        if not authenticated(username, pwd):
+            return redirect("/")
+        else:
+            return redirect("/")
+    else:
+        return redirect("/")
+
+
+def authenticated(username, pwd):
+    if username != "" and pwd != "":
+        auth_query = """SELECT id, name, password FROM users
+        WHERE users.name = '%s';
+        """ % username
+        result = data_handler.execute_query(auth_query)
+        if not result:
+            return False
+        else:
+            result = result.pop()
+        if util.verify_password(pwd, result["password"]):
+            session["username"] = result["name"]
+            session["id"] = result["id"]
+            return True
+    return False
 
 
 @app.route("/logout")

@@ -5,14 +5,13 @@ from psycopg2 import sql
 
 import connection
 from util import string_builder, create_check_keywords_in_database_string, escape_single_quotes, hash_password
-from flask import request
+from flask import request, session
 
 
 def add_entry(entry, is_answer=False):
     table = "answer"
     if not is_answer:
         table = "question"
-
     query = """INSERT INTO {table}
     ({columns}) VALUES ({values});
     """.format(columns=string_builder(entry.keys()),
@@ -69,15 +68,23 @@ def update_record(record, is_answer=False):
     execute_query(query)
 
 
+def get_question_id(id):
+    question_id_query = f"""SELECT question_id FROM answer
+                            WHERE id={id};"""
+    question_id = execute_query(question_id_query)[0]['question_id']
+    return question_id
+
+
 def delete_record(id, answer=False, delete=False):
     if answer:
-        question_id_query = f"""SELECT question_id FROM answer
-                                WHERE id={id};"""
+        # question_id_query = f"""SELECT question_id FROM answer
+        #                         WHERE id={id};"""
         delete_answer_query = f"""DELETE FROM answer
                                   WHERE id={id};"""
         delete_comment_query = f"""DELETE FROM comment
                                   WHERE answer_id={id};"""
-        question_id = execute_query(question_id_query)[0]['question_id']
+        # question_id = execute_query(question_id_query)[0]['question_id']
+        question_id = get_question_id(id)
 
         if delete:
             execute_query(delete_comment_query)
