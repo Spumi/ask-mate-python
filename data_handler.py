@@ -5,14 +5,13 @@ from psycopg2 import sql
 
 import connection
 from util import string_builder, create_check_keywords_in_database_string, escape_single_quotes, hash_password
-from flask import request
+from flask import request, session
 
 
 def add_entry(entry, is_answer=False):
     table = "answer"
     if not is_answer:
         table = "question"
-
     query = """INSERT INTO {table}
     ({columns}) VALUES ({values});
     """.format(columns=string_builder(entry.keys()),
@@ -240,3 +239,9 @@ def register(username, password):
         return False
     else:
         return True
+
+
+def bind_answer_to_user():
+    user_id = session['id']
+    query = """INSERT INTO answer (user_id) VALUES (%s)""" % (user_id)
+    execute_query(query)

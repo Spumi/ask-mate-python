@@ -64,7 +64,7 @@ def add_question():
 def add_answer(question_id):
     if request.method == 'POST':
         req = request.form.to_dict()
-        util.handle_add_answer(req)
+        util.handle_add_answer(req, str(session["id"]))
         return redirect("/question/" + question_id)
 
     return render_template("add-answer.html", qid=question_id)

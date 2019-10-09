@@ -40,9 +40,10 @@ def generate_answer_dict(data):
     return answer_data
 
 
-def handle_add_answer(reqv):
+def handle_add_answer(reqv, id):
     handle_upload(reqv)
     answer = generate_answer_dict(reqv)
+    answer['user_id'] = id
     data_handler.add_entry(answer, True)
 
 
