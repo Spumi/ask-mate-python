@@ -325,6 +325,12 @@ def logout():
     return redirect("/")
 
 
+@app.route('/user/<user_id>')
+def list_user_activities(user_id):
+    user_entries = data_handler.get_all_entries_by_user_id(user_id)
+    return render_template('user.html', entries=user_entries, logged_in=session["username"] if session else "")
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
