@@ -138,7 +138,7 @@ def create_questions_containing_keywords_query(keywords):
 
 
 def delete_question(question_id):
-    q = """DELETE FROM comment WHERE question_id = {question_id} OR answer_id = (SELECT id FROM answer WHERE id = {question_id}) 
+    q = """DELETE FROM comment WHERE question_id = {question_id} OR answer_id IN (SELECT id FROM answer WHERE answer.question_id = {question_id}) 
     """.format(question_id=question_id)
     execute_query(q)
     q = """DELETE FROM answer WHERE question_id = {question_id}
