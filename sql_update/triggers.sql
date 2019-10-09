@@ -49,7 +49,7 @@ CREATE TRIGGER answer_repu
     AFTER UPDATE OF vote_number
     ON public.answer
     FOR EACH ROW
-    EXECUTE PROCEDURE public.vote();
+    EXECUTE PROCEDURE public.vote_answer_repu();
 
 CREATE TRIGGER question_repu
     AFTER UPDATE OF vote_number
