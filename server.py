@@ -173,7 +173,7 @@ def delete_answer(answer_id):
             return render_template('asking_if_delete_answer.html', answer_id=answer_id,
                                    logged_in=session["username"] if session else "")
     else:
-        flash('You are not entitled to delete this question')
+        flash('You are not entitled to delete this answer')
         question_id = data_handler.get_question_id(answer_id)
         return redirect("/question/" + str(question_id))
 
@@ -249,7 +249,7 @@ def edit_answer(answer_id):
                                logged_in=session["username"] if session else "")
 
     else:
-        flash('You are not entitled to edit this question')
+        flash('You are not entitled to edit this answer')
         question_id = data_handler.get_question_id(answer_id)
         return redirect("/question/" + str(question_id))
 
@@ -328,7 +328,23 @@ def logout():
 @app.route('/list-users')
 def list_users():
     users = data_handler.get_users()
-    return render_template('list-users.html', users=users)
+    return render_template('list-users.html', users=users,
+                           logged_in=session["username"] if session else "")
+
+
+@app.route('/answer/<answer_id>/accept')
+@auth_required
+def accept_answer(answer_id):
+    question_id = data_handler.get_question_id(answer_id)
+    if data_handler.get_user_by_entry_id(question_id) == session['id']:
+
+        is_privilege_to_accept = True
+
+        #return render_template('display_question.html', is_privilege_to_accept=is_privilege_to_accept)
+    else:
+        flash('You are not entitled to mark this answer as accepted')
+    return redirect('/question/' + str(question_id))
+
 
 
 if __name__ == '__main__':

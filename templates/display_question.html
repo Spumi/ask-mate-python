@@ -244,10 +244,18 @@
                                 <td>
                                     <form action={{ "/answer/" }}{{ answer.id }}{{ "/new-comment" }}>
                                         <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
-                                        <input type="submit" value="comment">
+                                        <input type="submit" value="Comment">
                                     </form>
                                 </td>
+
+                                <td>
+                                <form action={{"/answer/" }}{{ answer.id }}{{ "/accept" }}>
+                                    <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
+                                    <input type="submit" value="Mark as accepted answer">
+                                </form>
+                                </td>
                             </tr>
+
                         </table>
                     </div>
                     {% set comments = get_comments("answer",answer["id"]) %}
