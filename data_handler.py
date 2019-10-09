@@ -110,7 +110,9 @@ def handle_add_comment(req):
 
 def get_comments(comment_tpe, _id):
     comment_tpe += "_id"
-    query = """SELECT message, submission_time, edited_count, comment.question_id, comment.answer_id, comment.id  FROM comment
+    query = """SELECT message, submission_time, edited_count, comment.question_id, comment.answer_id, comment.id, u.name
+    FROM comment
+    JOIN users u on comment.user_id = u.id
     WHERE {col} = {id} ORDER BY submission_time DESC 
     """.format(col=comment_tpe, id=_id)
     return execute_query(query)

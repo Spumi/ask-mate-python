@@ -208,6 +208,7 @@ def comment_question(id):
         comment_type = "answer"
     if request.method == 'POST':
         req = request.form.to_dict()
+        req["user_id"] = str(session["id"])
         ref_question_id = req["qid"]
         del req["qid"]
         data_handler.handle_add_comment(req)
