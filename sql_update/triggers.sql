@@ -29,7 +29,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION vote_accept_repu() RETURNS TRIGGER AS $vote_accept_repu$
 BEGIN
-    IF NEW.accepted is true > OLD.accepted is false THEN
+    IF NEW.accepted is true and OLD.accepted is false THEN
       update users set reputation = reputation + 15 WHERE id = old.user_id;
    END IF;
 RETURN NULL; 
