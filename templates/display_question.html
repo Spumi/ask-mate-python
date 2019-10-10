@@ -252,12 +252,12 @@
                                     <td>
                                     <form action="{{"/question/" }}{{ question.id }}{{ "/accept-answer" }}" method="post">
                                         <input type="hidden" name="answer_id" value="{{ answer.id }}">
-                                        <input type="submit" name="accept-answer" value="Mark as accepted answer">
+                                        <input type="submit" name="accept-answer" value="Accept answer">
                                     </form>
                                     </td>
                                 {% else %}
                                     <td>
-                                        <input type="text" value="Answer is marked as accepted" readonly>
+                                        <input type="text" value="Answer is accepted" readonly>
                                     </td>
                                 {% endif %}
                             </tr>
