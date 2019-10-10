@@ -58,7 +58,7 @@
             <tr>
                 <td colspan="5" class="tags">
                     {% for related_tag in question_related_tags %}
-                        {{ related_tag['name'] + ',' }}
+                        {{ related_tag['name'] + ('<a href="/question/' + related_tag["question_id"] | string + '/tag/' + related_tag["tag_id"] | string + "/delete\" style=\"color: red; font-size: 20px;\">&#10007; </a>") | safe }}
                     {% endfor %}
                 </td>
                 </label>
@@ -244,10 +244,24 @@
                                 <td>
                                     <form action={{ "/answer/" }}{{ answer.id }}{{ "/new-comment" }}>
                                         <input type="hidden" name="qid" value="{{ answer["question_id"] }}">
-                                        <input type="submit" value="comment">
+                                        <input type="submit" value="Comment">
                                     </form>
+
                                 </td>
+                                {% if answer_id_and_accepted_pairs[answer.id] == False %}
+                                    <td>
+                                    <form action="{{"/question/" }}{{ question.id }}" method="post">
+                                        <input type="hidden" name="answer_id" value="{{ answer.id }}">
+                                        <input type="submit" name="accept-answer" value="Accept answer">
+                                    </form>
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <input type="text" value="Answer is accepted" readonly>
+                                    </td>
+                                {% endif %}
                             </tr>
+
                         </table>
                     </div>
                     {% set comments = get_comments("answer",answer["id"]) %}

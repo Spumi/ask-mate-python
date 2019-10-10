@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+{% set question_headers = ['Title', 'Message', 'Submission', 'Views', 'Votes'] %}
+{% set question_keys = [('title', '20%', 'left'), ('message', '60%', 'left'), ('submission_time', '10%', 'center'), ('view_number', '10%', 'center'), ('vote_number', '10%', 'center')] %}
+{% set answer_headers = ['Title', 'Answer', 'Submission', 'Status', 'Votes'] %}
+{% set answer_keys = [('question_title', '20%', 'left'), ('answer', '60%', 'left'), ('submission_time', '10%', 'center'), ('status', '10%', 'center'), ('vote_number', '10%', 'center')] %}
+{% set comment_headers = ['Title', 'Comment', 'Submission', 'Comment for'] %}
+{% set comment_keys = [('question_title', '20%', 'left'), ('comment', '64%', 'left'), ('submission_time', '10%', 'center'), ('comment_for', '10%', 'center')] %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User activity</title>
+</head>
+<body>
+    {% include "banner.html" %}
+    <h1 class="question_title">All activities of user: {{ session['username'] }}</h1>
+    <div class="question_display" style="width: 95%">
+    <div class="question_detail">
+    <br>
+        <h2 class="title2">Questions</h2>
+        {% if entries['questions'] != [] %}
+            <table>
+                <thead>
+                <tr>
+                    {% for header in question_headers %}
+                        <th style="padding-bottom: 20px">{{ header }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for question in entries['questions'] %}
+                    <tr>
+                        {% for key, width, align in question_keys %}
+                            {% if key == 'submission_time' %}
+                                <td align={{ align }} width={{ width }}>{{ question.get(key) }}</td>
+                            {% elif key == 'title' %}
+                                <td align={{ align }} width={{ width }}>
+                                    <a href="{{ url_for('question_display', question_id=question.get('question_id')) }}">{{ question.get(key) }}</a>
+                                </td>
+                            {% else %}
+                                <td align="{{ align }}" width="{{ width }}">{{ question.get(key) }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <br>
+            <h3>There are no questions you asked</h3>
+            <br>
+        {% endif %}
+     <br>
+        <h2>Answers</h2>
+        {% if entries['answers'] != [] %}
+        <table>
+                <thead>
+                <tr>
+                    {% for header in answer_headers %}
+                        <th style="padding-bottom: 20px">{{ header }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for answer in entries['answers'] %}
+                    <tr>
+                        {% for key, width, align in answer_keys %}
+                            {% if key == 'submission_time' %}
+                                <td align={{ align }} width={{ width }}>{{ answer.get(key) }}</td>
+                            {% elif key == 'question_title' %}
+                                <td align={{ align }} width={{ width }}>
+                                    <a href="{{ url_for('question_display', question_id=answer.get('question_id')) }}">{{ answer.get(key) }}</a>
+                                </td>
+                            {% else %}
+                                <td align="{{ align }}" width="{{ width }}">{{ answer.get(key) }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <br>
+            <h3>There are no answers you posted</h3>
+            <br>
+        {% endif %}
+    <br>
+        <h2>Comments</h2>
+        {% if entries['comments'] != [] %}
+        <table>
+                <thead>
+                <tr>
+                    {% for header in comment_headers %}
+                        <th style="padding-bottom: 20px">{{ header }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for comment in entries['comments'] %}
+                    <tr>
+                        {% for key, width, align in comment_keys %}
+                            {% if key == 'submission_time' %}
+                                <td align={{ align }} width={{ width }}>{{ comment.get(key) }}</td>
+                            {% elif key == 'question_title' %}
+                                <td align={{ align }} width={{ width }}>
+                                    <a href="{{ url_for('question_display', question_id=comment.get('question_id')) }}">{{ comment.get(key) }}</a>
+                                </td>
+                            {% else %}
+                                <td align="{{ align }}" width="{{ width }}">{{ comment.get(key) }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <br>
+            <h3>There are no comments you posted</h3>
+            <br>
+        {% endif %}
+</body>
+</html>
