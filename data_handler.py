@@ -222,8 +222,8 @@ def get_related_question_id(id):
 
 
 def get_question_related_tags(question_id):
-    question_related_tags = execute_query("""SELECT tag.name FROM question_tag LEFT JOIN tag 
-        ON question_tag.tag_id = tag.id WHERE question_tag.question_id = {id}""".format(id=question_id))
+    question_related_tags = execute_query("""SELECT tag.name, tag_id, question_tag.question_id FROM question_tag LEFT JOIN tag 
+             ON question_tag.tag_id = tag.id WHERE question_tag.question_id = {id}""".format(id=question_id))
     return question_related_tags
 
 
@@ -268,5 +268,6 @@ def is_comment_owned_by_user(user_id, comment_id):
 
 
 def delete_tag(question_id, tag_id):
-    q =  """DELETE FROM question_tag WHERE question_id = %(question_id)s AND tag_id = %(tag_id)s
-    """ %(question_id, tag_id)
+    q =  """DELETE FROM question_tag WHERE question_id = %s AND tag_id = %s
+    """ %(str(question_id), str(tag_id))
+    execute_query(q)
