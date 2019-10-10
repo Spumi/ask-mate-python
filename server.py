@@ -106,7 +106,6 @@ def question_display(question_id):
                            answers=related_answers,
                            get_comments=data_handler.get_comments,
                            question_related_tags=question_related_tags,
-                           logged_in=session["username"] if session else "",
                            answer_id_and_accepted_pairs=answer_id_and_accepted_pairs)
 
 
