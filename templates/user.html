@@ -13,9 +13,10 @@
 <body>
     {% include "banner.html" %}
     <h1 class="question_title">All activities of user: {{ session['username'] }}</h1>
-    <div class="question_display">
+    <div class="question_display" style="width: 95%">
     <div class="question_detail">
-    <h2>Questions</h2>
+    <br>
+        <h2 class="title2">Questions</h2>
         {% if entries['questions'] != [] %}
             <table>
                 <thead>
@@ -44,9 +45,12 @@
                 </tbody>
             </table>
         {% else %}
+            <br>
             <h3>There are no questions you asked</h3>
+            <br>
         {% endif %}
-    <h2>Answers</h2>
+     <br>
+        <h2>Answers</h2>
         {% if entries['answers'] != [] %}
         <table>
                 <thead>
@@ -75,9 +79,12 @@
                 </tbody>
             </table>
         {% else %}
+            <br>
             <h3>There are no answers you posted</h3>
+            <br>
         {% endif %}
-    <h2>Comments</h2>
+    <br>
+        <h2>Comments</h2>
         {% if entries['comments'] != [] %}
         <table>
                 <thead>
@@ -106,7 +113,9 @@
                 </tbody>
             </table>
         {% else %}
+            <br>
             <h3>There are no comments you posted</h3>
+            <br>
         {% endif %}
 </body>
 </html>
