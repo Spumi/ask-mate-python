@@ -314,3 +314,8 @@ def get_all_entries_by_user_id(user_id):
                     'comments': execute_query(sql_comments)}
 
     return user_entries
+
+
+def is_comment_owned_by_user(user_id, comment_id):
+    uid = get_user_by_entry_id(comment_id, 'comment')
+    return uid == user_id
