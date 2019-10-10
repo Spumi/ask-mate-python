@@ -344,10 +344,7 @@ def logout():
 @app.route('/list-users')
 def list_users():
     users = data_handler.get_users()
-    return render_template('list-users.html', users=users,
-                           logged_in=session["username"] if session else "")
-
-
+    return render_template('list-users.html', users=users)
 
 
 @app.route('/user/<user_id>')

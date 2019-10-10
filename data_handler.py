@@ -316,6 +316,11 @@ def get_all_entries_by_user_id(user_id):
     return user_entries
 
 
+def is_comment_owned_by_user(user_id, comment_id):
+    uid = get_user_by_entry_id(comment_id, 'comment')
+    return uid == user_id
+
+
 def get_users():
     query = """SELECT * FROM users"""
     users = execute_query(query)
@@ -345,9 +350,3 @@ def update_answer_accepted(answer_id_and_accepted_pairs, answer_id):
 def is_comment_owned_by_user(user_id, comment_id):
     uid = get_user_by_entry_id(comment_id, 'comment')
     return uid == user_id
-
-
-def delete_tag(question_id, tag_id):
-    q =  """DELETE FROM question_tag WHERE question_id = %s AND tag_id = %s
-    """ %(str(question_id), str(tag_id))
-    execute_query(q)
