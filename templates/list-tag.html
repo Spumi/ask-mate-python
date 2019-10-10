@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Tag list</title>
+    </head>
+    <body>
+        {% include "banner.html" %}
+        {% include "search.html" %}
+        <div class="answer padTop2p comment_buttons rowHeight">
+            <h1 align="center">List tags</h1>
+            <br>
+            <table class="center_tags tag_table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tag in tags %}
+                    <tr>
+                        <td>{{ tag["name"] }}</td>
+                        <td>{{ tag["count"] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

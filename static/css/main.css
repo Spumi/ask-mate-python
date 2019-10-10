@@ -13,7 +13,12 @@ table.center {
     width: 95%;
 }
 
-
+table.center_tags {
+    text-align: center;
+    margin-left:auto;
+    margin-right:auto;
+    width: 95%;
+}
 
 .comment_buttons input {
     padding: 5px;
@@ -304,5 +309,10 @@ input::-webkit-file-upload-button {
     font-weight: bold;
     font-style: italic;
     text-decoration: underline;
+}
+
+.tag_table{
+    text-align: center;
+    width: 50%;
 }
 

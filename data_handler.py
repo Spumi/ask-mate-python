@@ -262,11 +262,6 @@ def get_user_by_entry_id(id, table='question'):
     return user_id
 
 
-def is_comment_owned_by_user(user_id, comment_id):
-    uid = get_user_by_entry_id(comment_id, 'comment')
-    return uid == user_id
-
-
 def get_all_entries_by_user_id(user_id):
     sql_questions = """SELECT users.id AS user_id,
                               users.name AS user_name, 
@@ -356,6 +351,13 @@ def is_comment_owned_by_user(user_id, comment_id):
     uid = get_user_by_entry_id(comment_id, 'comment')
     return uid == user_id
 
+
+def get_tags():
+    q = """SELECT tag.name, COUNT(*) AS count FROM tag
+    right join question_tag qt on tag.id = qt.tag_id
+    GROUP BY tag.name
+    """
+    return execute_query(q)
 
 def delete_tag(question_id, tag_id):
     q =  """DELETE FROM question_tag WHERE question_id = %s AND tag_id = %s

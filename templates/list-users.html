@@ -4,26 +4,25 @@
         <meta charset="UTF-8">
         <title>User list</title>
     </head>
-    <div class="answer padTop2p comment_buttons rowHeight">
         <body>
             {% include "banner.html" %}
+            <h1 class="question_display"></h1>
+            <div class="question_detail answer_display rowHeight">
             <br>
             <div align="center">
             <h1>User list</h1>
             </div>
             <br>
-            <table class="center pt15">
+            <table class="center_tags pt15">
                 <colgroup>
                     <col style="width: 3%">
                     <col style="width: 4%">
                     <col style="width: 10%">
-                    <col style="width: 10%">
-                    <col style="width: 9%">
                 </colgroup>
                 {% set fieldnames = ['name', 'reg_date', 'reputation'] %}
                 <thead>
                     {%  for title in fieldnames %}
-                        <td>{{ title|capitalize }}</td>
+                        <th>{{ title|capitalize }}</th>
                     {% endfor %}
                 </thead>
                 <tbody>
@@ -36,6 +35,6 @@
                     {% endfor %}
                 </tbody>
             </table>
+            </div>
         </body>
-    </div>
 </html>
