@@ -306,3 +306,6 @@ input::-webkit-file-upload-button {
     text-decoration: underline;
 }
 
+.userPagePadding{
+    padding: 20px;
+}
