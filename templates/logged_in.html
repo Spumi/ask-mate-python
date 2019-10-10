@@ -1,5 +1,5 @@
 <div class="control_buttons">
-    Logged in as <a href="/user">({{ logged_in }})</a>
+    Logged in as <a href={{ url_for('list_user_activities', user_id=session['id']) }}>{{ session['username'] }}</a>
     <br>
     <a href="/logout">Logout</a>
 </div>

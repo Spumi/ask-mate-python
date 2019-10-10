@@ -2,7 +2,7 @@
 <div class="header">
     <h1 id="title">Ask Mate</h1>
     <br>
-    {%  if logged_in == "" %}
+    {%  if not session['username'] %}
     {% include "reg.html" %}
     {% else %}
     {% include "logged_in.html"%}
