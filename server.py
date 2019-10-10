@@ -17,7 +17,7 @@ def auth_required(f):
     def decorated_function(*args, **kwargs):
         if not session:
             # return redirect(url_for('login'))
-            return "not logged in"
+            return render_template("denied.html")
         else:
             return f(*args, **kwargs)
     return decorated_function
