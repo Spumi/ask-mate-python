@@ -272,29 +272,34 @@ def edit_answer(answer_id):
         question_id = data_handler.get_question_id(answer_id)
         return redirect("/question/" + str(question_id))
 
+
 @app.route("/comments/<id>/edit", methods=["GET", "POST"])
 @auth_required
 def edit_comment(id):
     comment_type = "question"
     ref_question_id = request.args.get('qid')
-    message =request.args.get("message")
-    if "answer" in str(request.url_rule):
-        comment_type = "answer"
-    if request.method == 'POST':
-        req = request.form.to_dict()
-        question_id = req["qid"]
-        del req["qid"]
-        data_handler.handle_edit_comment(id,req)
-        return redirect("/question/" + str(question_id))
+    if data_handler.is_comment_owned_by_user(session["id"], id):
+        message =request.args.get("message")
+        if "answer" in str(request.url_rule):
+            comment_type = "answer"
+        if request.method == 'POST':
+            req = request.form.to_dict()
+            question_id = req["qid"]
+            del req["qid"]
+            data_handler.handle_edit_comment(id,req)
+            return redirect("/question/" + str(question_id))
 
-    return render_template("add-comment.html", qid=id, type=comment_type, message=message, question_id = ref_question_id,
+        return render_template("add-comment.html", qid=id, type=comment_type, message=message, question_id = ref_question_id,
                            logged_in=session["username"] if session else "")
+    else:
+        return redirect("/question/" + str(ref_question_id))
 
 
 @app.route("/comments/<comment_id>/delete", methods=["GET"])
 def delete_comment(comment_id):
     question_id = request.args.get("qid")
-    data_handler.delete_comment(comment_id)
+    if data_handler.is_comment_owned_by_user(session["id"], int(comment_id)):
+        data_handler.delete_comment(comment_id)
     return redirect("/question/" + str(question_id))
 
 

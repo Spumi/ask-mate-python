@@ -286,3 +286,8 @@ def update_answer_accepted(answer_id_and_accepted_pairs, answer_id):
     query = """UPDATE answer SET accepted=%(accepted)s WHERE id=%(id)s""" % {
         'accepted': answer_id_and_accepted_pairs[answer_id], 'id': answer_id}
     execute_query(query)
+
+
+def is_comment_owned_by_user(user_id, comment_id):
+    uid = get_user_by_entry_id(comment_id, 'comment')
+    return uid == user_id
