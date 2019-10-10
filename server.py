@@ -329,6 +329,10 @@ def logout():
     session.clear()
     return redirect("/")
 
+@app.route('/question/<question_id>/tag/<tag_id>/delete')
+def delete_tag(question_id, tag_id):
+    data_handler.delete_tag(question_id, tag_id)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

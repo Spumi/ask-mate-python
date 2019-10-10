@@ -265,3 +265,8 @@ def get_user_by_entry_id(id, table='question'):
 def is_comment_owned_by_user(user_id, comment_id):
     uid = get_user_by_entry_id(comment_id, 'comment')
     return uid == user_id
+
+
+def delete_tag(question_id, tag_id):
+    q =  """DELETE FROM question_tag WHERE question_id = %(question_id)s AND tag_id = %(tag_id)s
+    """ %(question_id, tag_id)
