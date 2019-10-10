@@ -74,8 +74,10 @@ def add_answer(question_id):
     return render_template("add-answer.html", qid=question_id,
                            logged_in=session["username"] if session else "")
 
-@app.route('/question/<question_id>/accept-answer', methods=['GET', 'POST'])
-@app.route('/question/<question_id>')
+
+
+#@app.route('/question/<question_id>/accept-answer', methods=['GET', 'POST'])
+@app.route('/question/<question_id>', methods=['GET', 'POST'])
 def question_display(question_id):
     question = data_handler.get_question(question_id)
     related_answers = data_handler.get_question_related_answers(question_id)
@@ -84,11 +86,16 @@ def question_display(question_id):
 
     answer_id_and_accepted_pairs = {answer['id']:answer['accepted'] for answer in
                                     [answer for answer in data_handler.get_accepted_attribute(question_id)]}
+
     if request.method == "POST":
-        if data_handler.get_user_by_entry_id(question_id) == session['id']:
-            answer_id = int(request.form.get('answer_id'))
-            answer_id_and_accepted_pairs[answer_id] = True
-            data_handler.update_answer_accepted(answer_id_and_accepted_pairs, answer_id)
+        if session:
+            if data_handler.get_user_by_entry_id(question_id) == session['id']:
+                answer_id = int(request.form.get('answer_id'))
+                answer_id_and_accepted_pairs[answer_id] = True
+                data_handler.update_answer_accepted(answer_id_and_accepted_pairs, answer_id)
+            else:
+                flash('You are not entitled to mark this answer as accepted')
+                return redirect('/question/' + str(question_id))
         else:
             flash('You are not entitled to mark this answer as accepted')
             return redirect('/question/' + str(question_id))
