@@ -350,3 +350,11 @@ def update_answer_accepted(answer_id_and_accepted_pairs, answer_id):
 def is_comment_owned_by_user(user_id, comment_id):
     uid = get_user_by_entry_id(comment_id, 'comment')
     return uid == user_id
+
+
+def get_tags():
+    q = """SELECT tag.name, COUNT(*) AS count FROM tag
+    right join question_tag qt on tag.id = qt.tag_id
+    GROUP BY tag.name
+    """
+    return execute_query(q)

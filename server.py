@@ -358,6 +358,11 @@ def delete_tag(question_id, tag_id):
     data_handler.delete_tag(question_id, tag_id)
     return redirect("/question/" + str(question_id))
 
+@app.route('/tag')
+def tag_page():
+    tags = data_handler.get_tags()
+    return render_template("list-tag.html", tags=tags)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
