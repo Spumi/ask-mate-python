@@ -279,7 +279,8 @@ def edit_comment(id):
 @app.route("/comments/<comment_id>/delete", methods=["GET"])
 def delete_comment(comment_id):
     question_id = request.args.get("qid")
-    data_handler.delete_comment(comment_id)
+    if data_handler.is_comment_owned_by_user(session["id"], int(comment_id)):
+        data_handler.delete_comment(comment_id)
     return redirect("/question/" + str(question_id))
 
 
