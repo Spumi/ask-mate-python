@@ -311,7 +311,7 @@ def login():
         username = request.form.get("username","")
         pwd = request.form.get("password","")
         if not authenticated(username, pwd):
-            return redirect("/")
+            return redirect("/401")
         else:
             return redirect("/")
     else:
@@ -334,6 +334,10 @@ def authenticated(username, pwd):
             return True
     return False
 
+
+@app.route('/401')
+def failed_login():
+    return render_template("not_logged_in.html")
 
 @app.route("/logout")
 def logout():

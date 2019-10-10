@@ -309,3 +309,11 @@ input::-webkit-file-upload-button {
 .userPagePadding{
     padding: 20px;
 }
+
+
+.gif{
+    height: 500px;
+    width: auto;
+    margin-bottom: 0px;
+}
+
