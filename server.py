@@ -63,6 +63,7 @@ def add_question():
 
 
 @app.route("/question/<question_id>/new-answer", methods=["GET", "POST"])
+@auth_required
 def add_answer(question_id):
     if request.method == 'POST':
         req = request.form.to_dict()
@@ -190,6 +191,7 @@ def upload_image():
 
 @app.route("/question/<id>/new-comment", methods=["GET", "POST"])
 @app.route("/answer/<id>/new-comment", methods=["GET", "POST"])
+@auth_required
 def comment_question(id):
     comment_type = "question"
     ref_question_id = request.args.get("qid")
@@ -206,6 +208,7 @@ def comment_question(id):
 
 
 @app.route("/question/<id>/new-tag", methods=["GET", "POST"])
+@auth_required
 def tag_question(id):
     existing_tags = data_handler.get_existing_tags()
     if request.method == 'POST':
@@ -220,6 +223,7 @@ def tag_question(id):
 
 
 @app.route('/answer/<answer_id>/edit', methods=["GET", "POST"])
+@auth_required
 def edit_answer(answer_id):
     if data_handler.get_user_by_entry_id(answer_id, table='answer') == session['id']:
         if request.method == 'POST':
@@ -265,6 +269,7 @@ def edit_comment(id):
 
 
 @app.route("/comments/<comment_id>/delete", methods=["GET"])
+@auth_required
 def delete_comment(comment_id):
     question_id = request.args.get("qid")
     if data_handler.is_comment_owned_by_user(session["id"], int(comment_id)):
