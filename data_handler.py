@@ -273,3 +273,16 @@ def get_answer_id(question_id):
                             WHERE question_id={question_id};"""
     answer_id = execute_query(answer_id_query)[0]['id']
     return answer_id
+
+
+def get_accepted_attribute(question_id):
+    query = """SELECT id, accepted FROM answer 
+        WHERE question_id=%(question_id)s""" % {'question_id': question_id}
+    accepted_attribute = execute_query(query)
+    return accepted_attribute
+
+
+def update_answer_accepted(answer_id_and_accepted_pairs, answer_id):
+    query = """UPDATE answer SET accepted=%(accepted)s WHERE id=%(id)s""" % {
+        'accepted': answer_id_and_accepted_pairs[answer_id], 'id': answer_id}
+    execute_query(query)

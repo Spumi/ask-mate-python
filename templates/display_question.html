@@ -251,7 +251,7 @@
                                 {% if answer_id_and_accepted_pairs[answer.id] == False %}
                                     <td>
                                     <form action="{{"/question/" }}{{ question.id }}{{ "/accept-answer" }}" method="post">
-                                        <input type="hidden" name="aid" value="{{ answer.id }}">
+                                        <input type="hidden" name="answer_id" value="{{ answer.id }}">
                                         <input type="submit" name="accept-answer" value="Mark as accepted answer">
                                     </form>
                                     </td>

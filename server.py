@@ -82,25 +82,13 @@ def question_display(question_id):
     question_comments = data_handler.get_comments("question", question_id)
     question_related_tags = data_handler.get_question_related_tags(question_id)
 
-    # ennek mi a franc legyen a neve????
-    is_answers_accepted = data_handler.execute_query("""SELECT id, accepted FROM answer 
-        WHERE question_id=%(question_id)s""" % {'question_id': question_id})
-    print(is_answers_accepted)
-
-    answer_id_and_accepted_pairs = {answer['id']:answer['accepted'] for answer in [answer for answer in is_answers_accepted]}
-    print(answer_id_and_accepted_pairs)
-
-
+    answer_id_and_accepted_pairs = {answer['id']:answer['accepted'] for answer in
+                                    [answer for answer in data_handler.get_accepted_attribute(question_id)]}
     if request.method == "POST":
         if data_handler.get_user_by_entry_id(question_id) == session['id']:
-            answer_id = int(request.form.get('aid'))
-            print(answer_id)
-            # set the chosen answer as accepted
+            answer_id = int(request.form.get('answer_id'))
             answer_id_and_accepted_pairs[answer_id] = True
-            print(answer_id_and_accepted_pairs)
-            #then save it
-            data_handler.execute_query("""UPDATE answer SET accepted=%(accepted)s WHERE id=%(id)s""" % {'accepted': answer_id_and_accepted_pairs[answer_id], 'id': answer_id})
-
+            data_handler.update_answer_accepted(answer_id_and_accepted_pairs, answer_id)
         else:
             flash('You are not entitled to mark this answer as accepted')
             return redirect('/question/' + str(question_id))
