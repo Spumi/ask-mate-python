@@ -58,7 +58,7 @@
             <tr>
                 <td colspan="5" class="tags">
                     {% for related_tag in question_related_tags %}
-                        {{ related_tag['name'] + ',' }}
+                        {{ related_tag['name'] + ('<a href="/question/' + related_tag["question_id"] | string + '/tag/' + related_tag["tag_id"] | string + "/delete\" style=\"color: red; font-size: 20px;\">&#10007; </a>") | safe }}
                     {% endfor %}
                 </td>
                 </label>

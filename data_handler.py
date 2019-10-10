@@ -222,8 +222,8 @@ def get_related_question_id(id):
 
 
 def get_question_related_tags(question_id):
-    question_related_tags = execute_query("""SELECT tag.name FROM question_tag LEFT JOIN tag 
-        ON question_tag.tag_id = tag.id WHERE question_tag.question_id = {id}""".format(id=question_id))
+    question_related_tags = execute_query("""SELECT tag.name, tag_id, question_tag.question_id FROM question_tag LEFT JOIN tag 
+             ON question_tag.tag_id = tag.id WHERE question_tag.question_id = {id}""".format(id=question_id))
     return question_related_tags
 
 
@@ -262,6 +262,60 @@ def get_user_by_entry_id(id, table='question'):
     return user_id
 
 
+def get_all_entries_by_user_id(user_id):
+    sql_questions = """SELECT users.id AS user_id,
+                              users.name AS user_name, 
+                              question.id AS question_id,
+                              question.title,
+                              question.message,
+                              question.submission_time,
+                              question.view_number,
+                              question.vote_number
+                       FROM users
+                       JOIN question
+                        ON users.id = question.user_id
+                       WHERE users.id = %(user_id)s
+                       ORDER BY question.submission_time DESC;
+                    """ % {'user_id': user_id}
+
+    sql_answers = """SELECT answer.user_id AS user_id,
+                            (SELECT name FROM users WHERE id=%(user_id)s) AS user_name,
+                            question.id AS question_id,
+                            question.title AS question_title,
+                            answer.message AS answer,
+                            answer.submission_time,
+                            answer.vote_number,
+                            CASE WHEN answer.accepted IS TRUE THEN 'accepted' ELSE '' END AS status
+                     FROM answer
+                     JOIN question
+                      ON answer.question_id = question.id
+                     WHERE answer.user_id = %(user_id)s
+                     ORDER BY answer.submission_time DESC;
+                  """ % {'user_id': user_id}
+
+    sql_comments = """SELECT comment.user_id AS user_id,
+                             (SELECT name FROM users WHERE id=%(user_id)s) AS user_name,
+                             question.id AS question_id,
+                             question.title AS question_title,
+                             comment.message AS comment,
+                             comment.submission_time,
+                             CASE WHEN comment.question_id IS NULL THEN 'answer' ELSE 'question' END AS comment_for
+                      FROM comment
+                      LEFT JOIN answer
+                      ON comment.answer_id = answer.id
+                      LEFT JOIN question
+                      ON comment.question_id = question.id OR answer.question_id = question.id
+                      WHERE comment.user_id = %(user_id)s
+                      ORDER BY comment.submission_time DESC;
+                  """ % {'user_id': user_id}
+
+    user_entries = {'questions': execute_query(sql_questions),
+                    'answers': execute_query(sql_answers),
+                    'comments': execute_query(sql_comments)}
+
+    return user_entries
+
+
 def get_users():
     query = """SELECT * FROM users"""
     users = execute_query(query)
@@ -291,3 +345,9 @@ def update_answer_accepted(answer_id_and_accepted_pairs, answer_id):
 def is_comment_owned_by_user(user_id, comment_id):
     uid = get_user_by_entry_id(comment_id, 'comment')
     return uid == user_id
+
+
+def delete_tag(question_id, tag_id):
+    q =  """DELETE FROM question_tag WHERE question_id = %s AND tag_id = %s
+    """ %(str(question_id), str(tag_id))
+    execute_query(q)
