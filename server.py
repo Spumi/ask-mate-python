@@ -300,7 +300,7 @@ def user_registration():
     if request.method == "POST":
         credentials = request.form.to_dict()
         if not register(credentials['username'], credentials['password']):
-            return 'Fail'
+            return redirect("/401")
         else:
             return redirect('/')
 

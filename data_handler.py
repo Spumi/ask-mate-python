@@ -242,6 +242,8 @@ def order_questions(order_by, order_direction, is_main):
 
 
 def register(username, password):
+    if username == "" or password == "":
+        return False
     sql_expression = """ INSERT INTO users (name, password)
                          VALUES ('%s', '%s')                   
                      """ % (username.lower(), hash_password(password))
